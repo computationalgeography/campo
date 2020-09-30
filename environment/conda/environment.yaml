@@ -1,0 +1,20 @@
+name: campo-test
+channels:
+  - conda-forge
+  - https://pcraster.geo.uu.nl/pcraster/pcraster
+  - defaults
+dependencies:
+  - python=3.7
+#  - numpy
+  - boost-cpp=1.72.0
+  - lue
+#  - pcraster
+#  - matplotlib
+  - xarray
+#  - pandas
+#  - gdal
+#  - networkx
+  - pip
+  - pip:
+    - https://campo.computationalgeography.org/download/campo-0.0.1-py3-none-any.whl
+
