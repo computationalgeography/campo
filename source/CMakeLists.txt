@@ -7,6 +7,10 @@ configure_file(setup.py.in
   setup.py
 )
 
+configure_file(environment.yaml.in
+  ${CMAKE_SOURCE_DIR}/environment/conda/environment.yaml
+)
+
 install(
   FILES
     ${CMAKE_CURRENT_BINARY_DIR}/setup.py
@@ -18,31 +22,3 @@ install(
 install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} setup.py sdist bdist_wheel
                               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/package)")
 
-
-
-
-
-
-
-
-#
-#
-# message(STATUS "))))))))))))))))0" ${CMAKE_CURRENT_SOURCE_DIR}/campo)
-# message(STATUS "))))))))))))))))0" ${CMAKE_CURRENT_BINARY_DIR}/campo)
-
-
-# add_custom_command(
-#   TARGET init_sources
-#   ALL #POST_BUILD
-#   COMMAND ${CMAKE_COMMAND} -E copy_directory
-#     ${CMAKE_CURRENT_SOURCE_DIR}/campo
-#     ${CMAKE_CURRENT_BINARY_DIR}/campo
-# )
-
-# add_custom_target(
-#   init_source
-#   ALL
-#   COMMAND ${CMAKE_COMMAND} -E copy_directory
-#     ${CMAKE_CURRENT_SOURCE_DIR}/campo
-#     ${CMAKE_CURRENT_BINARY_DIR}/campo
-# )
