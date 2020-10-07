@@ -11,6 +11,11 @@ configure_file(environment.yaml.in
   ${CMAKE_SOURCE_DIR}/environment/conda/environment.yaml
 )
 
+configure_file(environment.yaml.in
+  ${CMAKE_BINARY_DIR}/documentation/environment.yaml
+)
+
+
 install(
   FILES
     ${CMAKE_CURRENT_BINARY_DIR}/setup.py

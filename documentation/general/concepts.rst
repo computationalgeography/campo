@@ -1,10 +1,8 @@
 Concepts
 ========
 
-For detailed descriptions of concepts and implementation of the data model we refer to the publications of
-de Bakker
-and
-de Jong.
+For detailed descriptions of concepts and implementation of the data model we refer to the `publications <https://campo.computationalgeography.org/publications/>`_ of
+de Bakker et al (2017) and de Jong and Karssenberg (2020).
 
 The data model uses the following terminology:
 

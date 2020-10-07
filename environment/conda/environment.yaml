@@ -1,21 +1,20 @@
 # This file was automatically generated during build
-name: campo-test
+name: campo
 channels:
   - conda-forge
   - https://pcraster.geo.uu.nl/pcraster/pcraster
   - defaults
 dependencies:
   - python=3.7
-#  - numpy
+  - numpy
   - boost-cpp=1.72.0
   - lue
-#  - pcraster
-#  - matplotlib
+  - pcraster
+  - matplotlib
   - xarray
-#  - pandas
-#  - gdal
-#  - networkx
+  - pandas
+  - gdal
+  - networkx
   - pip
   - pip:
     - https://campo.computationalgeography.org/download/campo-0.0.2-py3-none-any.whl
-
