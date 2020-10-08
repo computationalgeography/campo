@@ -50,6 +50,7 @@ add_custom_command(
 
 
 add_custom_target(documentation
+  DEPENDS init_campo_sources
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/_build/html/index.html
   DEPENDS ${CMAKE_BINARY_DIR}/source/pcraster
 )
