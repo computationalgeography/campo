@@ -4,18 +4,14 @@ Reference documentation
 
 Reference documentation of the currently implemeted operations.
 
-Creation of a dataset
----------------------
+Initialisation
+--------------
 
 .. currentmodule:: campo.dataset
 
 
-.. .. automodule:: campo.dataset
-
 .. autosummary::
    :toctree: generated
-
-
 
    Campo
    Campo.add_phenomenon
@@ -23,9 +19,12 @@ Creation of a dataset
    Campo.write
    Campo.set_time
 
+   Phenomenon
+   Phenomenon.add_property_set
 
 
-Operations for field and agent properties
+
+Operations on field and agent properties
 ------------------------------------------
 
 
@@ -33,5 +32,14 @@ Operations for field and agent properties
 
 
 
-Operations for field properties
+Operations on field properties
 -------------------------------
+
+.. currentmodule:: campo.op_fields.operations
+
+
+.. autosummary::
+   :toctree: generated
+
+   slope
+   spread

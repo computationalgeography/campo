@@ -6,7 +6,7 @@ import lue.data_model as ldm
 
 from .points import Points
 from .areas import Areas
-#from .phenomenon import Phenomenon
+from .phenomenon import Phenomenon
 
 
 
@@ -16,7 +16,6 @@ class Campo(object):
     """ """
 
     def __init__(self):
-      """  """
 
       self._phenomena = {}
       self._nr_timesteps = None
@@ -31,10 +30,8 @@ class Campo(object):
 
 
 
-    def add_framework(self, nr_objects):
-      """ Adding a phenomenon holding framwork relevant information
-          in a good case this can be shared between phenomena
-      """
+    def _add_framework(self, nr_objects):
+      """      """
 
       # LUE
       self.lue_dataset.add_phenomenon('framework')
@@ -65,14 +62,14 @@ class Campo(object):
 
 
 
-    def add_phenomenon(self, phen_name):
+    def add_phenomenon(self, phenomenon_name):
 
-      if phen_name in self._phenomena:
-        msg = "'{}' is already present as phenomenon name".format(phen_name)
+      if phenomenon_name in self._phenomena:
+        msg = "'{}' is already present as phenomenon name".format(phenomenon_name)
         raise ValueError(msg)
 
-      #####phen = fame_phen.Phenomenon(phen_name)
-      self._phenomena[phen_name] = phen
+      phen = fame_phen.Phenomenon(phenomenon_name)
+      self._phenomena[phenomenon_name] = phen
 
       return phen
 
