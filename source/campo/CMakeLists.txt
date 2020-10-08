@@ -1,6 +1,11 @@
 set(SOURCES
   __init__.py
+  areas.py
   dataframe.py
+  dataset.py
+  points.py
+  utils.py
+
 )
 
 

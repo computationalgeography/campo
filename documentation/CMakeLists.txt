@@ -45,5 +45,6 @@ add_custom_command(
   VERBATIM
   COMMAND ${CMAKE_COMMAND} -E remove_directory _build
   COMMAND ${CMAKE_COMMAND} -E make_directory _build
-  COMMAND sphinx-build -q -W -b html ${CMAKE_CURRENT_BINARY_DIR} _build
+  # COMMAND sphinx-build -q -W -b html ${CMAKE_CURRENT_BINARY_DIR} _build
+  COMMAND sphinx-build -q -b html ${CMAKE_CURRENT_BINARY_DIR} _build
 )
