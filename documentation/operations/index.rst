@@ -1,4 +1,3 @@
-
 Reference documentation
 =======================
 
@@ -7,7 +6,6 @@ Reference documentation of the currently implemeted operations.
 Initialisation
 --------------
 
-.. .. currentmodule:: campo.dataset
 .. automodule:: campo.dataset
 
 
@@ -29,7 +27,7 @@ Operations on field and agent properties
 ------------------------------------------
 
 
-.. automodule:: campo.op_fieldagents.operators
+.. automodule:: campo.op_fieldagents
 
 .. autosummary::
    :toctree: generated
@@ -43,10 +41,6 @@ Operations on field and agent properties
    sub
 
 
-
-.. automodule:: campo.op_fieldagents.operations
-
-
 .. autosummary::
    :toctree: generated
 
@@ -56,7 +50,7 @@ Operations on field and agent properties
 Operations on field properties
 -------------------------------
 
-.. automodule:: campo.op_fields.operations
+.. automodule:: campo.op_fields
 
 
 .. autosummary::
