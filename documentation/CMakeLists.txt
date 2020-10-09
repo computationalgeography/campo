@@ -39,7 +39,6 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_directory general ${CMAKE_CURRENT_BINARY_DIR}/general
   COMMAND ${CMAKE_COMMAND} -E copy_directory operations ${CMAKE_CURRENT_BINARY_DIR}/operations
   COMMAND ${CMAKE_COMMAND} -E copy index.rst ${CMAKE_CURRENT_BINARY_DIR}
-  COMMENT "Copying sources..."
 )
 
 
@@ -57,5 +56,4 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E remove_directory _build
   COMMAND ${CMAKE_COMMAND} -E make_directory _build
   COMMAND sphinx-build -q -W -b html ${CMAKE_CURRENT_BINARY_DIR} _build
-  COMMENT "Building documentation..."
 )

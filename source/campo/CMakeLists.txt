@@ -24,33 +24,29 @@ set(FIELDAGENT_SOURCES
 
 add_custom_target(init_campo_sources ALL
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/dataframe.py
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/op_fields/__init__.py
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/op_fieldagents/__init__.py
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/op_fields/operations.py
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/op_fieldagents/operations.py
 )
-
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dataframe.py
   DEPENDS ${SOURCES}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   COMMAND ${CMAKE_COMMAND} -E copy ${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}
-  COMMENT "Copying sources..."
 )
 
 add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/op_fields/__init__.py
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/op_fields/operations.py
   DEPENDS ${FIELD_SOURCES}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   COMMAND ${CMAKE_COMMAND} -E copy_directory op_fields ${CMAKE_CURRENT_BINARY_DIR}/op_fields
-  COMMENT "Copying sources..."
 )
 
 add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/op_fieldagents/__init__.py
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/op_fieldagents/operations.py
   DEPENDS ${FIELDAGENT_SOURCES}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   COMMAND ${CMAKE_COMMAND} -E copy_directory op_fieldagents ${CMAKE_CURRENT_BINARY_DIR}/op_fieldagents
-  COMMENT "Copying sources..."
 )
 
 install(
