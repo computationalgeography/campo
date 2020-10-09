@@ -23,11 +23,11 @@ Initialisation
 
 
 
-Operations on field and agent properties
-------------------------------------------
+Operations on field or agent properties
+---------------------------------------
 
 
-.. automodule:: campo.op_fieldagents
+.. automodule:: campo
 
 .. autosummary::
    :toctree: generated
@@ -39,19 +39,11 @@ Operations on field and agent properties
    mul
    power
    sub
-
-
-.. autosummary::
-   :toctree: generated
-
    uniform
 
 
 Operations on field properties
 -------------------------------
-
-.. automodule:: campo.op_fields
-
 
 .. autosummary::
    :toctree: generated
