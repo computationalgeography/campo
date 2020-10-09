@@ -2,14 +2,15 @@ configure_file(conf.py.in
   conf.py
 )
 
-# Hack to mimic LUE
-# this way we don't need to install the package for documentation building
+# Hack to mimic Python modules
+# this way we don't need to install the packages for documentation building
 # similar with PCRaster, maks empty dir to allow for module import
 file(WRITE ${CMAKE_BINARY_DIR}/source/lue/data_model/__init__.py
 "class Unit(object):
   day,month,year=1,1,1
 "
 )
+file(WRITE ${CMAKE_BINARY_DIR}/source/pcraster/__init__.py "")
 
 set(SOURCES
   index.rst
@@ -26,13 +27,6 @@ add_custom_target(init_doc_sources ALL
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/index.rst
 )
 
-
-add_custom_command(
-  OUTPUT ${CMAKE_BINARY_DIR}/source/pcraster
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/source
-  COMMAND ${CMAKE_COMMAND} -E make_directory pcraster
-  COMMENT "Creating fake modules..."
-)
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/index.rst
@@ -52,7 +46,6 @@ add_custom_command(
 add_custom_target(documentation
   DEPENDS init_campo_sources
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/_build/html/index.html
-  DEPENDS ${CMAKE_BINARY_DIR}/source/pcraster
 )
 
 
@@ -63,7 +56,6 @@ add_custom_command(
   VERBATIM
   COMMAND ${CMAKE_COMMAND} -E remove_directory _build
   COMMAND ${CMAKE_COMMAND} -E make_directory _build
-  # COMMAND sphinx-build -q -W -b html ${CMAKE_CURRENT_BINARY_DIR} _build
-  COMMAND sphinx-build -q -b html ${CMAKE_CURRENT_BINARY_DIR} _build
+  COMMAND sphinx-build -q -W -b html ${CMAKE_CURRENT_BINARY_DIR} _build
   COMMENT "Building documentation..."
 )

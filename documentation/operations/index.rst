@@ -7,7 +7,8 @@ Reference documentation of the currently implemeted operations.
 Initialisation
 --------------
 
-.. currentmodule:: campo.dataset
+.. .. currentmodule:: campo.dataset
+.. automodule:: campo.dataset
 
 
 .. autosummary::
@@ -35,7 +36,8 @@ Operations on field and agent properties
 Operations on field properties
 -------------------------------
 
-.. currentmodule:: campo.op_fields.operations
+.. .. currentmodule:: campo.op_fields.operations
+.. automodule:: campo.op_fields.operations
 
 
 .. autosummary::
