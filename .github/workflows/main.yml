@@ -34,9 +34,6 @@ jobs:
               mkdir build
               cd build
               cmake ../
-              make
-              ls -al source/campo
-              ls -al source/campo/op_fieldagents/
               make documentation
               make install
               rm -f package/dist/*gz

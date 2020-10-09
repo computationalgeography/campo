@@ -11,6 +11,8 @@ file(WRITE ${CMAKE_BINARY_DIR}/source/lue/data_model/__init__.py
 "
 )
 file(WRITE ${CMAKE_BINARY_DIR}/source/pcraster/__init__.py "")
+file(WRITE ${CMAKE_BINARY_DIR}/source/xarray/__init__.py "")
+file(WRITE ${CMAKE_BINARY_DIR}/source/pandas/__init__.py "")
 
 set(SOURCES
   index.rst
@@ -56,5 +58,5 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E remove_directory _build
   COMMAND ${CMAKE_COMMAND} -E make_directory _build
   # COMMAND sphinx-build -q -W -b html ${CMAKE_CURRENT_BINARY_DIR} _build
-  COMMAND sphinx-build -b html ${CMAKE_CURRENT_BINARY_DIR} _build
+  COMMAND sphinx-build -q -b html ${CMAKE_CURRENT_BINARY_DIR} _build
 )
