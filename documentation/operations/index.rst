@@ -6,7 +6,7 @@ Reference documentation of the currently implemeted operations.
 Initialisation
 --------------
 
-.. automodule:: campo.dataset
+.. currentmodule:: campo.dataset
 
 
 .. autosummary::
@@ -27,7 +27,7 @@ Operations on field or agent properties
 ---------------------------------------
 
 
-.. automodule:: campo
+.. currentmodule:: campo
 
 .. autosummary::
    :toctree: generated
