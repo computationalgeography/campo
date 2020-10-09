@@ -22,3 +22,4 @@ You can find more infomation about this project on the `Campo <https://campo.com
    general/install.rst
    general/sourcecode.rst
    general/indices.rst
+   Campo website <https://campo.computationalgeography.org/>

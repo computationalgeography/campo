@@ -29,14 +29,33 @@ Operations on field and agent properties
 ------------------------------------------
 
 
+.. automodule:: campo.op_fieldagents.operators
+
+.. autosummary::
+   :toctree: generated
+
+   add
+   abs
+   divide
+   exp
+   mul
+   power
+   sub
 
 
+
+.. automodule:: campo.op_fieldagents.operations
+
+
+.. autosummary::
+   :toctree: generated
+
+   uniform
 
 
 Operations on field properties
 -------------------------------
 
-.. .. currentmodule:: campo.op_fields.operations
 .. automodule:: campo.op_fields.operations
 
 
