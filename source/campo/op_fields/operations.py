@@ -164,7 +164,20 @@ def windowtotal(area_property, window_size):
 
 
 def spread(start_locations, frictiondist, friction):
-  """ """
+  """ Total friction of the shortest accumulated friction path over a map with friction values from a source cell to cell under consideration
+
+  :param start_locations: starting locations
+  :type start_locations:  Property
+  :param frictiondist: initial friction
+  :type frictiondist: Property
+  :param friction: friction per cell
+  :type friction: Property
+  :returns: a property with total friction values
+  :rtype: Property
+
+  For concepts of this operation calculated on each agent see
+  https://pcraster.geo.uu.nl/pcraster/4.3.0/documentation/pcraster_manual/sphinx/op_spread.html
+  """
 
 
   result_prop = Property('emptyspreadname', start_locations.pset_uuid, start_locations.space_domain, start_locations.shapes)

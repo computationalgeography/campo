@@ -3,6 +3,7 @@ Concepts
 
 For detailed descriptions of concepts and implementation of the data model we refer to the `publications <https://campo.computationalgeography.org/publications/>`_ of
 de Bakker et al (2017) and de Jong and Karssenberg (2020).
+You can also find more detailed informatio about the concepts on the LUE `documentation <https://lue.computationalgeography.org/doc/manual/data_model/concept.html>`_ page.
 
 The data model uses the following terminology:
 
