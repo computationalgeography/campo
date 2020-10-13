@@ -15,6 +15,7 @@ set(${PROJECT_NAME}_COPYRIGHT
 
 
 find_package (Python3 COMPONENTS Interpreter NumPy)
+include(FetchContent)
 
 enable_testing()
 

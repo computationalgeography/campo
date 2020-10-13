@@ -81,7 +81,19 @@ def power(self, other):
 
 
 def mul(self, other):
-  """ """
+  """ Multiplication, equivalent to the * operator.
+
+  The * operator multiplies for each object the property values of two properties.
+  The properties must be from the same property set, or one argument can be a number.
+
+
+  :param arg1: multiplier
+  :type arg1: Property or number
+  :param arg2: multiplicand
+  :type arg2: Property or number
+  :returns: a property with the product
+  :rtype: Property
+  """
   return _PropOpB(self, other, numpy.multiply)
 
 
@@ -91,8 +103,18 @@ def rmul(self, number):
 
 
 def sub(self, other):
-  """
+  """ Subtraction, equivalent to the - operator.
 
+  The - operator subtracts for each object the property values of two properties.
+  The properties must be from the same property set, or one argument can be a number.
+
+
+  :param arg1: minuend
+  :type arg1: Property or number
+  :param arg2: subtrahend
+  :type arg2: Property or number
+  :returns: a property with the difference
+  :rtype: Property
   """
   return _PropOpB(self, other, numpy.subtract)
 
@@ -104,7 +126,7 @@ def rsub(self, number):
 
 
 def add(self, other):
-  """Addition, equivalent to the + operator.
+  """ Addition, equivalent to the + operator.
 
   The + operator adds for each object the property values of two properties.
   The properties must be from the same property set, or one argument can be a number.
@@ -128,7 +150,18 @@ def radd(self, number):
 
 
 def divide(self, other):
-  """
+  """ Division, equivalent to the / operator.
+
+  The / operator divides for each object the property values of two properties.
+  The properties must be from the same property set, or one argument can be a number.
+
+
+  :param arg1: dividend
+  :type arg1: Property or number
+  :param arg2: divisor
+  :type arg2: Property or number
+  :returns: a property with the quotient
+  :rtype: Property
   """
   return _PropOpB(self, other, numpy.divide)
 

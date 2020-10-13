@@ -54,6 +54,9 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 html_theme = 'pyramid' # 'alabaster'
+#html_theme = "sphinx_rtd_theme"
+#html_theme_path = ["@sphinx_lue_theme_SOURCE_DIR@"]
+
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = False
 
