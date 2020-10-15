@@ -1,5 +1,3 @@
-
-
 Source code
 ===========
 
@@ -9,7 +7,7 @@ You can find the source codes of the different projects at:
 
 LUE:
 
-https://github.com/pcraster/lue
+https://github.com/computationalgeography/lue
 
 PCRaster:
 

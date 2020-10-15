@@ -65,19 +65,25 @@ def _AOpProp(number, arg2, op):
 
 
 def abs(self):
-  """ """
-  return _PropOp(self, numpy.abs)
+  """ Calculates the absolute value for each object the property values.
+
+  :returns: a property with the absolute values
+  :rtype: Property
+  """
+  return _PropOp(self, numpy.absolute)
 
 
-def exp(self):
-  """ """
+def exp(self, arg):
+  """ Calculates the exponential for each object the property values.
+
+  :param arg1:
+  :type arg1: Property
+  :returns: a property with the exponential values
+  :rtype: Property
+  """
   return _PropOp(self, numpy.exp)
 
 
-def power(self, other):
-  """ """
-
-  return _PropOpB(self, other, numpy.power)
 
 
 def mul(self, other):
@@ -172,7 +178,12 @@ def rdivide(self, number):
 
 
 def power(self, other):
-  """
+  """ First property raised to the power of the second property. Equivalent to ‘**’.
+
+  :param arg:
+  :type arg: Property
+  :returns: a property with the base raised to the power exponent
+  :rtype: Property
   """
   return _PropOpB(self, other, numpy.power)
 

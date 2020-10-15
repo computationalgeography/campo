@@ -36,7 +36,13 @@ Operations on field or agent properties
    abs
    divide
    exp
+   equal
+   greater_equal
+   greater
+   less_equal
+   less
    mul
+   not_equal
    power
    sub
    uniform
