@@ -1,15 +1,15 @@
-# if(EXISTS "sphinx_rtd_theme")
-#   set(sphinx_rtd_theme_repository "sphinx_rtd_theme")
-# else()
-#   set(sphinx_rtd_theme_repository "https://github.com/computationalgeography/sphinx_rtd_theme")
-# endif()
-#
-# FetchContent_Declare(sphinx_lue_theme
-#   GIT_REPOSITORY ${sphinx_rtd_theme_repository}
-#   GIT_TAG 3ecd7ff
-# )
-#
-# FetchContent_MakeAvailable(sphinx_lue_theme)
+if(EXISTS "sphinx_rtd_theme")
+  set(sphinx_rtd_theme_repository "sphinx_rtd_theme")
+else()
+  set(sphinx_rtd_theme_repository "https://github.com/computationalgeography/sphinx_rtd_theme")
+endif()
+
+FetchContent_Declare(sphinx_lue_theme
+  GIT_REPOSITORY ${sphinx_rtd_theme_repository}
+  GIT_TAG 3ecd7ff
+)
+
+FetchContent_MakeAvailable(sphinx_lue_theme)
 
 configure_file(conf.py.in
   conf.py
