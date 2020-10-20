@@ -26,6 +26,11 @@ file(WRITE ${CMAKE_BINARY_DIR}/source/lue/data_model/__init__.py
 file(WRITE ${CMAKE_BINARY_DIR}/source/pcraster/__init__.py "")
 file(WRITE ${CMAKE_BINARY_DIR}/source/xarray/__init__.py "")
 file(WRITE ${CMAKE_BINARY_DIR}/source/pandas/__init__.py "")
+file(WRITE ${CMAKE_BINARY_DIR}/source/networkx/__init__.py "")
+file(WRITE ${CMAKE_BINARY_DIR}/source/osgeo/__init__.py "")
+file(WRITE ${CMAKE_BINARY_DIR}/source/osgeo/gdal/__init__.py "")
+file(WRITE ${CMAKE_BINARY_DIR}/source/osgeo/osr/__init__.py "")
+file(WRITE ${CMAKE_BINARY_DIR}/source/osgeo/ogr/__init__.py "")
 
 set(SOURCES
   index.rst
@@ -70,5 +75,5 @@ add_custom_command(
   VERBATIM
   COMMAND ${CMAKE_COMMAND} -E remove_directory _build
   COMMAND ${CMAKE_COMMAND} -E make_directory _build
-  COMMAND sphinx-build -q -W -b html ${CMAKE_CURRENT_BINARY_DIR} _build
+  COMMAND sphinx-build -W -b html ${CMAKE_CURRENT_BINARY_DIR} _build
 )
