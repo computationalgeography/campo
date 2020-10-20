@@ -2,26 +2,23 @@ Installation
 ============
 
 You can install Campo on Windows, macOS or Linux.
+Supported Python versions are 3.6 up to 3.9.
 
 Installing Python
 -----------------
 
 We suggest to install |miniconda|, a Python package and environment management system.
+An alternative is provided by |anaconda|.
 The user guide and short reference on conda can be found |minicondadoc|.
 
-Supported Python versions are 3.6, 3.7 or 3.8.
 
 
 
-Installing Campo
-----------------
+Install using Conda
+-------------------
 
 We provide an environment file that you can use to install Campo.
-Copy the following content to a file named ``environment.yaml``
-
-.. Download the file at
-.. environment.yaml
-.. or c
+|campoenv| the file or copy the following content to a file named ``environment.yaml``:
 
 .. literalinclude:: ../environment.yaml
 
@@ -39,8 +36,11 @@ After a successful installation you can activate your environment with
 
    conda activate campo
 
+You can test your installation by printing the Campo version number
 
+.. code-block:: bash
 
+   python -c "import campo; print(campo.__version__)"
 
 
 
@@ -54,25 +54,12 @@ After a successful installation you can activate your environment with
    <a href="https://docs.conda.io/projects/conda/en/latest/user-guide/cheatsheet.html" target="_blank">here</a>
 
 
-.. Install LUE
-.. -----------
-..
-.. .. code-block:: bash
-..
-..    conda install -c conda-forge -c http://pcraster.geo.uu.nl/pcraster/pcraster/ lue
-..
-..
-.. Install framework
-.. -----------------
-..
-.. .. code-block:: bash
-..
-..    git clone git@github.com:pcraster/fame.git
-..
-..
-.. Install PCRaster
-.. ----------------
-..
-.. .. code-block:: bash
-..
-..    conda install -c conda-forge pcraster
+
+.. |anaconda| raw:: html
+
+   <a href="https://www.anaconda.com/" target="_blank">Anaconda</a>
+
+
+.. |campoenv| raw:: html
+
+   <a href="https://github.com/computationalgeography/campo/blob/master/environment/conda/environment.yaml" target="_blank">Download</a>

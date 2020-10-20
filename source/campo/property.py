@@ -55,4 +55,4 @@ class Property(object):
       return self._shape
 
   def set_values(self, values):
-      self._values = Values2(self._nr_agents, self._shape, values)
+      self._values = Values(self._nr_agents, self._shape, values)

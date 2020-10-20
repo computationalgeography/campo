@@ -56,3 +56,10 @@ Operations on field properties
 
    slope
    spread
+
+
+
+Reading from a LUE dataset
+--------------------------
+
+

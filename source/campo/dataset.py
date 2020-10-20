@@ -68,7 +68,7 @@ class Campo(object):
         msg = "'{}' is already present as phenomenon name".format(phenomenon_name)
         raise ValueError(msg)
 
-      phen = fame_phen.Phenomenon(phenomenon_name)
+      phen = Phenomenon(phenomenon_name)
       self._phenomena[phenomenon_name] = phen
 
       return phen
@@ -137,7 +137,7 @@ class Campo(object):
           lue_prop = pset.add_property(prop.name, dtype=np.dtype(dtype), rank=2)
 
 
-        space_discr = pset.fame_discretization
+        space_discr = pset.campo_discretization
 
         for idx, item in enumerate(property_set.space_domain):
           space_discr.value[idx]= [item[4], item[5]]

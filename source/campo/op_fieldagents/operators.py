@@ -75,15 +75,15 @@ def abs(property):
   return _PropOp(property, numpy.absolute)
 
 
-def exp(self, arg):
+def exp(property):
   """ Calculates the exponential for each object the property values.
 
-  :param arg1:
-  :type arg1: Property
+  :param property:
+  :type property: Property
   :returns: a property with the exponential values
   :rtype: Property
   """
-  return _PropOp(self, numpy.exp)
+  return _PropOp(property, numpy.exp)
 
 
 

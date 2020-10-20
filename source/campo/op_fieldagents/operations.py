@@ -23,10 +23,10 @@ def uniform(lower, upper, seed=0):
 
   """
 
-  if not isinstance(lower, campo.lue_property.Property):
+  if not isinstance(lower, Property):
     raise ValueError
 
-  if not isinstance(upper, campo.lue_property.Property):
+  if not isinstance(upper, Property):
     raise ValueError
 
   if lower.pset_uuid != upper.pset_uuid:

@@ -1,3 +1,8 @@
+configure_file(
+    __about__.py.in
+    __about__.py
+)
+
 set(SOURCES
   __init__.py
   areas.py
@@ -22,10 +27,19 @@ set(FIELDAGENT_SOURCES
   op_fieldagents/operators.py
 )
 
+set(EXPERIMENTAL_SOURCES
+  op_experimental/__init__.py
+  op_experimental/rasterize.py
+  op_experimental/focal.py
+  op_experimental/network.py
+)
+
+
 add_custom_target(init_campo_sources ALL
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/dataframe.py
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/op_fields/operations.py
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/op_fieldagents/operations.py
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/op_experimental/__init__.py
 )
 
 add_custom_command(
@@ -49,9 +63,19 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_directory op_fieldagents ${CMAKE_CURRENT_BINARY_DIR}/op_fieldagents
 )
 
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/op_experimental/__init__.py
+  DEPENDS ${EXPERIMENTAL_SOURCES}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  COMMAND ${CMAKE_COMMAND} -E copy_directory op_experimental ${CMAKE_CURRENT_BINARY_DIR}/op_experimental
+)
+
 install(
   FILES
     ${SOURCES}
+    ${FIELD_SOURCES}
+    ${FIELDAGENT_SOURCES}
+    ${EXPERIMENTAL_SOURCES}
   DESTINATION
     ${CMAKE_BINARY_DIR}/package/campo
 )

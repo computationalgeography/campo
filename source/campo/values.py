@@ -1,8 +1,7 @@
 import numpy as np
 from collections import OrderedDict
 
-import campo.property as Property
-
+import campo.property as property
 
 class Values(object):
 
@@ -18,8 +17,7 @@ class Values(object):
 
     elif isinstance(values, np.ndarray):
       self._init_array(shapes, values)
-
-    elif isinstance(values, Property):
+    elif isinstance(values, property.Property):
       self._init_prop(shapes, values)
     else:
       raise NotImplementedError
