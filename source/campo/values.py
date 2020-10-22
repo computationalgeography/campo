@@ -1,7 +1,7 @@
 import numpy as np
 from collections import OrderedDict
 
-import campo.property as property
+from . import property
 
 class Values(object):
 

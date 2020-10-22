@@ -1,9 +1,9 @@
 name: campo
 channels:
   - conda-forge
-  - defaults
+  - nodefaults
 dependencies:
-  - python=3.7
+  - python=3.8
   - numpy
   - lue
   - pcraster

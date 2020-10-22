@@ -21,6 +21,8 @@ class Campo(object):
       self._nr_timesteps = None
       self._lue_clock = None
       self._lue_time_configuration = None
+      self.lue_dataset = None
+      self.lue_filename = None
 
 
 
