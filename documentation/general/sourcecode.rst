@@ -2,8 +2,12 @@ Source code
 ===========
 
 
-You can find the source codes of the different projects at:
+You can find the source codes of our projects at:
 
+
+Campo:
+
+https://github.com/computationalgeography/campo
 
 LUE:
 
@@ -13,6 +17,3 @@ PCRaster:
 
 https://github.com/pcraster/pcraster
 
-Campo:
-
-https://github.com/computationalgeography/campo

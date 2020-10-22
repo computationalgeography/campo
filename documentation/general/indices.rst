@@ -1,6 +1,11 @@
-Indices and tables
-==================
+Index
+=====
+
 
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+
+.. * :ref:`search`
+
+
+
+.. * :ref:`modindex`

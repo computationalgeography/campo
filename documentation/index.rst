@@ -13,6 +13,7 @@ You can find more infomation about this project on the `Campo <https://campo.com
    this documentation page is work in progress
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :caption: Contents:
 

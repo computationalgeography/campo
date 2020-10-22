@@ -1,0 +1,4 @@
+
+.. code-block:: bash
+
+   pip install https://campo.computationalgeography.org/download/campo-${campo_VERSION}-py3-none-any.whl

@@ -73,9 +73,27 @@ add_custom_command(
 install(
   FILES
     ${SOURCES}
-    ${FIELD_SOURCES}
-    ${FIELDAGENT_SOURCES}
-    ${EXPERIMENTAL_SOURCES}
   DESTINATION
     ${CMAKE_BINARY_DIR}/package/campo
+)
+
+install(
+  FILES
+    ${FIELD_SOURCES}
+  DESTINATION
+    ${CMAKE_BINARY_DIR}/package/op_fields
+)
+
+install(
+  FILES
+    ${FIELDAGENT_SOURCES}
+  DESTINATION
+    ${CMAKE_BINARY_DIR}/package/op_fieldagents
+)
+
+install(
+  FILES
+    ${EXPERIMENTAL_SOURCES}
+  DESTINATION
+    ${CMAKE_BINARY_DIR}/package/op_experimental
 )

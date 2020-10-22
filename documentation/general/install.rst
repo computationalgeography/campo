@@ -8,8 +8,8 @@ Installing Python
 -----------------
 
 We suggest to install |miniconda|, a Python package and environment management system.
-An alternative is provided by |anaconda|.
-The user guide and short reference on conda can be found |minicondadoc|.
+An alternative distribution is |anaconda| provided by Continuum Analytics.
+The user guide and short reference on the conda pacakge manager can be found |minicondadoc|.
 
 
 
@@ -41,6 +41,16 @@ You can test your installation by printing the Campo version number
 .. code-block:: bash
 
    python -c "import campo; print(campo.__version__)"
+
+
+
+Upgrade using pip
+-----------------
+
+You can upgrade Campo to a newer version using pip:
+
+.. include:: ../pip.rst
+
 
 
 

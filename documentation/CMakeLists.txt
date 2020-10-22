@@ -15,6 +15,11 @@ configure_file(conf.py.in
   conf.py
 )
 
+configure_file(pip.rst.in
+  pip.rst
+)
+
+
 # Hack to mimic Python modules
 # this way we don't need to install the packages for documentation building
 # similar with PCRaster, maks empty dir to allow for module import
@@ -75,5 +80,5 @@ add_custom_command(
   VERBATIM
   COMMAND ${CMAKE_COMMAND} -E remove_directory _build
   COMMAND ${CMAKE_COMMAND} -E make_directory _build
-  COMMAND sphinx-build -W -b html ${CMAKE_CURRENT_BINARY_DIR} _build
+  COMMAND sphinx-build -q -W -b html ${CMAKE_CURRENT_BINARY_DIR} _build
 )
