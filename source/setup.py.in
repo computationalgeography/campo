@@ -26,8 +26,7 @@ setuptools.setup(
         'Topic :: Scientific/Engineering :: GIS',
         'Topic :: Scientific/Engineering :: Hydrology'
     ],
-    #package_dir={'': '.'},
-    packages=setuptools.find_packages(where='.'),
+    packages=setuptools.find_packages(),
     python_requires='>=3.6',
     keywords='Field-based modeling, agent-based modeling, LUE, PCRaster'
 )

@@ -73,6 +73,7 @@ add_custom_command(
 install(
   FILES
     ${SOURCES}
+    ${CMAKE_CURRENT_BINARY_DIR}/__about__.py
   DESTINATION
     ${CMAKE_BINARY_DIR}/package/campo
 )
@@ -81,19 +82,19 @@ install(
   FILES
     ${FIELD_SOURCES}
   DESTINATION
-    ${CMAKE_BINARY_DIR}/package/op_fields
+    ${CMAKE_BINARY_DIR}/package/campo/op_fields
 )
 
 install(
   FILES
     ${FIELDAGENT_SOURCES}
   DESTINATION
-    ${CMAKE_BINARY_DIR}/package/op_fieldagents
+    ${CMAKE_BINARY_DIR}/package/campo/op_fieldagents
 )
 
 install(
   FILES
     ${EXPERIMENTAL_SOURCES}
   DESTINATION
-    ${CMAKE_BINARY_DIR}/package/op_experimental
+    ${CMAKE_BINARY_DIR}/package/campo/op_experimental
 )
