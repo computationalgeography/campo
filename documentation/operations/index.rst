@@ -49,7 +49,7 @@ Operations on field or agent properties
 
 
 Operations on field properties
--------------------------------
+------------------------------
 
 .. autosummary::
    :toctree: generated

@@ -32,6 +32,7 @@ set(EXPERIMENTAL_SOURCES
   op_experimental/rasterize.py
   op_experimental/focal.py
   op_experimental/network.py
+  op_experimental/export.py
 )
 
 
