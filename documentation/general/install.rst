@@ -18,19 +18,19 @@ Install using Conda
 -------------------
 
 We provide an environment file that you can use to install Campo.
-|campoenv| the file or copy the following content to a file named ``environment.yaml``:
+|campoenv| the file or copy the following content to a file named ``campo.yaml``:
 
-.. literalinclude:: ../environment.yaml
+.. literalinclude:: ../campo.yaml
 
 then install it with
 
 .. code-block:: bash
 
-   conda install -f environment.yaml
+   conda env create -f campo.yaml
 
 
 
-After a successful installation you can activate your environment with
+After a successful installation you can activate your ``campo`` environment with
 
 .. code-block:: bash
 
@@ -47,7 +47,8 @@ You can test your installation by printing the Campo version number
 Upgrade using pip
 -----------------
 
-You can upgrade Campo to a newer version using pip:
+Most likely it is sufficient to upgrade the Campo module instead of recreating the conda environment.
+Within your ``campo`` environment you can upgrade Campo to a newer version using pip:
 
 .. include:: ../pip.rst
 
@@ -72,4 +73,4 @@ You can upgrade Campo to a newer version using pip:
 
 .. |campoenv| raw:: html
 
-   <a href="https://github.com/computationalgeography/campo/blob/master/environment/conda/environment.yaml" target="_blank">Download</a>
+   <a href="https://github.com/computationalgeography/campo/blob/master/environment/conda/campo.yaml" target="_blank">Download</a>
