@@ -56,3 +56,10 @@ class Property(object):
 
   def set_values(self, values):
       self._values = Values(self._nr_agents, self._shape, values)
+
+
+  def __repr__(self, indent=0):
+    msg = '{}Property: {}'.format('  ' * indent, self.name)
+
+    return msg
+

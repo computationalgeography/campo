@@ -18,6 +18,7 @@ class Phenomenon(object):
     def __init__(self, name):
 
         self._name = name
+        self._nr_objects = 0
         self._property_sets = {}
 
 
@@ -78,7 +79,10 @@ class Phenomenon(object):
       """ """
 
       nr_objects, domain, shape  = self._read_domain(filename)
+      if nr_objects != 0:
+        self._nr_objects = nr_objects
 
+      assert self._nr_objects == nr_objects
 
       p = PropertySet(pset_name, nr_objects, domain, shape)
       self._property_sets[pset_name] = p
@@ -107,3 +111,17 @@ class Phenomenon(object):
     @property
     def property_sets(self):
       return self._property_sets
+
+    def __repr__(self, indent=0):
+      msg = '{}Phenomenon: {}\n'.format('  ' * indent, self.name)
+      msg += '{}Agents: {}'.format('  ' * (indent+1), self.nr_objects)
+
+      if len(self._property_sets) == 0:
+        msg += '\n{}Property sets: 0'.format('  ' * (indent+1))
+      else:
+        for p in self._property_sets:
+          msg += '\n'
+          msg += self._property_sets[p].__repr__(indent+1)
+
+
+      return msg

@@ -109,3 +109,5 @@ class Areas(object):
         return values
 
 
+  def __repr__(self):
+    return 'Area'

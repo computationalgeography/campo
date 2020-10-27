@@ -94,3 +94,7 @@ class Points(object):
 
   def __len__(self):
       return len(self.xcoord)
+
+
+  def __repr__(self):
+    return 'Point'

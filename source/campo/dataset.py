@@ -26,6 +26,17 @@ class Campo(object):
 
 
 
+    def __repr__(self, indent=0):
+      msg = '{}Campo:\n'.format('  ' * indent)
+      if len(self._phenomena) == 0:
+        msg += '{}Phenomena: 0'.format('  ' * (indent+1))
+      else:
+        for p in self._phenomena:
+          msg += self._phenomena[p].__repr__(indent + 1)
+
+      return msg
+
+
     @property
     def lue_clock(self):
       return self._lue_clock

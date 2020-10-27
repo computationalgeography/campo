@@ -24,6 +24,8 @@ class PropertySet(object):
       self._uuid = uuid.uuid4()
 
 
+
+
     @property
     def uuid(self):
       return self._uuid
@@ -209,3 +211,19 @@ class PropertySet(object):
           # Create a new property
           p = Property(name, self._uuid, self._space_domain, self._shape, value)
           self._properties[name] = p
+
+
+
+
+    def __repr__(self, indent=0):
+      msg = '{}Property set: {}\n'.format('  ' * indent, self.name)
+      msg += '{}Type: {}'.format('  ' * (indent+1), self.space_domain)
+
+      if len(self._properties) == 0:
+        msg += '\n{}Properties: 0'.format('  ' * (indent+1))
+      else:
+        for p in self._properties:
+          msg += '\n'
+          msg += self._properties[p].__repr__(indent+2)
+
+      return msg
