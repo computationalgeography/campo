@@ -14,8 +14,8 @@ The user guide and short reference on the conda pacakge manager can be found |mi
 
 
 
-Install using Conda
--------------------
+Installing Campo using Conda
+----------------------------
 
 We provide an environment file that you can use to install Campo.
 |campoenv| the file or copy the following content to a file named ``campo.yaml``:
@@ -44,8 +44,8 @@ You can test your installation by printing the Campo version number
 
 
 
-Upgrade using pip
------------------
+Upgrading Campo using pip
+-------------------------
 
 Most likely it is sufficient to upgrade the Campo module instead of recreating the conda environment.
 Within your ``campo`` environment you can upgrade Campo to a newer version using pip:

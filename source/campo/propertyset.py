@@ -227,3 +227,4 @@ class PropertySet(object):
           msg += self._properties[p].__repr__(indent+2)
 
       return msg
+

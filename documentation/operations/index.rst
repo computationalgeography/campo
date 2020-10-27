@@ -29,13 +29,25 @@ Operations on field or agent properties
 
 .. currentmodule:: campo
 
+Operations
+~~~~~~~~~~
+
+.. autosummary::
+   :toctree: generated
+
+   abs
+   exp
+   uniform
+
+
+Operators
+~~~~~~~~~
+
 .. autosummary::
    :toctree: generated
 
    add
-   abs
    divide
-   exp
    equal
    greater_equal
    greater
@@ -45,8 +57,6 @@ Operations on field or agent properties
    not_equal
    power
    sub
-   uniform
-
 
 Operations on field properties
 ------------------------------

@@ -22,7 +22,7 @@ def _PropOp(arg1, op):
 
 
 
-def _PropOpB(arg1, arg2, op):
+def _PropOpB(arg1, arg2, op, cast_type=None):
 
   if isinstance(arg2, Property):
     if arg1.pset_uuid != arg2.pset_uuid:
@@ -39,7 +39,11 @@ def _PropOpB(arg1, arg2, op):
     argument2 = arg2.values()
 
   for idx in range(0, tmp_prop.nr_objects):
-    tmp_prop.values()[idx] = op(tmp_prop.values()[idx], argument2[idx])
+    value = op(tmp_prop.values()[idx], argument2[idx])
+    if cast_type == None:
+      tmp_prop.values()[idx] = value
+    else:
+      tmp_prop.values()[idx] = value.astype(numpy.dtype(cast_type))
 
   return tmp_prop
 
@@ -204,40 +208,40 @@ def neg(self):
 
 
 def not_equal(self, other):
+  """ Equivalent to the != operator.
   """
-  """
-  return _PropOpB(self, other, numpy.not_equal)
+  return _PropOpB(self, other, numpy.not_equal, numpy.uint8)
 
 
 def equal(self, other):
+  """ Equivalent to the == operator.
   """
-  """
-  return _PropOpB(self, other, numpy.equal)
+  return _PropOpB(self, other, numpy.equal, numpy.uint8)
 
 
 def greater(self, other):
+  """ Equivalent to the > operator.
   """
-  """
-  return _PropOpB(self, other, numpy.greater)
+  return _PropOpB(self, other, numpy.greater, numpy.uint8)
 
 
 
 def greater_equal(self, other):
+  """ Equivalent to the >= operator.
   """
-  """
-  return _PropOpB(self, other, numpy.greater_equal)
+  return _PropOpB(self, other, numpy.greater_equal, numpy.uint8)
 
 
 def less(self, other):
+  """ Equivalent to the < operator.
   """
-  """
-  return _PropOpB(self, other, numpy.less)
+  return _PropOpB(self, other, numpy.less, numpy.uint8)
 
 
 def less_equal(self, other):
+  """ Equivalent to the <= operator.
   """
-  """
-  return _PropOpB(self, other, numpy.less_equal)
+  return _PropOpB(self, other, numpy.less_equal, numpy.uint8)
 
 
 
