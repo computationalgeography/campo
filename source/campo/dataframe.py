@@ -61,10 +61,10 @@ def select_constant_same_shape_arrays(
 
         if point_agent(object_ids, space_domain):
           dim = 'x, y'
-          result['_campo_space_type'] = 'static_point'
+          result['_campo_space_type'] = 'static_same_point'
         else:
           dim = 'xlr, ylr, xul, yul'
-          result['_campo_space_type'] = 'static_field'
+          result['_campo_space_type'] = 'static_same_field'
 
         da = xr.DataArray(coordinates, coords={'id':sel_oids}, dims=['id', dim])
 
@@ -97,7 +97,7 @@ def select_constant_different_shape_arrays(
 
     # Each array is a different_shape.Property
     # Each array can be translated to a dictionary of arrays per object ID
-    result = {}
+    result = {'_campo_space_type' : 'static_diff_field'}
 
     property_set_name = property_set.id.name
 

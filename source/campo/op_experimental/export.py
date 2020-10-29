@@ -25,7 +25,7 @@ def to_gpkg(dataframe, filename, crs=''):
     for pset_name in phen.keys():
       propset = dataframe[phen_name][pset_name]
 
-      if propset['_campo_space_type'] == 'static_point':
+      if propset['_campo_space_type'] == 'static_same_point':
         dfObj = pd.DataFrame()
         del dataframe[phen_name][pset_name]['_campo_space_type']
 
@@ -68,11 +68,68 @@ def to_gpkg(dataframe, filename, crs=''):
               cmd = f'ogr2ogr {s_srs} {t_srs} -oo X_POSSIBLE_NAMES=CoordX -oo Y_POSSIBLE_NAMES=CoordY -f GPKG {filename} {csv_fname}'
               subprocess.check_call(cmd, shell=True, stdout=subprocess.DEVNULL)
 
-      elif propset['_campo_space_type'] == 'static_field':
-        raise NotImplementedError
+      #elif propset['_campo_space_type'] == 'static_same_field':
+        #raise NotImplementedError
+      #elif propset['_campo_space_type'] == 'static_diff_field':
+        #raise NotImplementedError
       else:
-        raise NotImplementedError
+        raise TypeError('Only for static point agents')
 
+def to_tiff(dataframe, crs='', directory=''):
+
+
+
+  for phen_name in dataframe.keys():
+    phen = dataframe[phen_name]
+    for pset_name in phen.keys():
+      propset = dataframe[phen_name][pset_name]
+      if propset['_campo_space_type'] == 'static_same_point':# or propset['_campo_space_type'] == 'diff_same_point':
+        raise TypeError('Only for field agents')
+
+      del dataframe[phen_name][pset_name]['_campo_space_type']
+
+      for prop_name in propset.keys():
+        objects = dataframe[phen_name][pset_name][prop_name]
+
+        for obj_id in objects:
+          obj = objects[obj_id]
+
+          rows = obj.values.shape[0]
+          cols = obj.values.shape[1]
+          cellsize = math.fabs(obj.xcoord[1].values - obj.xcoord[0].values)
+
+          data = obj.data
+          xmin = obj.xcoord[0].values.item()
+          ymax = obj.ycoord[-1].values.item()
+          geotransform = (xmin, cellsize, 0, ymax, 0, -cellsize)
+
+          fname = os.path.join(directory, f'{prop_name}_{obj_id}.tiff')
+
+          dtype = None
+          if data.dtype.kind == 'f':
+            dtype = gdal.GDT_Float32
+          if data.dtype.kind == 'i':
+            dtype = gdal.GDT_Int32
+          if data.dtype.kind == 'u':
+            dtype = gdal.GDT_Byte
+          else:
+            raise NotImplementedError
+
+
+          dst_ds = gdal.GetDriverByName('GTiff').Create(fname, cols, rows, 1, dtype)
+          dst_ds.SetGeoTransform(geotransform)
+
+          if crs != '':
+            aut, code = crs.split(':')
+            if aut != 'EPSG':
+              raise TypeError('Provide CRS as EPSG code, e.g."EPSG:4326"')
+
+            srs = osr.SpatialReference()
+            srs.ImportFromEPSG(int(code))
+            dst_ds.SetProjection(srs.ExportToWkt())
+
+          dst_ds.GetRasterBand(1).WriteArray(data)
+          dst_ds = None
 
 
 
