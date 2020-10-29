@@ -61,8 +61,11 @@ def select_constant_same_shape_arrays(
 
         if point_agent(object_ids, space_domain):
           dim = 'x, y'
+          result['_campo_space_type'] = 'static_point'
         else:
           dim = 'xlr, ylr, xul, yul'
+          result['_campo_space_type'] = 'static_field'
+
         da = xr.DataArray(coordinates, coords={'id':sel_oids}, dims=['id', dim])
 
         xr_dataset['coordinates'] = da

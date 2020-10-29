@@ -12,6 +12,71 @@ import lue.data_model as ldm
 
 from ..dataframe import *
 
+
+
+def to_gpkg(dataframe, filename, crs=''):
+  """
+  """
+
+  phen_name = dataframe.keys()
+
+  for phen_name in dataframe.keys():
+    phen = dataframe[phen_name]
+    for pset_name in phen.keys():
+      propset = dataframe[phen_name][pset_name]
+
+      if propset['_campo_space_type'] == 'static_point':
+        dfObj = pd.DataFrame()
+        del dataframe[phen_name][pset_name]['_campo_space_type']
+
+        for prop_name in propset.keys():
+          dfObj['CoordX'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
+          dfObj['CoordY'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
+
+          for prop_name in propset.keys():
+            prop = dataframe[phen_name][pset_name][prop_name]
+            dfObj[prop_name] = prop['values'].data
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+              layername, tail = os.path.splitext(os.path.basename(filename))
+
+              csv_fname = os.path.join(tmpdir, f'{layername}.csv')
+              csvt_fname = os.path.join(tmpdir, f'{layername}.csvt')
+
+              columns = []
+              for c in dfObj:
+                if dfObj[c].dtype.kind == 'f':
+                  columns.append('Real')
+                elif dfObj[c].dtype.kind == 'i':
+                  columns.append('Integer')
+                else:
+                  columns.append('String')
+
+              columns = ','.join(map(str, columns))
+              with open(csvt_fname, 'w') as content:
+                content.write(columns)
+
+              dfObj.to_csv(csv_fname, index=False)
+
+              s_srs = ''
+              t_srs = ''
+              if crs != '':
+                s_srs = f'-s_srs {crs}'
+                t_srs = f'-t_srs {crs}'
+
+
+              cmd = f'ogr2ogr {s_srs} {t_srs} -oo X_POSSIBLE_NAMES=CoordX -oo Y_POSSIBLE_NAMES=CoordY -f GPKG {filename} {csv_fname}'
+              subprocess.check_call(cmd, shell=True, stdout=subprocess.DEVNULL)
+
+      elif propset['_campo_space_type'] == 'static_field':
+        raise NotImplementedError
+      else:
+        raise NotImplementedError
+
+
+
+
+
 def to_csv(frame, filename):
 
   phen_name = frame.keys()
