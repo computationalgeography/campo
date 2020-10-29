@@ -14,4 +14,4 @@ dependencies:
   - networkx
   - pip
   - pip:
-    - https://campo.computationalgeography.org/download/campo-0.0.24-py3-none-any.whl
+    - https://campo.computationalgeography.org/download/campo-0.0.25-py3-none-any.whl

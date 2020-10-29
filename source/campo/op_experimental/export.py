@@ -11,6 +11,7 @@ import shutil
 import lue.data_model as ldm
 
 from ..dataframe import *
+from ..utils import color_message
 
 
 
@@ -73,7 +74,8 @@ def to_gpkg(dataframe, filename, crs=''):
       #elif propset['_campo_space_type'] == 'static_diff_field':
         #raise NotImplementedError
       else:
-        raise TypeError('Only for static point agents')
+        msg = color_message('Only for static point agents')
+        raise TypeError(msg)
 
 def to_tiff(dataframe, crs='', directory=''):
 
@@ -84,7 +86,8 @@ def to_tiff(dataframe, crs='', directory=''):
     for pset_name in phen.keys():
       propset = dataframe[phen_name][pset_name]
       if propset['_campo_space_type'] == 'static_same_point':# or propset['_campo_space_type'] == 'diff_same_point':
-        raise TypeError('Only for field agents')
+        msg = color_message('Only for field agents')
+        raise TypeError(msg)
 
       del dataframe[phen_name][pset_name]['_campo_space_type']
 
@@ -122,7 +125,8 @@ def to_tiff(dataframe, crs='', directory=''):
           if crs != '':
             aut, code = crs.split(':')
             if aut != 'EPSG':
-              raise TypeError('Provide CRS as EPSG code, e.g."EPSG:4326"')
+              msg = color_message('Provide CRS as EPSG code, e.g."EPSG:4326"')
+              raise TypeError(msg)
 
             srs = osr.SpatialReference()
             srs.ImportFromEPSG(int(code))

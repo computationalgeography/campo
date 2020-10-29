@@ -111,3 +111,14 @@ class Areas(object):
 
   def __repr__(self):
     return 'Area'
+
+  def _extent(self, index):
+        values = (self.p1.xcoord[index],
+                  self.p1.ycoord[index],
+                  self.p2.xcoord[index],
+                  self.p2.ycoord[index],
+                  int(self.row_discr[index]),
+                  int(self.col_discr[index]),
+                  )
+
+        return values

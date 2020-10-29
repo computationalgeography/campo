@@ -8,6 +8,7 @@ import lue.data_model as ldm
 from .points import Points
 from .areas import Areas
 from .propertyset import PropertySet
+from .utils import color_message
 
 
 
@@ -30,9 +31,11 @@ class Phenomenon(object):
 
     def __getattr__(self, property_set_name):
 
-
       if property_set_name in self._property_sets:
         return self._property_sets[property_set_name]
+      else:
+        msg = color_message(f'No property set "{property_set_name}" in phenomenon "{self._name}"')
+        raise TypeError(msg)
 
 
 

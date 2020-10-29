@@ -1,5 +1,7 @@
 import copy
 import numpy
+import math
+import sys
 
 from osgeo import gdal
 from osgeo import ogr
@@ -9,6 +11,7 @@ from osgeo import osr
 from ..property import Property
 from ..points import Points
 from ..areas import Areas
+from ..utils import color_message
 
 
 def agents_average(prop):
@@ -193,3 +196,94 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
 
 
   return tmp_prop
+
+
+
+
+
+
+
+def weighted_sum(source_point, source_field, dest_prop):
+    if not isinstance(source_point.space_domain, Points):
+      msg = color_message(f'Property "{source_point.name}" must be of domain type Point')
+      raise TypeError(msg)
+
+    if not isinstance(source_field.space_domain, Areas):
+      msg = color_message(f'Property "{source_field.name}" must be of domain type Area')
+      raise TypeError(msg)
+
+    if not isinstance(dest_prop.space_domain, Points):
+      msg = color_message(f'Property "{dest_prop.name}" must be of domain type Point')
+      raise TypeError(msg)
+
+    pp = next(iter(source_point._properties))
+    tmp_prop = copy.deepcopy(source_point._properties[pp])
+
+
+    # Brute assumption here for the CRS, this should be in the dataset itself somewhere...
+    spatial_ref = osr.SpatialReference()
+    spatial_ref.ImportFromEPSG(28992)
+
+    ds = ogr.GetDriverByName('MEMORY').CreateDataSource('mem')
+    #ds = ogr.GetDriverByName('GPKG').CreateDataSource('mem.gpkg')
+
+    # Second we make a point feature from which we will obtain the values
+    # Holding all objects
+    lyr_dst = ds.CreateLayer('values', geom_type=ogr.wkbPoint, srs=spatial_ref)
+
+
+    field = ogr.FieldDefn('value', ogr.OFTReal)
+    lyr_dst.CreateField(field)
+
+
+    for idx, p in enumerate(dest_prop.space_domain):
+      point = ogr.Geometry(ogr.wkbPoint)
+
+      point.AddPoint(p[0], p[1])
+      feat = ogr.Feature(lyr_dst.GetLayerDefn())
+      feat.SetGeometry(point)
+
+      val = dest_prop.values()[idx]
+      feat.SetField('value', val[0])
+
+      lyr_dst.CreateFeature(feat)
+
+
+    lyr_dst = None
+    lyr_dst = ds.GetLayer('values')
+
+
+
+
+    for idx, p in enumerate(source_point.space_domain):
+      p = source_field.values()[idx]
+
+      extent = source_field.space_domain._extent(idx)
+
+
+      # Raster for points to query
+      nr_rows = extent[4]
+      nr_cols = extent[5]
+      cellsize = math.fabs(extent[2] - extent[0]) / nr_cols
+
+
+      minX = extent[0]
+      maxY = extent[3]
+
+
+      target_ds = gdal.GetDriverByName('MEM').Create('', nr_cols, nr_rows, 1, gdal.GDT_Float64)
+      target_ds.SetGeoTransform((minX, cellsize, 0, maxY, 0, -cellsize))
+      target_ds.SetProjection(spatial_ref.ExportToWkt())
+
+      gdal.RasterizeLayer(target_ds, [1], lyr_dst, options=['ALL_TOUCHED=TRUE', 'ATTRIBUTE=values'])
+
+      band = target_ds.GetRasterBand(1)
+      array = band.ReadAsArray()
+
+      masked = numpy.where(p==1, array, 0)
+
+      avg = numpy.average(masked)
+
+      tmp_prop.values()[idx] = avg
+
+    return tmp_prop
