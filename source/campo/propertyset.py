@@ -25,7 +25,6 @@ class PropertySet(object):
 
 
 
-
     @property
     def uuid(self):
       return self._uuid

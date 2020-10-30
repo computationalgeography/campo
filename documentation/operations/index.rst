@@ -6,7 +6,9 @@ Reference documentation of the currently implemeted operations.
 Initialisation
 --------------
 
-.. currentmodule:: campo.dataset
+.. currentmodule:: campo
+
+.. .dataset
 
 
 .. autosummary::
@@ -20,6 +22,7 @@ Initialisation
 
    Phenomenon
    Phenomenon.add_property_set
+   Phenomenon.set_epsg
 
 
 

@@ -203,7 +203,23 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
 
 
 
-def weighted_sum(source_point, source_field, dest_prop):
+def weighted_sum(dest, area, source):
+    """
+
+    dest: point property set (determines property return type)
+
+    area: field property (mask)
+
+    source: point property (values to gather from)
+    """
+
+
+
+    # hack rename...
+    source_point = dest
+    source_field = area
+    dest_prop = source
+
     if not isinstance(source_point.space_domain, Points):
       msg = color_message(f'Property "{source_point.name}" must be of domain type Point')
       raise TypeError(msg)
@@ -216,21 +232,40 @@ def weighted_sum(source_point, source_field, dest_prop):
       msg = color_message(f'Property "{dest_prop.name}" must be of domain type Point')
       raise TypeError(msg)
 
+    dst_crs = source_point.space_domain.epsg
+    field_crs = source_field.space_domain.epsg
+    point_crs = dest_prop.space_domain.epsg
+
+    cnt = 1
+    for arg in [dst_crs, field_crs, point_crs]:
+      if not arg:
+        msg = color_message(f'Operation requires a CRS, set the EPSG code of the phenomenon (argument {cnt})')
+        raise ValueError(msg)
+      cnt += 1
+
+    if field_crs != point_crs:
+      msg = color_message(f'Incompatible CRS {field_crs} != {point_crs}')
+      raise ValueError(msg)
+
+    assert dst_crs == field_crs
+
+
     pp = next(iter(source_point._properties))
     tmp_prop = copy.deepcopy(source_point._properties[pp])
 
 
+
+
+
     # Brute assumption here for the CRS, this should be in the dataset itself somewhere...
     spatial_ref = osr.SpatialReference()
-    spatial_ref.ImportFromEPSG(28992)
+    spatial_ref.ImportFromEPSG(point_crs)
 
     ds = ogr.GetDriverByName('MEMORY').CreateDataSource('mem')
-    #ds = ogr.GetDriverByName('GPKG').CreateDataSource('mem.gpkg')
 
     # Second we make a point feature from which we will obtain the values
     # Holding all objects
     lyr_dst = ds.CreateLayer('values', geom_type=ogr.wkbPoint, srs=spatial_ref)
-
 
     field = ogr.FieldDefn('value', ogr.OFTReal)
     lyr_dst.CreateField(field)
@@ -247,7 +282,6 @@ def weighted_sum(source_point, source_field, dest_prop):
       feat.SetField('value', val[0])
 
       lyr_dst.CreateFeature(feat)
-
 
     lyr_dst = None
     lyr_dst = ds.GetLayer('values')

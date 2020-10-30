@@ -18,6 +18,17 @@ class Points(object):
 
     self.iter_idx = 0
 
+    self._epsg = None
+
+
+  @property
+  def epsg(self):
+      return self._epsg
+
+  @epsg.setter
+  def epsg(self, epsg):
+      assert isinstance(epsg, int)
+      self._epsg = epsg
 
   @property
   def mobile(self):

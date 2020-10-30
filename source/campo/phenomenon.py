@@ -22,6 +22,20 @@ class Phenomenon(object):
         self._nr_objects = 0
         self._property_sets = {}
 
+        self._epsg = None
+
+
+    def set_epsg(self, epsg):
+      """ Setting Coordinate Reference System (CRS) for the spatial domain
+
+
+      :param epsg: EPSG code
+      :type epsg: int
+      """
+      for p in self._property_sets:
+        self._property_sets[p].space_domain.epsg = epsg
+
+      self._epsg = epsg
 
 
 
@@ -89,6 +103,9 @@ class Phenomenon(object):
 
       p = PropertySet(pset_name, nr_objects, domain, shape)
       self._property_sets[pset_name] = p
+
+      if self._epsg:
+        p.space_domain.epsg = self._epsg
 
 
 
