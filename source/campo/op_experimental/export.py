@@ -111,9 +111,9 @@ def to_tiff(dataframe, crs='', directory=''):
           dtype = None
           if data.dtype.kind == 'f':
             dtype = gdal.GDT_Float32
-          if data.dtype.kind == 'i':
+          elif data.dtype.kind == 'i':
             dtype = gdal.GDT_Int32
-          if data.dtype.kind == 'u':
+          elif data.dtype.kind == 'u':
             dtype = gdal.GDT_Byte
           else:
             raise NotImplementedError
