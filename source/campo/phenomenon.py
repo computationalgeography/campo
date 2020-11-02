@@ -21,6 +21,7 @@ class Phenomenon(object):
         self._name = name
         self._nr_objects = 0
         self._property_sets = {}
+        self._nr_psets = 0
 
         self._epsg = None
 
@@ -48,7 +49,7 @@ class Phenomenon(object):
       if property_set_name in self._property_sets:
         return self._property_sets[property_set_name]
       else:
-        msg = color_message(f'No property set "{property_set_name}" in phenomenon "{self._name}"')
+        msg = color_message(f"No property set '{property_set_name}' in phenomenon '{self._name}'")
         raise TypeError(msg)
 
 
@@ -104,6 +105,8 @@ class Phenomenon(object):
       p = PropertySet(pset_name, nr_objects, domain, shape)
       self._property_sets[pset_name] = p
 
+      self._nr_psets += 1
+
       if self._epsg:
         p.space_domain.epsg = self._epsg
 
@@ -111,6 +114,14 @@ class Phenomenon(object):
 
 
 
+
+    @property
+    def nr_propertysets(self):
+      return self._nr_psets
+
+    @property
+    def nr_agents(self):
+      return self._nr_objects
 
     @property
     def nr_objects(self):

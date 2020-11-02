@@ -41,6 +41,7 @@ Operations
    abs
    exp
    uniform
+   where
 
 
 Operators

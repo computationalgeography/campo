@@ -318,6 +318,42 @@ def weighted_sum(dest, area, source):
 
       avg = numpy.average(masked)
 
+
       tmp_prop.values()[idx] = avg
 
     return tmp_prop
+
+
+
+
+def where(condition, property1, property2):
+  """ returns property1 for true condition, property2 otherwise
+  """
+
+  if not isinstance(condition, Property):
+      msg = color_message('condition must be of type Property')
+      raise TypeError(msg)
+  if not isinstance(property1, Property):
+      msg = color_message('property1 must be of type Property')
+      raise TypeError(msg)
+  if not isinstance(property2, Property):
+      msg = color_message('property2 must be of type Property')
+      raise TypeError(msg)
+
+
+  allowed = numpy.array([0, 1])
+  for item in condition.values().values:
+      condition_val = condition.values()[item]
+      assert numpy.dtype(condition_val.dtype) == numpy.uint8, f'{condition_val.dtype} != numpy.uint8'
+      diff = numpy.setdiff1d(condition_val, allowed)
+      assert len(diff) == 0, 'Only 0 and 1 values allowed for condition'
+
+  tmp_prop = copy.deepcopy(property1)
+
+  for item in condition.values().values:
+    cval = condition.values()[item]
+    tval = property1.values()[item].astype(numpy.float64)
+    fval = property2.values()[item]
+    tmp_prop.values()[item] = numpy.where(cval, tval, fval)
+
+  return tmp_prop

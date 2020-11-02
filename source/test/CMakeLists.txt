@@ -4,6 +4,8 @@ set(SOURCES
   extract_dyn_diff.py
   extract_dyn_same.py
   unit_tests.py
+  test_phenomenon.py
+  test_propertyset.py
 )
 
 
@@ -43,6 +45,6 @@ if(WIN32)
 else()
   set(ENV_PATH $ENV{PYTHONPATH})
   set_tests_properties(campo_unit_tests PROPERTIES
-    ENVIRONMENT "PYTHONPATH=${CMAKE_SOURCE_DIR}/source:$ENV{PYTHONPATH}"
+    ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/source:$ENV{PYTHONPATH}"
   )
 endif()

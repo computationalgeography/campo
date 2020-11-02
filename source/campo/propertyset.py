@@ -195,7 +195,7 @@ class PropertySet(object):
       if name in self._properties:
         return self._properties[name]
       else:
-        msg = color_message(f'No property "{name}" in property set "{self._name}"')
+        msg = color_message(f"No property '{name}' in property set '{self._name}'")
         raise TypeError(msg)
 
 
