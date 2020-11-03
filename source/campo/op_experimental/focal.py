@@ -11,7 +11,7 @@ from osgeo import osr
 from ..property import Property
 from ..points import Points
 from ..areas import Areas
-from ..utils import color_message
+from ..utils import _color_message
 
 
 def agents_average(prop):
@@ -203,33 +203,34 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
 
 
 
-def weighted_sum(dest, area, source):
+def focal_agents(dest, weight, source, operation='average', fail=False):
     """
 
     dest: point property set (determines property return type)
 
-    area: field property (mask)
+    weight: field property (weight/mask)
 
     source: point property (values to gather from)
-    """
 
+    operation: type of operation, being 'average' (default), 'sum'
+    """
 
 
     # hack rename...
     source_point = dest
-    source_field = area
+    source_field = weight
     dest_prop = source
 
     if not isinstance(source_point.space_domain, Points):
-      msg = color_message(f'Property "{source_point.name}" must be of domain type Point')
+      msg = _color_message(f'Property "{source_point.name}" must be of domain type Point')
       raise TypeError(msg)
 
     if not isinstance(source_field.space_domain, Areas):
-      msg = color_message(f'Property "{source_field.name}" must be of domain type Area')
+      msg = _color_message(f'Property "{source_field.name}" must be of domain type Area')
       raise TypeError(msg)
 
     if not isinstance(dest_prop.space_domain, Points):
-      msg = color_message(f'Property "{dest_prop.name}" must be of domain type Point')
+      msg = _color_message(f'Property "{dest_prop.name}" must be of domain type Point')
       raise TypeError(msg)
 
     dst_crs = source_point.space_domain.epsg
@@ -239,12 +240,12 @@ def weighted_sum(dest, area, source):
     cnt = 1
     for arg in [dst_crs, field_crs, point_crs]:
       if not arg:
-        msg = color_message(f'Operation requires a CRS, set the EPSG code of the phenomenon (argument {cnt})')
+        msg = _color_message(f'Operation requires a CRS, set the EPSG code of the phenomenon (argument {cnt})')
         raise ValueError(msg)
       cnt += 1
 
     if field_crs != point_crs:
-      msg = color_message(f'Incompatible CRS {field_crs} != {point_crs}')
+      msg = _color_message(f'Incompatible CRS {field_crs} != {point_crs}')
       raise ValueError(msg)
 
     assert dst_crs == field_crs
@@ -255,9 +256,6 @@ def weighted_sum(dest, area, source):
 
 
 
-
-
-    # Brute assumption here for the CRS, this should be in the dataset itself somewhere...
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromEPSG(point_crs)
 
@@ -290,7 +288,7 @@ def weighted_sum(dest, area, source):
 
 
     for idx, p in enumerate(source_point.space_domain):
-      p = source_field.values()[idx]
+      values_weight = source_field.values()[idx]
 
       extent = source_field.space_domain._extent(idx)
 
@@ -313,13 +311,19 @@ def weighted_sum(dest, area, source):
 
       band = target_ds.GetRasterBand(1)
       array = band.ReadAsArray()
+      masked = array * values_weight #numpy.where(p==1, array, 0)
 
-      masked = numpy.where(p==1, array, 0)
+      if operation == 'average':
+        res = numpy.average(masked)
+      elif operation == 'sum':
+        res = numpy.sum(masked)
+      else:
+        raise NotImplementedError
 
-      avg = numpy.average(masked)
+      if fail == True:
+        assert res != 0
 
-
-      tmp_prop.values()[idx] = avg
+      tmp_prop.values()[idx] = res
 
     return tmp_prop
 
@@ -331,13 +335,13 @@ def where(condition, property1, property2):
   """
 
   if not isinstance(condition, Property):
-      msg = color_message('condition must be of type Property')
+      msg = _color_message('condition must be of type Property')
       raise TypeError(msg)
   if not isinstance(property1, Property):
-      msg = color_message('property1 must be of type Property')
+      msg = _color_message('property1 must be of type Property')
       raise TypeError(msg)
   if not isinstance(property2, Property):
-      msg = color_message('property2 must be of type Property')
+      msg = _color_message('property2 must be of type Property')
       raise TypeError(msg)
 
 

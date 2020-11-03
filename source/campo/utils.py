@@ -3,7 +3,8 @@ import enum
 import lue.data_model as ldm
 
 
-def color_message(message, colour_start='\033[31m'):
+def _color_message(message, colour_start='\033[31m'):
+  """ Colourize message using ANSI escape codes """
   colour_end = '\033[0m'
   return f'{colour_start}{message}{colour_end}'
 

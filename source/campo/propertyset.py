@@ -8,7 +8,7 @@ import lue.data_model as ldm
 from .points import Points
 from .areas import Areas
 from .property import Property
-from .utils import TimeDiscretization, color_message
+from .utils import TimeDiscretization, _color_message
 
 
 
@@ -195,7 +195,7 @@ class PropertySet(object):
       if name in self._properties:
         return self._properties[name]
       else:
-        msg = color_message(f"No property '{name}' in property set '{self._name}'")
+        msg = _color_message(f"No property '{name}' in property set '{self._name}'")
         raise TypeError(msg)
 
 
