@@ -307,7 +307,7 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
       target_ds.SetGeoTransform((minX, cellsize, 0, maxY, 0, -cellsize))
       target_ds.SetProjection(spatial_ref.ExportToWkt())
 
-      gdal.RasterizeLayer(target_ds, [1], lyr_dst, options=['ALL_TOUCHED=TRUE', 'ATTRIBUTE=values'])
+      gdal.RasterizeLayer(target_ds, [1], lyr_dst, options=['ALL_TOUCHED=TRUE', 'ATTRIBUTE=value'])
 
       band = target_ds.GetRasterBand(1)
       array = band.ReadAsArray()

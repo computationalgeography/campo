@@ -11,7 +11,6 @@ from .phenomenon import Phenomenon
 
 
 
-
 class Campo(object):
     """ """
 
@@ -283,6 +282,14 @@ class Campo(object):
 
 
     def _lue_write_property(self, phen_name, pset, prop, timestep):
+
+      # todo restructure this method...
+
+      # if possible return without performing disk access
+      if not prop.is_dynamic:
+        # do not write 'static' data in dynamic section
+              if timestep is not None:
+                return
 
       lue_pset = self.lue_dataset.phenomena[phen_name].property_sets[pset.name]
       object_ids = self.lue_dataset.phenomena[phen_name].object_id[:]
