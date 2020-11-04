@@ -276,8 +276,12 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
       feat = ogr.Feature(lyr_dst.GetLayerDefn())
       feat.SetGeometry(point)
 
-      val = dest_prop.values()[idx]
-      feat.SetField('value', val[0])
+      try:
+        val = dest_prop.values()[idx][0]
+      except:
+        val = dest_prop.values()[idx]
+
+      feat.SetField('value', val)
 
       lyr_dst.CreateFeature(feat)
 
