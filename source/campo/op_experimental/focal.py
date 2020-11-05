@@ -2,10 +2,13 @@ import copy
 import numpy
 import math
 import sys
+import datetime
 
 from osgeo import gdal
 from osgeo import ogr
 from osgeo import osr
+
+import pcraster
 
 
 from ..property import Property
@@ -259,37 +262,10 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromEPSG(point_crs)
 
-    ds = ogr.GetDriverByName('MEMORY').CreateDataSource('mem')
+    nr_locs = dest_prop.nr_objects
 
-    # Second we make a point feature from which we will obtain the values
-    # Holding all objects
-    lyr_dst = ds.CreateLayer('values', geom_type=ogr.wkbPoint, srs=spatial_ref)
-
-    field = ogr.FieldDefn('value', ogr.OFTReal)
-    lyr_dst.CreateField(field)
-
-
-    for idx, p in enumerate(dest_prop.space_domain):
-      point = ogr.Geometry(ogr.wkbPoint)
-
-      point.AddPoint(p[0], p[1])
-      feat = ogr.Feature(lyr_dst.GetLayerDefn())
-      feat.SetGeometry(point)
-
-      try:
-        val = dest_prop.values()[idx][0]
-      except:
-        val = dest_prop.values()[idx]
-
-      feat.SetField('value', val)
-
-      lyr_dst.CreateFeature(feat)
-
-    lyr_dst = None
-    lyr_dst = ds.GetLayer('values')
-
-
-
+    point_values = numpy.empty(nr_locs)
+    point_values.fill(numpy.nan)
 
     for idx, p in enumerate(source_point.space_domain):
       values_weight = source_field.values()[idx]
@@ -307,16 +283,28 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
       maxY = extent[3]
 
 
-      target_ds = gdal.GetDriverByName('MEM').Create('', nr_cols, nr_rows, 1, gdal.GDT_Float64)
-      target_ds.SetGeoTransform((minX, cellsize, 0, maxY, 0, -cellsize))
-      target_ds.SetProjection(spatial_ref.ExportToWkt())
 
-      gdal.RasterizeLayer(target_ds, [1], lyr_dst, options=['ALL_TOUCHED=TRUE', 'ATTRIBUTE=value'])
+      pcraster.setclone(nr_rows, nr_cols, cellsize, minX, maxY)
 
-      band = target_ds.GetRasterBand(1)
-      array = band.ReadAsArray()
-      masked = array * values_weight #numpy.where(p==1, array, 0)
+      raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight, numpy.nan)
 
+      point_values.fill(numpy.nan)
+
+      for point_idx, loc in enumerate(dest_prop.space_domain):
+        try:
+          mask_value, valid = pcraster.cellvalue_by_coordinates(raster, loc[0], loc[1])
+          agent_value = dest_prop.values()[point_idx][0]
+          if valid:
+            val = mask_value * agent_value
+            point_values[point_idx] = val
+        except ValueError:
+          # ignore locations out of area
+          pass
+
+      indices = ~numpy.isnan(point_values)
+      masked = point_values[indices]
+
+      res = 0
       if operation == 'average':
         res = numpy.average(masked)
       elif operation == 'sum':
@@ -328,6 +316,7 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
         assert res != 0
 
       tmp_prop.values()[idx] = res
+
 
     return tmp_prop
 
