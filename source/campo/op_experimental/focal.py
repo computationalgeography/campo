@@ -262,6 +262,43 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromEPSG(point_crs)
 
+
+    ds = ogr.GetDriverByName('MEMORY').CreateDataSource('mem')
+
+    # Second we make a point feature from which we will obtain the locations
+    # Holding all objects
+    lyr_dst = ds.CreateLayer('locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
+
+    field = ogr.FieldDefn('value', ogr.OFTReal)
+    lyr_dst.CreateField(field)
+
+
+    for idx, p in enumerate(dest_prop.space_domain):
+      point = ogr.Geometry(ogr.wkbPoint)
+
+      point.AddPoint(p[0], p[1])
+      feat = ogr.Feature(lyr_dst.GetLayerDefn())
+      feat.SetGeometry(point)
+
+      try:
+        val = dest_prop.values()[idx][0]
+      except:
+        val = dest_prop.values()[idx]
+
+      feat.SetField('value', val)
+
+      lyr_dst.CreateFeature(feat)
+
+    lyr_dst = None
+    lyr_dst = ds.GetLayer('locations')
+
+
+
+
+
+
+
+
     nr_locs = dest_prop.nr_objects
 
     point_values = numpy.empty(nr_locs)
@@ -282,7 +319,33 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
       minX = extent[0]
       maxY = extent[3]
 
+      if ds.GetLayerByName('extent'):
+            ds.DeleteLayer('extent')
 
+      extent_lyr = ds.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
+
+      feat = ogr.Feature(extent_lyr.GetLayerDefn())
+
+      ring = ogr.Geometry(ogr.wkbLinearRing)
+
+      ring.AddPoint(minX, maxY)
+      ring.AddPoint(minX + nr_cols * cellsize, maxY)
+      ring.AddPoint(minX + nr_cols * cellsize, maxY - nr_rows * cellsize)
+      ring.AddPoint(minX, maxY - nr_rows * cellsize)
+      ring.AddPoint(minX, maxY)
+
+      poly = ogr.Geometry(ogr.wkbPolygon)
+      poly.AddGeometry(ring)
+
+      feat.SetGeometry(poly)
+      extent_lyr.CreateFeature(feat)
+
+      if ds.GetLayerByName('intersect'):
+            ds.DeleteLayer('intersect')
+
+      intersect_layer = ds.CreateLayer('locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
+
+      lyr_dst.Intersection(extent_lyr, intersect_layer)
 
       pcraster.setclone(nr_rows, nr_cols, cellsize, minX, maxY)
 
@@ -290,16 +353,13 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
 
       point_values.fill(numpy.nan)
 
-      for point_idx, loc in enumerate(dest_prop.space_domain):
-        try:
-          mask_value, valid = pcraster.cellvalue_by_coordinates(raster, loc[0], loc[1])
-          agent_value = dest_prop.values()[point_idx]#[0]
-          if valid:
-            val = mask_value * agent_value
-            point_values[point_idx] = val
-        except ValueError:
-          # ignore locations out of area
-          pass
+      for idx, feature in enumerate(intersect_layer):
+        x = feature.GetGeometryRef().GetX()
+        y = feature.GetGeometryRef().GetY()
+
+        mask_value, valid = pcraster.cellvalue_by_coordinates(raster, x, y)
+        agent_value = feature.GetField('value')
+        point_values[idx] = mask_value * agent_value
 
       indices = ~numpy.isnan(point_values)
       masked = point_values[indices]
