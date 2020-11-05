@@ -285,7 +285,7 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
       except:
         val = dest_prop.values()[idx]
 
-      feat.SetField('value', val)
+      feat.SetField('value', float(val))
 
       lyr_dst.CreateFeature(feat)
 
