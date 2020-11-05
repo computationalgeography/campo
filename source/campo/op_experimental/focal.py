@@ -293,7 +293,7 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
       for point_idx, loc in enumerate(dest_prop.space_domain):
         try:
           mask_value, valid = pcraster.cellvalue_by_coordinates(raster, loc[0], loc[1])
-          agent_value = dest_prop.values()[point_idx][0]
+          agent_value = dest_prop.values()[point_idx]#[0]
           if valid:
             val = mask_value * agent_value
             point_values[point_idx] = val
