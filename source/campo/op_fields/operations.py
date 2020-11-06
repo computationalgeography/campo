@@ -1,6 +1,5 @@
 import os
 import numpy
-import multiprocessing
 import datetime
 
 import pcraster
@@ -165,7 +164,6 @@ def windowtotal(area_property, window_size):
 
 
 def _pspread(values):
-  #(idx, result_prop, start_locations, arg1_raster, frictiondist_raster, friction_raster)
 
   idx = values[0]
   result_prop = values[1]
@@ -204,9 +202,6 @@ def spread(start_locations, frictiondist, friction):
 
   result_prop = Property('emptyspreadname', start_locations.pset_uuid, start_locations.space_domain, start_locations.shapes)
 
-  pool = multiprocessing.Pool(multiprocessing.cpu_count() - 1)
-
-  todo = []
   for idx in start_locations.values().values.keys():
     values = start_locations.values().values[idx]
     _set_current_clone(start_locations, idx)
@@ -214,22 +209,7 @@ def spread(start_locations, frictiondist, friction):
     frictiondistvalues = frictiondist.values().values[idx]
     frictionvalues = friction.values().values[idx]
 
-
-    item = (idx, result_prop, start_locations, values, frictiondistvalues, frictionvalues)
-    todo.append(item)
-
-  pool.map(_pspread, todo, chunksize=1)
-
-  return result_prop
-
-  for idx in start_locations.values().values.keys():
-    values = start_locations.values().values[idx]
-    _set_current_clone(start_locations, idx)
-
-    frictiondistvalues = frictiondist.values().values[idx]
-    frictionvalues = friction.values().values[idx]
-
-    arg1_raster = pcraster.numpy2pcr(pcraster.Nominal, values, -999) #numpy.nan)
+    arg1_raster = pcraster.numpy2pcr(pcraster.Nominal, values, -99999) #numpy.nan)
     frictiondist_raster = pcraster.numpy2pcr(pcraster.Scalar, frictiondistvalues, numpy.nan)
     friction_raster = pcraster.numpy2pcr(pcraster.Scalar, frictionvalues, numpy.nan)
 
