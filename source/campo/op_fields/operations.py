@@ -1,12 +1,14 @@
 import os
 import numpy
 import datetime
+import multiprocessing
+import sys
 
 import pcraster
 
 from ..property import Property
 
-
+import time
 
 def _spatial_operation(area_property, spatial_operation):
 
@@ -201,6 +203,31 @@ def spread(start_locations, frictiondist, friction):
 
 
   result_prop = Property('emptyspreadname', start_locations.pset_uuid, start_locations.space_domain, start_locations.shapes)
+
+  todo = []
+  for idx in start_locations.values().values.keys():
+    values = start_locations.values().values[idx]
+#    _set_current_clone(start_locations, idx)
+
+    frictiondistvalues = frictiondist.values().values[idx]
+    frictionvalues = friction.values().values[idx]
+
+    item = (idx, result_prop, start_locations, values, frictiondistvalues, frictionvalues)
+    todo.append(item)
+
+  cpus = max(1, multiprocessing.cpu_count() - 1)
+  tasks = len(todo)
+  chunks = max(cpus, int(tasks / cpus))
+  pool = multiprocessing.Pool(cpus)
+  pool.map(_pspread, todo, chunksize=cpus)
+
+
+  #with futures.ThreadPoolExecutor(max_workers=cpus) as ex:
+    #for task in todo:
+      #print(task[0])
+      #ex.submit(_pspread, task)
+
+  return result_prop
 
   for idx in start_locations.values().values.keys():
     values = start_locations.values().values[idx]
