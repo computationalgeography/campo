@@ -2,6 +2,7 @@ import copy
 import numpy
 import math
 import sys
+import multiprocessing
 import datetime
 
 from osgeo import gdal
@@ -204,6 +205,94 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
 
 
 
+def _focal_agents(values):
+#(idx, tmp_prop, nr_locs, values_weight, extent)
+      idx = values[0]
+      tmp_prop = values[1]
+      nr_locs = values[2]
+      values_weight = values[3]
+      extent = values[4]
+      spatial_ref = values[5]
+      lyr_dst = values[6]
+      operation = values[7]
+      fail = values[8]
+
+      point_values = numpy.empty(nr_locs)
+      point_values.fill(numpy.nan)
+
+      # Raster for points to query
+      nr_rows = extent[4]
+      nr_cols = extent[5]
+      cellsize = math.fabs(extent[2] - extent[0]) / nr_cols
+
+
+      minX = extent[0]
+      maxY = extent[3]
+
+      #if ds.GetLayerByName('extent'):
+      #      ds.DeleteLayer('extent')
+      #ds.DeleteLayer('extent')
+
+      ds_extent = ogr.GetDriverByName('MEMORY').CreateDataSource('ds_extent')
+
+      extent_lyr = ds_extent.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
+      assert extent_lyr
+
+      feat = ogr.Feature(extent_lyr.GetLayerDefn())
+
+      ring = ogr.Geometry(ogr.wkbLinearRing)
+
+      ring.AddPoint(minX, maxY)
+      ring.AddPoint(minX + nr_cols * cellsize, maxY)
+      ring.AddPoint(minX + nr_cols * cellsize, maxY - nr_rows * cellsize)
+      ring.AddPoint(minX, maxY - nr_rows * cellsize)
+      ring.AddPoint(minX, maxY)
+
+      poly = ogr.Geometry(ogr.wkbPolygon)
+      poly.AddGeometry(ring)
+
+      feat.SetGeometry(poly)
+      extent_lyr.CreateFeature(feat)
+
+      #if ds.GetLayerByName('intersect'):
+      #      ds.DeleteLayer('intersect')
+
+      intersect_layer = ds_extent.CreateLayer('locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
+      assert intersect_layer
+
+      lyr_dst.Intersection(extent_lyr, intersect_layer)
+
+      pcraster.setclone(nr_rows, nr_cols, cellsize, minX, maxY)
+
+      raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight, numpy.nan)
+
+      point_values.fill(numpy.nan)
+
+      for idx, feature in enumerate(intersect_layer):
+        x = feature.GetGeometryRef().GetX()
+        y = feature.GetGeometryRef().GetY()
+
+        mask_value, valid = pcraster.cellvalue_by_coordinates(raster, x, y)
+        agent_value = feature.GetField('value')
+        point_values[idx] = mask_value * agent_value
+
+      indices = ~numpy.isnan(point_values)
+      masked = point_values[indices]
+
+      res = 0
+      if operation == 'average':
+        res = numpy.average(masked)
+      elif operation == 'sum':
+        res = numpy.sum(masked)
+      else:
+        raise NotImplementedError
+
+      if fail == True:
+        assert res != 0
+
+      tmp_prop.values()[idx] = res
+
+
 
 
 def focal_agents(dest, weight, source, operation='average', fail=False):
@@ -294,10 +383,27 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
 
 
 
+    nr_locs = dest_prop.nr_objects
 
+    todos = []
+    for idx, p in enumerate(source_point.space_domain):
+      values_weight = source_field.values()[idx]
 
+      extent = source_field.space_domain._extent(idx)
 
+      item = (idx, tmp_prop, nr_locs, values_weight, extent, spatial_ref, lyr_dst, operation, fail)
+      todos.append(item)
 
+    cpus = multiprocessing.cpu_count()
+    tasks = len(todos)
+    chunks = max(cpus, int(tasks / cpus))
+    pool = multiprocessing.Pool(cpus)
+    pool.imap(_focal_agents, todos, chunksize=chunks)
+
+    #_focal_agents(todos[0])
+
+    return tmp_prop
+    # sequential #
 
     nr_locs = dest_prop.nr_objects
 
