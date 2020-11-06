@@ -1,6 +1,7 @@
 import os
 import numpy
-
+import multiprocessing
+import datetime
 
 import pcraster
 
@@ -163,6 +164,27 @@ def windowtotal(area_property, window_size):
   return _spatial_operation_two_arguments(area_property, window_size, pcraster.windowtotal, pcraster.Scalar)
 
 
+def _pspread(values):
+  #(idx, result_prop, start_locations, arg1_raster, frictiondist_raster, friction_raster)
+
+  idx = values[0]
+  result_prop = values[1]
+  start_locations = values[2]
+  raster_values = values[3]
+  frictiondist_values = values[4]
+  friction_values = values[5]
+
+
+  _set_current_clone(start_locations, idx)
+
+  arg1_raster = pcraster.numpy2pcr(pcraster.Nominal, raster_values, -999) #numpy.nan)
+  frictiondist_raster = pcraster.numpy2pcr(pcraster.Scalar, frictiondist_values, numpy.nan)
+  friction_raster = pcraster.numpy2pcr(pcraster.Scalar, friction_values, numpy.nan)
+  result_raster = pcraster.spread(arg1_raster, frictiondist_raster, friction_raster)
+  result_item = pcraster.pcr2numpy(result_raster, numpy.nan)
+  result_prop.values().values[idx] = result_item
+
+
 def spread(start_locations, frictiondist, friction):
   """ Total friction of the shortest accumulated friction path over a map with friction values from a source cell to cell under consideration
 
@@ -182,6 +204,23 @@ def spread(start_locations, frictiondist, friction):
 
   result_prop = Property('emptyspreadname', start_locations.pset_uuid, start_locations.space_domain, start_locations.shapes)
 
+  pool = multiprocessing.Pool(multiprocessing.cpu_count() - 1)
+
+  todo = []
+  for idx in start_locations.values().values.keys():
+    values = start_locations.values().values[idx]
+    _set_current_clone(start_locations, idx)
+
+    frictiondistvalues = frictiondist.values().values[idx]
+    frictionvalues = friction.values().values[idx]
+
+
+    item = (idx, result_prop, start_locations, values, frictiondistvalues, frictionvalues)
+    todo.append(item)
+
+  pool.map(_pspread, todo, chunksize=1)
+
+  return result_prop
 
   for idx in start_locations.values().values.keys():
     values = start_locations.values().values[idx]
