@@ -319,10 +319,13 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
       minX = extent[0]
       maxY = extent[3]
 
-      if ds.GetLayerByName('extent'):
-            ds.DeleteLayer('extent')
+      #if ds.GetLayerByName('extent'):
+      #      ds.DeleteLayer('extent')
+      #ds.DeleteLayer('extent')
 
-      extent_lyr = ds.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
+      ds_extent = ogr.GetDriverByName('MEMORY').CreateDataSource('ds_extent')
+
+      extent_lyr = ds_extent.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
 
       feat = ogr.Feature(extent_lyr.GetLayerDefn())
 
@@ -340,10 +343,10 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
       feat.SetGeometry(poly)
       extent_lyr.CreateFeature(feat)
 
-      if ds.GetLayerByName('intersect'):
-            ds.DeleteLayer('intersect')
+      #if ds.GetLayerByName('intersect'):
+      #      ds.DeleteLayer('intersect')
 
-      intersect_layer = ds.CreateLayer('locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
+      intersect_layer = ds_extent.CreateLayer('locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
 
       lyr_dst.Intersection(extent_lyr, intersect_layer)
 

@@ -91,7 +91,6 @@ class PropertySet(object):
 
 
     def add_property(self, property_name, dtype=np.float64, time_discretisation=TimeDiscretization.dynamic, rank=None, shape=None):
-
       assert isinstance(property_name, str)
       assert self._lue_dataset_name is not None
 

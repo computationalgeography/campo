@@ -10,11 +10,10 @@ from .phenomenon import Phenomenon
 
 
 
-
 class Campo(object):
     """ """
 
-    def __init__(self):
+    def __init__(self, debug=False):
 
       self._phenomena = {}
       self._nr_timesteps = None
@@ -22,6 +21,8 @@ class Campo(object):
       self._lue_time_configuration = None
       self.lue_dataset = None
       self.lue_filename = None
+
+      self._debug = debug
 
 
 
@@ -70,7 +71,8 @@ class Campo(object):
       #time_domain = point_pset.time_domain
       time_cell.time_domain.value.expand(time_boxes)[:] = [0, self._nr_timesteps]
 
-      ldm.assert_is_valid(self.lue_filename)
+      if self._debug:
+        ldm.assert_is_valid(self.lue_filename)
 
 
 
@@ -102,7 +104,9 @@ class Campo(object):
       self.lue_filename = fpath
 
       self.lue_dataset = ldm.create_dataset(self.lue_filename)
-      ldm.assert_is_valid(self.lue_filename)
+
+      if self._debug:
+              ldm.assert_is_valid(self.lue_filename)
 
 
 
@@ -175,8 +179,8 @@ class Campo(object):
       else:
         raise NotImplementedError
 
-
-      ldm.assert_is_valid(self.lue_filename)
+      if self._debug:
+              ldm.assert_is_valid(self.lue_filename)
 
 
     def _generate_lue_property_set(self, phen_name, property_set):
@@ -259,7 +263,8 @@ class Campo(object):
         self._generate_lue_property(phen_name, property_set, prop)
 
 
-      ldm.assert_is_valid(self.lue_filename)
+      if self._debug:
+        ldm.assert_is_valid(self.lue_filename)
 
 
     def _generate_lue_phenomenon(self,  phenomenon):
@@ -276,8 +281,8 @@ class Campo(object):
         self._generate_lue_property_set(phenomenon.name, p)
 
 
-
-      ldm.assert_is_valid(self.lue_filename)
+      if self._debug:
+        ldm.assert_is_valid(self.lue_filename)
 
 
 
@@ -318,8 +323,8 @@ class Campo(object):
                   for idx, val in enumerate(prop.values().values):
                     lue_prop.value[object_ids[idx]][timestep - 1] = prop.values().values[idx]
 
-
-      ldm.assert_is_valid(self.lue_filename)
+      if self._debug:
+        ldm.assert_is_valid(self.lue_filename)
 
 
     def write(self, timestep=None):
@@ -361,4 +366,5 @@ class Campo(object):
       time_cell.object_tracker.active_set_index.expand(time_boxes)[:] = 0
       time_cell.time_domain.value.expand(time_boxes)[:] = [0, self._nr_timesteps]
 
-      ldm.assert_is_valid(self.lue_filename)
+      if self._debug:
+        ldm.assert_is_valid(self.lue_filename)
