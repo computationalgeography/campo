@@ -1,3 +1,4 @@
+from concurrent import futures
 import os
 import numpy
 import datetime
@@ -166,23 +167,22 @@ def windowtotal(area_property, window_size):
 
 
 def _pspread(values):
-
+#(idx, start_locationsvalues, frictiondistvalues, frictionvalues, start_locations)
   idx = values[0]
-  result_prop = values[1]
-  start_locations = values[2]
-  raster_values = values[3]
-  frictiondist_values = values[4]
-  friction_values = values[5]
+  start_locations_values = values[1]
+  frictiondist_values = values[2]
+  friction_values = values[3]
+  start_locations = values[4]
 
 
   _set_current_clone(start_locations, idx)
 
-  arg1_raster = pcraster.numpy2pcr(pcraster.Nominal, raster_values, -999) #numpy.nan)
+  arg1_raster = pcraster.numpy2pcr(pcraster.Nominal, start_locations_values, -999) #numpy.nan)
   frictiondist_raster = pcraster.numpy2pcr(pcraster.Scalar, frictiondist_values, numpy.nan)
   friction_raster = pcraster.numpy2pcr(pcraster.Scalar, friction_values, numpy.nan)
   result_raster = pcraster.spread(arg1_raster, frictiondist_raster, friction_raster)
-  result_item = pcraster.pcr2numpy(result_raster, numpy.nan)
-  result_prop.values().values[idx] = result_item
+
+  return idx, pcraster.pcr2numpy(result_raster, numpy.nan)
 
 
 def spread(start_locations, frictiondist, friction):
@@ -206,29 +206,27 @@ def spread(start_locations, frictiondist, friction):
 
   todo = []
   for idx in start_locations.values().values.keys():
-    values = start_locations.values().values[idx]
-#    _set_current_clone(start_locations, idx)
+    start_locations_values = start_locations.values().values[idx]
+    frictiondist_values = frictiondist.values().values[idx]
+    friction_values = friction.values().values[idx]
 
-    frictiondistvalues = frictiondist.values().values[idx]
-    frictionvalues = friction.values().values[idx]
-
-    item = (idx, result_prop, start_locations, values, frictiondistvalues, frictionvalues)
+    item = (idx, start_locations_values, frictiondist_values, friction_values, start_locations)
     todo.append(item)
 
   cpus = multiprocessing.cpu_count()
   tasks = len(todo)
-  chunks = max(cpus, int(tasks / cpus))
-  pool = multiprocessing.Pool(cpus)
-  pool.imap(_pspread, todo, chunksize=chunks)
+  chunks = tasks // cpus
 
+  with futures.ThreadPoolExecutor(max_workers=cpus) as ex:
+    results = ex.map(_pspread, todo, chunksize=chunks)
 
-  #with futures.ThreadPoolExecutor(max_workers=cpus) as ex:
-    #for task in todo:
-      #print(task[0])
-      #ex.submit(_pspread, task)
+  for result in results:
+    result_prop.values().values[result[0]] = result[1]
 
   return result_prop
 
+
+  # sequential
   for idx in start_locations.values().values.keys():
     values = start_locations.values().values[idx]
     _set_current_clone(start_locations, idx)
