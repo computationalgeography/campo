@@ -127,13 +127,13 @@ class Campo(object):
           lue_prop = pset.add_property(prop.name, dtype=np.dtype(dtype), shape=p_shape, value_variability=ldm.ValueVariability.variable)
           lue_prop.value.expand(nr_objects)
 
+          # Just create these once...
+          if pset.object_tracker.active_object_id.nr_ids == 0:
+            pset.object_tracker.active_object_id.expand(time_boxes * nr_objects)[:] = self.lue_dataset.phenomena[phen_name].object_id[:]
+            pset.object_tracker.active_set_index.expand(time_boxes)[:] = 0
 
-          pset.object_tracker.active_object_id.expand(time_boxes * nr_objects)[:] = self.lue_dataset.phenomena[phen_name].object_id[:]
-          pset.object_tracker.active_set_index.expand(time_boxes)[:] = 0
-
-
-          time_domain = pset.time_domain
-          time_domain.value.expand(time_boxes)[:] = [0, self._nr_timesteps]
+            time_domain = pset.time_domain
+            time_domain.value.expand(time_boxes)[:] = [0, self._nr_timesteps]
 
         else:
           lue_prop = pset.add_property(prop.name, dtype=np.dtype(dtype))

@@ -5,6 +5,7 @@ import datetime
 import multiprocessing
 import sys
 
+from osgeo import gdal, ogr, osr
 import pcraster
 
 from ..property import Property
@@ -167,15 +168,14 @@ def windowtotal(area_property, window_size):
 
 
 def _pspread(values):
-#(idx, start_locationsvalues, frictiondistvalues, frictionvalues, start_locations)
+#(idx, start_locationsvalues, frictiondistvalues, frictionvalues, clone)
   idx = values[0]
   start_locations_values = values[1]
   frictiondist_values = values[2]
   friction_values = values[3]
-  start_locations = values[4]
+  clone = values[4]
 
-
-  _set_current_clone(start_locations, idx)
+  pcraster.setclone(clone[0], clone[1], clone[2], clone[3], clone[4])
 
   arg1_raster = pcraster.numpy2pcr(pcraster.Nominal, start_locations_values, -999) #numpy.nan)
   frictiondist_raster = pcraster.numpy2pcr(pcraster.Scalar, frictiondist_values, numpy.nan)
@@ -210,10 +210,18 @@ def spread(start_locations, frictiondist, friction):
     frictiondist_values = frictiondist.values().values[idx]
     friction_values = friction.values().values[idx]
 
-    item = (idx, start_locations_values, frictiondist_values, friction_values, start_locations)
+    west = start_locations.space_domain.p1.xcoord[idx]
+    north = start_locations.space_domain.p1.ycoord[idx]
+    rows = int(start_locations.space_domain.row_discr[idx])
+    cols = int(start_locations.space_domain.col_discr[idx])
+    cellsize = (start_locations.space_domain.p2.xcoord[idx] - west ) / cols
+
+    clone = (rows, cols, cellsize, west, north)
+
+    item = (idx, start_locations_values, frictiondist_values, friction_values, clone)
     todo.append(item)
 
-  cpus = multiprocessing.cpu_count()
+  cpus = 1#multiprocessing.cpu_count()
   tasks = len(todo)
   chunks = tasks // cpus
 

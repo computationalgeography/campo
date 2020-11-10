@@ -235,8 +235,10 @@ def select_variable_same_shape_constant_shape_arrays(
 
         if point_agent(object_ids, space_domain):
           dim = 'x, y'
+          result['_campo_space_type'] = 'dynamic_same_point'
         else:
           dim = 'xlr, ylr, xul, yul'
+          result['_campo_space_type'] = 'dynamic_same_field'
         da = xr.DataArray(coordinates, coords={'id':sel_oids}, dims=['id', dim])
 
         xr_dataset['coordinates'] = da

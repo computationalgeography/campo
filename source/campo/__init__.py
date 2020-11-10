@@ -2,6 +2,8 @@
 Campo modelling environment for fields and agents
 """
 
+from osgeo import gdal, ogr, osr
+
 from .dataset import *
 from .dataframe import *
 from .utils import *

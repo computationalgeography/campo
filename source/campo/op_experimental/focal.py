@@ -337,6 +337,8 @@ def _focal_agents(values):
             res = numpy.sum(masked)
           else:
             raise NotImplementedError
+        else:
+          res = numpy.nan
 
         if fail == True:
           assert res != 0
@@ -455,9 +457,7 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
     tasks = len(todos)
     chunks = tasks // cpus
 
-    #_focal_agents(todos[0])
-
-    with futures.ThreadPoolExecutor(max_workers=cpus) as ex:
+    with futures.ProcessPoolExecutor(max_workers=cpus) as ex:
       results = ex.map(_focal_agents, todos, chunksize=chunks)
 
     for result in results:
