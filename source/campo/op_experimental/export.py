@@ -233,28 +233,81 @@ def to_tiff(dataframe, crs='', directory='', timestep=None):
         del dataframe[phen_name][pset_name]['_campo_space_type']
         raise NotImplementedError
 
-def to_csv(frame, filename):
 
-  phen_name = frame.keys()
+def to_csv(dataframe, filename):
+
+  fname, tail = os.path.splitext(os.path.basename(filename))
+  phen_name = dataframe.keys()
 
   dfObj = pd.DataFrame()
 
-  for phen_name in frame.keys():
-    phen = frame[phen_name]
+  for phen_name in dataframe.keys():
+    phen = dataframe[phen_name]
     for pset_name in phen.keys():
-      propset = frame[phen_name][pset_name]
+      propset = dataframe[phen_name][pset_name]
 
-      for prop_name in propset.keys():
-        dfObj['x'] = frame[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
-        dfObj['y'] = frame[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
+      if propset['_campo_space_type'] == 'dynamic_same_point':
+
+        del dataframe[phen_name][pset_name]['_campo_space_type']
+
+        for prop_name in propset.keys():
+          xcoord = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
+          ycoord = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
+          dfObj = pd.DataFrame()
+          dfObj['CoordX'] = xcoord
+          dfObj['CoordY'] = ycoord
+          coordname = f'{fname}_coords.csv'
+          dfObj.to_csv(coordname, index=False)
+
+          dfObj = pd.DataFrame()
+          p = dataframe[phen_name][pset_name][prop_name]
+          obj_values = p['values']
+          for a in range(p['values'].shape[0]):
+           dfObj[f'ag{a}'] = p['values'].values[a]
 
 
-      for prop_name in propset.keys():
-        prop = frame[phen_name][pset_name][prop_name]
+          outname = f'{fname}_{prop_name}.csv'
+          dfObj.to_csv(outname, index=False)
 
-        dfObj[prop_name] = prop['values'].data
 
-  dfObj.to_csv(filename, index=False)
+      elif propset['_campo_space_type'] == 'static_same_point':
+          dfObj = pd.DataFrame()
+          del dataframe[phen_name][pset_name]['_campo_space_type']
+
+          for prop_name in propset.keys():
+            dfObj['CoordX'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
+            dfObj['CoordY'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
+
+          for prop_name in propset.keys():
+              prop = dataframe[phen_name][pset_name][prop_name]
+              dfObj[prop_name] = prop['values'].data
+
+          outname = f'{fname}.csv'
+          dfObj.to_csv(outname, index=False)
+
+      else:
+        raise NotImplementedError
+
+
+  return
+
+
+
+      #for prop_name in propset.keys():
+        #dfObj['CoordX'] = frame[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
+        #dfObj['CoordY'] = frame[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
+
+
+      #for prop_name in propset.keys():
+        #prop = frame[phen_name][pset_name][prop_name]
+
+        #dfObj[prop_name] = prop['values'].data
+
+  ##fname, tail = os.path.splitext(os.path.basename(filename))
+
+  ##csv_fname = f'{fname}.csv'
+
+  #dfObj.to_csv(filename, index=False)
 
 
 

@@ -397,14 +397,7 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
     assert dst_crs == field_crs
 
 
-    pp = next(iter(source_point._properties))
-    tmp_prop = copy.deepcopy(source_point._properties[pp])
-
-
- # new_prop = Property()
-
-  #fame.lue_property.Property(property_set._phen, property_set.shapes, property_set.uuid, property_set._domain, property_set.time_discretization)
-
+    tmp_prop = Property('emptyfocal_agents', dest.uuid, dest.space_domain, dest.shapes, numpy.nan)
 
 
     #spatial_ref = osr.SpatialReference()
@@ -462,7 +455,6 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
 
     for result in results:
       tmp_prop.values().values[result[0]] = result[1]
-
 
     return tmp_prop
     # sequential #

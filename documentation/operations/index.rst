@@ -79,5 +79,6 @@ Reading from a LUE dataset
 .. autosummary::
    :toctree: generated
 
+   to_csv
    to_gpkg
    to_tiff
