@@ -6,11 +6,11 @@ import multiprocessing
 import sys
 
 from osgeo import gdal, ogr, osr
-import pcraster
 
 from ..property import Property
 
 import time
+import pcraster
 
 def _spatial_operation(area_property, spatial_operation):
 
@@ -221,11 +221,11 @@ def spread(start_locations, frictiondist, friction):
     item = (idx, start_locations_values, frictiondist_values, friction_values, clone)
     todo.append(item)
 
-  cpus = 1#multiprocessing.cpu_count()
+  cpus = multiprocessing.cpu_count()
   tasks = len(todo)
   chunks = tasks // cpus
 
-  with futures.ThreadPoolExecutor(max_workers=cpus) as ex:
+  with futures.ProcessPoolExecutor(max_workers=cpus) as ex:
     results = ex.map(_pspread, todo, chunksize=chunks)
 
   for result in results:

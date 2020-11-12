@@ -192,7 +192,8 @@ def to_tiff(dataframe, crs='', directory='', timestep=None):
             ymax = obj.ycoord[-1].values.item()
             geotransform = (xmin, cellsize, 0, ymax, 0, -cellsize)
 
-            fname = os.path.join(directory, f'{prop_name}_{obj_id}.tiff')
+            out_id = obj_id + 1
+            fname = os.path.join(directory, f'{prop_name}_{out_id}.tiff')
 
             dtype = None
             if data.dtype.kind == 'f':

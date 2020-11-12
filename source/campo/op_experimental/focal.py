@@ -210,7 +210,7 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
 
 
 def _focal_agents(values):
-#(idx, tmp_prop, nr_locs, values_weight, extent, spatial_ref, lyr_dst, operation, fail, dest_prop, point_crs)
+#(idx, tmp_prop, nr_locs, values_weight, extent, spatial_ref, lyr_dst, operation, fail, dest_prop, point_crs, d_domain, d_values)
       idx = values[0]
       #tmp_prop = values[1]
       nr_locs = values[2]
@@ -220,13 +220,14 @@ def _focal_agents(values):
       #lyr_dst = values[6]
       #operation = values[7]
       fail = values[8]
-      dest_prop = values[9]
+      #dest_prop = values[9]
       crs = values[10]
+      d_domain = values[11]
+      d_values = values[12]
 
 
       spatial_ref = osr.SpatialReference()
       spatial_ref.ImportFromEPSG(crs)
-
 
       ds = ogr.GetDriverByName('MEMORY').CreateDataSource(f'mem{idx}')
 
@@ -261,24 +262,19 @@ def _focal_agents(values):
       lyr_dst = ds.GetLayer(lname)
 
 
-
-
       # Raster for points to query
       nr_rows = extent[4]
       nr_cols = extent[5]
       cellsize = math.fabs(extent[2] - extent[0]) / nr_cols
 
 
+      #
       minX = extent[0]
-      maxY = extent[3]
+      maxX = extent[2]
+      minY = extent[3]
+      maxY = extent[1]
 
-      #if ds.GetLayerByName('extent'):
-      #      ds.DeleteLayer('extent')
-      #ds.DeleteLayer('extent')
-
-      ds_extent = ogr.GetDriverByName('MEMORY').CreateDataSource(f'ds_extent{idx}')
-
-      extent_lyr = ds_extent.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
+      extent_lyr = ds.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
       assert extent_lyr
 
       feat = ogr.Feature(extent_lyr.GetLayerDefn())
@@ -297,10 +293,7 @@ def _focal_agents(values):
       feat.SetGeometry(poly)
       extent_lyr.CreateFeature(feat)
 
-      #if ds.GetLayerByName('intersect'):
-      #      ds.DeleteLayer('intersect')
-
-      intersect_layer = ds_extent.CreateLayer('locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
+      intersect_layer = ds.CreateLayer('intersect', geom_type=ogr.wkbPoint, srs=spatial_ref)
       assert intersect_layer
 
       lyr_dst.Intersection(extent_lyr, intersect_layer)
@@ -443,7 +436,10 @@ def focal_agents(dest, weight, source, fail=False):
       extent = source_field.space_domain._extent(idx)
       dprop = copy.deepcopy(dest_prop)
 
-      item = (idx, 'tmp_prop', nr_locs, values_weight, extent, 'spatial_ref', 'lyr_dst', 'operation', fail, dprop, point_crs)
+      d_domain = dest_prop.space_domain
+      d_values = dest_prop.values()
+
+      item = (idx, 'tmp_prop', nr_locs, values_weight, extent, 'spatial_ref', 'lyr_dst', 'operation', fail, 'dprop', point_crs, d_domain, d_values)
       todos.append(item)
 
 
