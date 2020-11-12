@@ -271,8 +271,8 @@ def _focal_agents(values):
       #
       minX = extent[0]
       maxX = extent[2]
-      minY = extent[3]
-      maxY = extent[1]
+      minY = extent[1]
+      maxY = extent[3]
 
       extent_lyr = ds.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
       assert extent_lyr
@@ -282,9 +282,9 @@ def _focal_agents(values):
       ring = ogr.Geometry(ogr.wkbLinearRing)
 
       ring.AddPoint(minX, maxY)
-      ring.AddPoint(minX + nr_cols * cellsize, maxY)
-      ring.AddPoint(minX + nr_cols * cellsize, maxY - nr_rows * cellsize)
-      ring.AddPoint(minX, maxY - nr_rows * cellsize)
+      ring.AddPoint(maxX, maxY)
+      ring.AddPoint(maxX, minY)
+      ring.AddPoint(minX, minY)
       ring.AddPoint(minX, maxY)
 
       poly = ogr.Geometry(ogr.wkbPolygon)
