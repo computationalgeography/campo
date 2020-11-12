@@ -239,7 +239,7 @@ def _focal_agents(values):
       field = ogr.FieldDefn('value', ogr.OFTReal)
       lyr_dst.CreateField(field)
 
-      for pidx, p in enumerate(dest_prop.space_domain):
+      for pidx, p in enumerate(d_domain):
         point = ogr.Geometry(ogr.wkbPoint)
 
         point.AddPoint(p[0], p[1])
@@ -247,9 +247,9 @@ def _focal_agents(values):
         feat.SetGeometry(point)
         val = None
         try:
-          val = dest_prop.values()[pidx][0]
+          val = d_values[pidx][0]
         except:
-          val = dest_prop.values()[pidx]
+          val = d_values[pidx]
 
         assert val
         feat.SetField('value', float(val))
@@ -434,7 +434,6 @@ def focal_agents(dest, weight, source, fail=False):
       values_weight = source_field.values()[idx]
 
       extent = source_field.space_domain._extent(idx)
-      dprop = copy.deepcopy(dest_prop)
 
       d_domain = dest_prop.space_domain
       d_values = dest_prop.values()
