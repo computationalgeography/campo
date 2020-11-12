@@ -218,7 +218,7 @@ def _focal_agents(values):
       extent = values[4]
       #spatial_ref = values[5]
       #lyr_dst = values[6]
-      operation = values[7]
+      #operation = values[7]
       fail = values[8]
       dest_prop = values[9]
       crs = values[10]
@@ -262,8 +262,6 @@ def _focal_agents(values):
 
 
 
-      point_values = numpy.empty(nr_locs)
-      point_values.fill(numpy.nan)
 
       # Raster for points to query
       nr_rows = extent[4]
@@ -311,45 +309,50 @@ def _focal_agents(values):
 
       raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight, numpy.nan)
 
+
+      point_values = numpy.empty(nr_locs)
       point_values.fill(numpy.nan)
+      weight_values = numpy.empty(nr_locs)
+      weight_values.fill(numpy.nan)
 
       for iidx, feature in enumerate(intersect_layer):
         x = feature.GetGeometryRef().GetX()
         y = feature.GetGeometryRef().GetY()
 
         try:
-          mask_value, valid = pcraster.cellvalue_by_coordinates(raster, x, y)
+          # Only add points that are 'valid' PCRaster points
+          # coordinate lookup might fail if point returned by gdal is on lower and right border
+          field_value, valid = pcraster.cellvalue_by_coordinates(raster, x, y)
+          point_value = feature.GetField('value')
+          if valid:
+            point_values[iidx] = point_value
+            weight_values[iidx] = field_value
         except:
           pass
-        agent_value = feature.GetField('value')
-        point_values[iidx] = mask_value * agent_value
 
       indices = ~numpy.isnan(point_values)
-      masked = point_values[indices]
+      masked_points = point_values[indices]
+      masked_weights = weight_values[indices]
 
-      with warnings.catch_warnings():
-        warnings.simplefilter('ignore', category=RuntimeWarning)
-        res = 0.0
-        if len(masked) > 0:
-          if operation == 'average':
-            res = numpy.average(masked)
-          elif operation == 'sum':
-            res = numpy.sum(masked)
-          else:
-            raise NotImplementedError
-        else:
-          res = numpy.nan
+      result = numpy.nan
 
-        if fail == True:
-          assert res != 0
+      if len(masked_weights) > 0:
+        try:
+          result = numpy.average(masked_points, weights=masked_weights)
+        except ZeroDivisionError as r:
+          msg = _color_message(f'AgentID {idx}: {r}')
+          raise ZeroDivisionError(msg)
 
-        return idx, res
+      if fail == True:
+        assert not numpy.isnan(result)
+
+      return idx, result
 
 
 
 
 
-def focal_agents(dest, weight, source, operation='average', fail=False):
+def focal_agents(dest, weight, source, fail=False):
     """
 
     dest: point property set (determines property return type)
@@ -357,8 +360,6 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
     weight: field property (weight/mask)
 
     source: point property (values to gather from)
-
-    operation: type of operation, being 'average' (default), 'sum'
     """
 
 
@@ -442,7 +443,7 @@ def focal_agents(dest, weight, source, operation='average', fail=False):
       extent = source_field.space_domain._extent(idx)
       dprop = copy.deepcopy(dest_prop)
 
-      item = (idx, 'tmp_prop', nr_locs, values_weight, extent, 'spatial_ref', 'lyr_dst', operation, fail, dprop, point_crs)
+      item = (idx, 'tmp_prop', nr_locs, values_weight, extent, 'spatial_ref', 'lyr_dst', 'operation', fail, dprop, point_crs)
       todos.append(item)
 
 
