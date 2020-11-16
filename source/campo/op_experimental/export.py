@@ -189,10 +189,11 @@ def to_tiff(dataframe, crs='', directory='', timestep=None):
 
             data = obj.data
             xmin = obj.xcoord[0].values.item()
-            ymax = obj.ycoord[-1].values.item()
+            # last ycoordinate is the lower of the topmost row, we need the upper ycoordinate for the extent
+            ymax = obj.ycoord[-1].values.item() + cellsize
             geotransform = (xmin, cellsize, 0, ymax, 0, -cellsize)
 
-            out_id = obj_id + 1
+            out_id = int(obj_id + 1)
             fname = os.path.join(directory, f'{prop_name}_{out_id}.tiff')
 
             dtype = None
