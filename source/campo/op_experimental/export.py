@@ -7,6 +7,7 @@ import subprocess
 import tempfile
 import numpy
 import shutil
+import copy
 
 import lue.data_model as ldm
 
@@ -39,13 +40,16 @@ def to_gpkg(dataframe, filename, crs='', timestep=None):
 
         if propset['_campo_space_type'] == 'static_same_point':
           dfObj = pd.DataFrame()
-          del dataframe[phen_name][pset_name]['_campo_space_type']
 
-          for prop_name in propset.keys():
+          property_names = list(propset.keys())
+          property_names.remove('_campo_space_type')
+
+
+          for prop_name in property_names:
             dfObj['CoordX'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
             dfObj['CoordY'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
 
-            for prop_name in propset.keys():
+            for prop_name in property_names:
               prop = dataframe[phen_name][pset_name][prop_name]
               dfObj[prop_name] = prop['values'].data
 
@@ -98,15 +102,17 @@ def to_gpkg(dataframe, filename, crs='', timestep=None):
         if not propset['_campo_space_type'] == 'dynamic_same_point':
           raise NotImplementedError
 
-        del dataframe[phen_name][pset_name]['_campo_space_type']
-
         dfObj = pd.DataFrame()
 
-        for prop_name in propset.keys():
+        property_names = list(propset.keys())
+        property_names.remove('_campo_space_type')
+
+
+        for prop_name in property_names:
             dfObj['CoordX'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
             dfObj['CoordY'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
 
-        for prop_name in propset.keys():
+        for prop_name in property_names:
           p = dataframe[phen_name][pset_name][prop_name]
           # User provided timestep to array index
           ts = timestep - 1
@@ -175,9 +181,10 @@ def to_tiff(dataframe, crs='', directory='', timestep=None):
           msg = _color_message('Only for field agents')
           raise TypeError(msg)
 
-        del dataframe[phen_name][pset_name]['_campo_space_type']
+        property_names = list(propset.keys())
+        property_names.remove('_campo_space_type')
 
-        for prop_name in propset.keys():
+        for prop_name in property_names:
           objects = dataframe[phen_name][pset_name][prop_name]
 
           for obj_id in objects:
@@ -232,7 +239,6 @@ def to_tiff(dataframe, crs='', directory='', timestep=None):
           msg = _color_message('Only for field agents')
           raise TypeError(msg)
 
-        del dataframe[phen_name][pset_name]['_campo_space_type']
         raise NotImplementedError
 
 
@@ -250,9 +256,11 @@ def to_csv(dataframe, filename):
 
       if propset['_campo_space_type'] == 'dynamic_same_point':
 
-        del dataframe[phen_name][pset_name]['_campo_space_type']
+        property_names = list(propset.keys())
+        property_names.remove('_campo_space_type')
 
-        for prop_name in propset.keys():
+
+        for prop_name in property_names:
           xcoord = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
           ycoord = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
           dfObj = pd.DataFrame()
@@ -274,13 +282,15 @@ def to_csv(dataframe, filename):
 
       elif propset['_campo_space_type'] == 'static_same_point':
           dfObj = pd.DataFrame()
-          del dataframe[phen_name][pset_name]['_campo_space_type']
 
-          for prop_name in propset.keys():
+          property_names = list(propset.keys())
+          property_names.remove('_campo_space_type')
+
+          for prop_name in property_names:
             dfObj['CoordX'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
             dfObj['CoordY'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
 
-          for prop_name in propset.keys():
+          for prop_name in property_names:
               prop = dataframe[phen_name][pset_name][prop_name]
               dfObj[prop_name] = prop['values'].data
 
