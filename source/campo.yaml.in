@@ -11,6 +11,8 @@ dependencies:
   - pandas
   - gdal
   - networkx
+  - spyder
+  - qgis
   - pip
   - pip:
     - https://campo.computationalgeography.org/download/campo-${campo_VERSION}-py3-none-any.whl
