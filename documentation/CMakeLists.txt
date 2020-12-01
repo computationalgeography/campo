@@ -45,6 +45,7 @@ set(SOURCES
   general/sourcecode.rst
   general/indices.rst
   operations/index.rst
+  operations/dataframe.rst
 )
 
 

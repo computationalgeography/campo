@@ -17,7 +17,7 @@ from ..utils import _color_message
 
 
 def to_gpkg(dataframe, filename, crs='', timestep=None):
-  """ Exports point agent properties to a Geopackage
+  """ Exports point agent properties to a GeoPackage
 
   :param dataframe: Input dataframe from LUE dataset
   :type dataframe: dataframe
@@ -243,6 +243,13 @@ def to_tiff(dataframe, crs='', directory='', timestep=None):
 
 
 def to_csv(dataframe, filename):
+  """ Exports point agent properties to a CSV
+
+  :param dataframe: Input dataframe from LUE dataset
+  :type dataframe: dataframe
+  :param filename: Output filename
+  :type filename: str
+  """
 
   fname, tail = os.path.splitext(os.path.basename(filename))
   phen_name = dataframe.keys()

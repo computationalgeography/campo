@@ -20,6 +20,7 @@ You can find more infomation about this project on the `Campo <https://campo.com
    general/introduction.rst
    general/concepts.rst
    operations/index.rst
+   operations/dataframe.rst
    general/install.rst
    general/sourcecode.rst
    general/indices.rst

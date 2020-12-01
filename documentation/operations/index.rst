@@ -73,7 +73,7 @@ Operations on field properties
 
 
 
-Reading from a LUE dataset
+Exporting to other formats
 --------------------------
 
 .. autosummary::
