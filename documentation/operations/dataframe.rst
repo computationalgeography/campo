@@ -17,7 +17,7 @@ In general, access to a LUE dataset by using the dataframe approach can be done 
    dataset = ldm.open_dataset("catchment.lue")
 
    # Obtain elevation and landuse properties from the catchment phenomenon
-   dataframe = df.dataframe.select(dataset.catchment, property_names=['elevation', 'landuse'])
+   dataframe = campo.dataframe.select(dataset.catchment, property_names=['elevation', 'landuse'])
 
 
 ``dataframe`` returned by ``select()`` holds a nested dictionary with the following general structure:
@@ -64,8 +64,8 @@ This situation applies to point agents, and field agents all having the same spa
    objj_id: list of object IDs
 
 
-Agents have the different shapes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Agents having different shapes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This situation applies field agents each having a different spatial extent (e.g. field-agents representing different catchments).
 ``select()`` returns a structure as follows:
@@ -99,8 +99,8 @@ This situation applies to point agents, and field agents all having the same spa
    objj_id: list of object IDs, e.g. [1,2,3,4,5]
    time: list with timesteps, e.g. ['2000-01-01', '2000-01-02', '2000-01-03']
 
-Agents have the different shapes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Agents having different shapes
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 This situation applies field agents each having a different spatial extent (e.g. field-agents representing different catchments).
@@ -150,3 +150,21 @@ In case you want to have plain access to the array values you can obtain them as
    res = property_values.values
 
 
+
+
+
+
+
+
+Reference
+---------
+
+.. currentmodule:: campo
+
+.. autosummary::
+   :toctree: generated
+
+   dataframe.select
+   to_csv
+   to_gpkg
+   to_tiff

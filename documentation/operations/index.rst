@@ -73,12 +73,3 @@ Operations on field properties
 
 
 
-Exporting to other formats
---------------------------
-
-.. autosummary::
-   :toctree: generated
-
-   to_csv
-   to_gpkg
-   to_tiff
