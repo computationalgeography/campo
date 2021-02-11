@@ -206,7 +206,7 @@ def select_variable_same_shape_constant_shape_arrays(
     assert time_domain.value.nr_boxes == 1
 
     # Construct list of time steps...
-    nr_timesteps = time_domain.value[0][1] + 1
+    nr_timesteps = int(time_domain.value[0][1] + 1)
 
     clock = time_domain.clock
     epoch = clock.epoch
@@ -315,7 +315,7 @@ def select_variable_different_shape_constant_shape_arrays(
     assert time_domain.value.nr_boxes == 1
 
     # Construct list of time steps...
-    nr_timesteps = time_domain.value[0][1]# + 1
+    nr_timesteps = int(time_domain.value[0][1])# + 1
 
     clock = time_domain.clock
     epoch = clock.epoch

@@ -24,6 +24,10 @@ class TimeDiscretization(enum.Enum):
 class TimeUnit(enum.Enum):
   """ Enum to indicate time step unit of a model """
 
+  second = ldm.Unit.second
+  minute = ldm.Unit.minute
+  hour = ldm.Unit.hour
   day = ldm.Unit.day
+  week = ldm.Unit.week
   month = ldm.Unit.month
   year = ldm.Unit.year
