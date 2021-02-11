@@ -70,6 +70,3 @@ Operations on field properties
 
    slope
    spread
-
-
-

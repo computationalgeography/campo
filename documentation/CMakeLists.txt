@@ -25,7 +25,7 @@ configure_file(pip.rst.in
 # similar with PCRaster, maks empty dir to allow for module import
 file(WRITE ${CMAKE_BINARY_DIR}/source/lue/data_model/__init__.py
 "class Unit(object):
-  day,month,year=1,1,1
+  day,month,year,second,minute,week,hour=1,1,1,1,1,1,1
 "
 )
 file(WRITE ${CMAKE_BINARY_DIR}/source/pcraster/__init__.py "")

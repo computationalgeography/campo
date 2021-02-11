@@ -22,7 +22,7 @@ class TimeDiscretization(enum.Enum):
 
 
 class TimeUnit(enum.Enum):
-  """ Enum to indicate time step unit of a model """
+  """ Supported time step units in model """
 
   second = ldm.Unit.second
   minute = ldm.Unit.minute
