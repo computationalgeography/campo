@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('../source/'))
 # -- Project information -----------------------------------------------------
 
 project = 'Campo'
-copyright = '2020, ${campo_ORGANISATION_NAME}.'
+copyright = '${campo_COPYRIGHT}.'
 author = '${campo_ORGANISATION_NAME}'
 
 # The short X.Y version
