@@ -76,26 +76,26 @@ install(
     ${SOURCES}
     ${CMAKE_CURRENT_BINARY_DIR}/__about__.py
   DESTINATION
-    ${CMAKE_BINARY_DIR}/package/campo
+    ${CAMPO_INSTALL_DIR}/campo
 )
 
 install(
   FILES
     ${FIELD_SOURCES}
   DESTINATION
-    ${CMAKE_BINARY_DIR}/package/campo/op_fields
+    ${CAMPO_INSTALL_DIR}/campo/op_fields
 )
 
 install(
   FILES
     ${FIELDAGENT_SOURCES}
   DESTINATION
-    ${CMAKE_BINARY_DIR}/package/campo/op_fieldagents
+    ${CAMPO_INSTALL_DIR}/campo/op_fieldagents
 )
 
 install(
   FILES
     ${EXPERIMENTAL_SOURCES}
   DESTINATION
-    ${CMAKE_BINARY_DIR}/package/campo/op_experimental
+    ${CAMPO_INSTALL_DIR}/campo/op_experimental
 )

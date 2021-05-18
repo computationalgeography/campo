@@ -33,7 +33,7 @@ jobs:
           run: |
               mkdir build
               cd build
-              cmake ../
+              cmake .. -DCAMPO_BUILD_WHEEL=ON
               make documentation
               make install
               rm -f package/dist/*gz
