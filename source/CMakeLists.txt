@@ -27,5 +27,5 @@ if(CAMPO_BUILD_WHEEL)
   )
 
   install(CODE "execute_process(COMMAND ${Python3_EXECUTABLE} setup.py sdist bdist_wheel
-                                WORKING_DIRECTORY ${CAMPO_INSTALL_DIR}")
+                                WORKING_DIRECTORY ${CAMPO_INSTALL_DIR})")
 endif()

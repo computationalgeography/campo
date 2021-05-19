@@ -8,5 +8,3 @@
 
 environment/conda/
 environment/configuration/
-
-documentation/

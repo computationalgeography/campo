@@ -143,9 +143,18 @@ class Campo(object):
       elif isinstance(property_set.space_domain, Areas):
 
         if prop.is_dynamic:
+          time_boxes = 1
           lue_prop = pset.add_property(prop.name, dtype=np.dtype(dtype), rank=2,
             shape_per_object=ldm.ShapePerObject.different,
             shape_variability=ldm.ShapeVariability.constant)
+
+          # Just create these once...
+          if pset.object_tracker.active_object_id.nr_ids == 0:
+            pset.object_tracker.active_object_id.expand(time_boxes * nr_objects)[:] = self.lue_dataset.phenomena[phen_name].object_id[:]
+            pset.object_tracker.active_set_index.expand(time_boxes)[:] = 0
+
+            time_domain = pset.time_domain
+            time_domain.value.expand(time_boxes)[:] = [0, self._nr_timesteps]
         else:
           # Same shape
           # prop = pset.add_property(property_name, dtype=np.dtype(dtype), shape=shape)
@@ -156,18 +165,21 @@ class Campo(object):
 
         space_discr = pset.campo_discretization
 
-        for idx, item in enumerate(property_set.space_domain):
-          space_discr.value[idx]= [item[4], item[5]]
+        if len(pset.campo_discretization.value) == 0:
 
+          shapes = 43000 + np.arange(
+                    1, nr_objects * 2 + 1, dtype=ldm.dtype.Count) \
+                        .reshape(nr_objects, 2)
 
-        lue_prop.set_space_discretization(
-            ldm.SpaceDiscretization.regular_grid,
-            space_discr)
+          for idx, item in enumerate(property_set.space_domain):
+            shapes[idx] = [item[4], item[5]]
+            space_discr.value.expand(property_set.nr_objects)[:] = shapes
+
 
         rank = 2
         if prop.is_dynamic:
           for idx, item in enumerate(property_set.space_domain):
-            prop.value.expand(idx, tuple([item[4], item[5]]), nr_timesteps)
+            lue_prop.value.expand(idx, tuple([item[4], item[5]]), self.nr_timesteps)
         else:
           shapes = np.zeros(nr_objects * rank, dtype=ldm.dtype.Count).reshape(nr_objects, rank)
 
@@ -176,6 +188,11 @@ class Campo(object):
             shapes[idx][1] = item[5]
 
           lue_prop.value.expand(self.lue_dataset.phenomena[phen_name].object_id[:], shapes)
+
+
+        lue_prop.set_space_discretization(
+            ldm.SpaceDiscretization.regular_grid,
+            space_discr)
 
       else:
         raise NotImplementedError
@@ -250,7 +267,7 @@ class Campo(object):
        #   tmp_prop.value[idx]= [item[4], item[5]]
 
         tmp_prop = tmp_pset.add_property('campo_discretization', dtype=ldm.dtype.Count, shape=(2,))
-        tmp_prop.value.expand(property_set.nr_objects)
+        #tmp_prop.value.expand(property_set.nr_objects)
 
 
 

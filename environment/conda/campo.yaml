@@ -15,4 +15,4 @@ dependencies:
   - qgis
   - pip
   - pip:
-    - https://campo.computationalgeography.org/download/campo-0.0.28-py3-none-any.whl
+    - https://campo.computationalgeography.org/download/campo-0.3.0-py3-none-any.whl
