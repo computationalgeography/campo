@@ -13,5 +13,19 @@ Documentation can be found [here](https://campo.computationalgeography.org/docum
 Campo is developed by the [Computational Geography](https://www.computationalgeography.org) group.
 
 
+## Installation
+
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/campo/badges/version.svg)](https://anaconda.org/conda-forge/campo)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/campo/badges/platforms.svg)](https://anaconda.org/conda-forge/campo)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/campo/badges/installer/conda.svg)](https://conda.anaconda.org/conda-forge)
+
+Packages are available for Linux, macOS and Windows via [conda-forge](https://github.com/conda-forge/campo-feedstock).
+Install Campo with:
+```bash
+conda install -c conda-forge campo
+```
+
+## Build status
+
 [![Build and deploy](https://github.com/computationalgeography/campo/workflows/Build%20and%20deploy/badge.svg)](https://github.com/computationalgeography/campo/actions)
 
