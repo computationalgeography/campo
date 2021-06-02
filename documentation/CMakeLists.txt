@@ -15,10 +15,6 @@ configure_file(conf.py.in
   conf.py
 )
 
-configure_file(pip.rst.in
-  pip.rst
-)
-
 
 # Hack to mimic Python modules
 # this way we don't need to install the packages for documentation building

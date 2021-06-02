@@ -6,7 +6,7 @@ A brief outline of the framework for field and agent based modelling.
 .. This framework builds upon the LUE scientific database, PCRaster and
 .. the PCRaster modelling framework.
 
-You can find more infomation about this project on the `Campo <https://campo.computationalgeography.org/>`_ project website.
+You can find more information about this project on the `Campo <https://campo.computationalgeography.org/>`_ project website.
 
 
 .. note::

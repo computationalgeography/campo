@@ -2,7 +2,7 @@ Installation
 ============
 
 You can install Campo on Windows, macOS or Linux.
-Supported Python versions are 3.6 up to 3.9.
+Supported Python versions are 3.6 or higher.
 
 Installing Python
 -----------------
@@ -12,45 +12,28 @@ An alternative distribution is |anaconda| provided by Continuum Analytics.
 The user guide and short reference on the conda pacakge manager can be found |minicondadoc|.
 
 
-
-
 Installing Campo using Conda
 ----------------------------
 
-We provide an environment file that you can use to install Campo.
-|campoenv| the file or copy the following content to a file named ``campo.yaml``:
+You can install Campo in an existing environment with
 
-.. literalinclude:: ../campo.yaml
+.. code-block:: console
 
-then install it with
-
-.. code-block:: bash
-
-   conda env create -f campo.yaml
+   conda install -c conda-forge campo
 
 
+..
+.. After a successful installation you can activate your ``campo`` environment with
+..
+.. .. code-block:: bash
+..
+.. ..    conda activate campo
 
-After a successful installation you can activate your ``campo`` environment with
+You can test your installation afterwards by printing the Campo version number
 
-.. code-block:: bash
-
-   conda activate campo
-
-You can test your installation by printing the Campo version number
-
-.. code-block:: bash
+.. code-block:: console
 
    python -c "import campo; print(campo.__version__)"
-
-
-
-Upgrading Campo using pip
--------------------------
-
-Most likely it is sufficient to upgrade the Campo module instead of recreating the conda environment.
-Within your ``campo`` environment you can upgrade Campo to a newer version using pip:
-
-.. include:: ../pip.rst
 
 
 
@@ -69,8 +52,3 @@ Within your ``campo`` environment you can upgrade Campo to a newer version using
 .. |anaconda| raw:: html
 
    <a href="https://www.anaconda.com/" target="_blank">Anaconda</a>
-
-
-.. |campoenv| raw:: html
-
-   <a href="https://github.com/computationalgeography/campo/blob/master/environment/conda/campo.yaml" target="_blank">Download</a>
