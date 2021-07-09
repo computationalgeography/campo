@@ -179,7 +179,7 @@ class Campo(object):
         rank = 2
         if prop.is_dynamic:
           for idx, item in enumerate(property_set.space_domain):
-            lue_prop.value.expand(idx, tuple([item[4], item[5]]), self.nr_timesteps)
+            lue_prop.value.expand(idx, tuple([item[4], item[5]]), self._nr_timesteps)
         else:
           shapes = np.zeros(nr_objects * rank, dtype=ldm.dtype.Count).reshape(nr_objects, rank)
 
