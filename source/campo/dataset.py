@@ -267,7 +267,7 @@ class Campo(object):
        #   tmp_prop.value[idx]= [item[4], item[5]]
 
         tmp_prop = tmp_pset.add_property('campo_discretization', dtype=ldm.dtype.Count, shape=(2,))
-        #tmp_prop.value.expand(property_set.nr_objects)
+        tmp_prop.value.expand(property_set.nr_objects)
 
 
 
