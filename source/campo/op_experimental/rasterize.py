@@ -3,6 +3,7 @@ from osgeo import osr
 from osgeo import ogr
 
 import math
+import numpy as np
 
 
 
@@ -124,4 +125,26 @@ def feature_to_raster_all(field_pset, point_pset):
 
 
   return tmp_prop
+
+
+
+def feature_values_to_raster(field_pset, point_pset, point_prop):
+
+  tmp_prop = Property('emptycreatename', field_pset.uuid, field_pset.space_domain, field_pset.shapes)
+
+  for idx,area in enumerate(field_pset.space_domain):
+
+    nr_rows = int(area[4])
+    nr_cols = int(area[5])
+
+    raster = np.zeros((nr_rows *  nr_cols))
+
+    for pidx,coordinate in enumerate(point_pset.space_domain):
+      raster[pidx] = point_prop.values()[pidx][0]
+
+    tmp_prop.values()[idx] = raster.reshape((nr_rows, nr_cols))
+
+  return tmp_prop
+
+
 

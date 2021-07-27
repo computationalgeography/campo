@@ -36,22 +36,26 @@ def _spatial_operation(area_property, spatial_operation):
 def _new_property_from_property(area_property, multiplier):
 
   # make empty property
-  new_prop = Property()
+  #new_prop = Property()
 
-  fame.lue_property.Property(property_set._phen, property_set.shapes, property_set.uuid, property_set._domain, property_set.time_discretization)
+  #new_prop = _new_property_from_property(area_property, 0.0) #Property(area_property._phen, area_property.shapes, area_property.uuid, area_property._domain, area_property.time_discretization)
+  new_prop = Property("_new_property_from_property_name", area_property._pset_uuid, area_property._pset_domain, area_property._shape)
 
   # attach propertyset domain if available
-  new_prop.pset_domain = area_property.pset_domain
+  #new_prop.pset_domain = area_property.pset_domain
 
   # obtain number, datatype and shape of value
 
-  new_prop.shape = area_property.shape
-  new_prop.dtype = area_property.dtype
+  #new_prop.shape = area_property.shape
+  #new_prop.dtype = area_property.dtype
 
-  nr_items = area_property.shape[0]
+  nr_items = area_property._shape[0]
+  print(nr_items)
 
   # create and attach new value to property
-  values = numpy.ones(area_property.shape, area_property.dtype)
+  dtype = area_property.values()[0].dtype
+  print(dtype, area_property._shape[0])
+  values = numpy.ones(area_property._shape[0], dtype)#, area_property.dtype)
 
   #
   new_prop.values = values
@@ -118,22 +122,20 @@ def _spatial_operation_two_arguments(arg1_property, arg2_property, spatial_opera
 
 
 
-  for item_idx, item in enumerate(arg1_property.values):
+  for item_idx, item in enumerate(arg1_property.values()):
 
         _set_current_clone(arg1_property, item_idx)
 
 
-        arg1_raster = pcraster.numpy2pcr(pcr_type, arg1_property.values[item_idx], numpy.nan)
-        arg2_raster = pcraster.numpy2pcr(pcr_type, arg2_property.values[item_idx], numpy.nan)
+        arg1_raster = pcraster.numpy2pcr(pcr_type, arg1_property.values()[item_idx], numpy.nan)
+        arg2_raster = pcraster.numpy2pcr(pcr_type, arg2_property.values()[item_idx], numpy.nan)
 
 
         result_raster = spatial_operation(arg1_raster, arg2_raster)
 
         result_item = pcraster.pcr2numpy(result_raster, numpy.nan)
 
-        result_prop.values[item_idx] = result_item
-
-
+        result_prop.values = result_item
 
   return result_prop
 

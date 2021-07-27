@@ -65,6 +65,15 @@ def _AOpProp(number, arg2, op):
 
 
 
+def log(property):
+  """ Calculates the absolute value for each object the property values.
+
+  :param property:
+  :type property: Property
+  :returns: a property with the absolute values
+  :rtype: Property
+  """
+  return _PropOp(property, numpy.log)
 
 
 

@@ -72,6 +72,7 @@ class Values(object):
 
   def __next__(self):
         if self.iter_idx == self.nr_objects:
+            self.iter_idx = 0
             raise StopIteration
 
         values = self.values[self.iter_idx]

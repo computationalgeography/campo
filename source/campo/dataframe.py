@@ -349,6 +349,9 @@ def select_variable_different_shape_constant_shape_arrays(
         val = prop.value[oid][:]
 
         nr_rows, nr_cols = dis
+        if(nr_rows == 0 and nr_cols==0):
+          nr_rows = 30
+          nr_cols = 30
 
         xul = dom[0]
         yul = dom[1]
