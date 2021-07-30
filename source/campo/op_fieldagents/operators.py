@@ -253,6 +253,13 @@ def less_equal(self, other):
   return _PropOpB(self, other, numpy.less_equal, numpy.uint8)
 
 
+def logical_and(self, other):
+  return _PropOpB(self, other, numpy.logical_and, numpy.uint8)
+
+
+
+def _bool(self):
+  raise NotImplementedError
 
 Property.__add__= add
 Property.__radd__ = radd
@@ -273,3 +280,5 @@ Property.__gt__ = greater
 Property.__ge__ = greater_equal
 Property.__lt__ = less
 Property.__le__ = less_equal
+
+Property.__bool__ = _bool

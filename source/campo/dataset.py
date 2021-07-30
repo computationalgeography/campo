@@ -133,8 +133,7 @@ class Campo(object):
             pset.object_tracker.active_set_index.expand(time_boxes)[:] = 0
 
             time_domain = pset.time_domain
-            time_domain.value.expand(time_boxes)[:] = [0, self._nr_timesteps]
-
+            time_domain.value.expand(time_boxes)[:] = np.array([0, self._nr_timesteps])
         else:
           lue_prop = pset.add_property(prop.name, dtype=np.dtype(dtype))
           lue_prop.value.expand(nr_objects)
@@ -154,7 +153,7 @@ class Campo(object):
             pset.object_tracker.active_set_index.expand(time_boxes)[:] = 0
 
             time_domain = pset.time_domain
-            time_domain.value.expand(time_boxes)[:] = [0, self._nr_timesteps]
+            time_domain.value.expand(time_boxes)[:] = np.array([0, self._nr_timesteps])
         else:
           # Same shape
           # prop = pset.add_property(property_name, dtype=np.dtype(dtype), shape=shape)
@@ -165,15 +164,16 @@ class Campo(object):
 
         space_discr = pset.campo_discretization
 
-        if len(pset.campo_discretization.value) == 0:
+        # if number of rows/columns not yet set...
+        if pset.campo_discretization.value[0][0] == 0 and pset.campo_discretization.value[0][1] == 0:
 
-          shapes = 43000 + np.arange(
-                    1, nr_objects * 2 + 1, dtype=ldm.dtype.Count) \
+          shapes = np.arange(1, nr_objects * 2 + 1, dtype=ldm.dtype.Count) \
                         .reshape(nr_objects, 2)
 
           for idx, item in enumerate(property_set.space_domain):
             shapes[idx] = [item[4], item[5]]
-            space_discr.value.expand(property_set.nr_objects)[:] = shapes
+
+          space_discr.value[:] = shapes
 
 
         rank = 2
@@ -382,7 +382,7 @@ class Campo(object):
       time_boxes = 1
 
       time_cell.object_tracker.active_set_index.expand(time_boxes)[:] = 0
-      time_cell.time_domain.value.expand(time_boxes)[:] = [0, self._nr_timesteps]
+      time_cell.time_domain.value.expand(time_boxes)[:] = np.array([0, self._nr_timesteps])
 
       if self._debug:
         ldm.assert_is_valid(self.lue_filename)
