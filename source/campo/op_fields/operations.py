@@ -213,7 +213,7 @@ def spread(start_locations, frictiondist, friction):
 
   cpus = multiprocessing.cpu_count()
   tasks = len(todo)
-  chunks = tasks // cpus
+  chunks = max(1, tasks // cpus)
 
   with futures.ProcessPoolExecutor(max_workers=cpus) as ex:
     results = ex.map(_pspread, todo, chunksize=chunks)
