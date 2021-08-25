@@ -19,7 +19,6 @@ class Campo(object):
       self._nr_timesteps = None
       self._lue_clock = None
       self._lue_time_configuration = None
-      self.lue_dataset = None
       self.lue_filename = None
 
       self._debug = debug
@@ -100,20 +99,21 @@ class Campo(object):
 
       if os.path.exists(filename):
         os.remove(filename)
-        #raise FileExistsError("'{}' already exists".format(filename))
 
       self.lue_filename = fpath
 
-      self.lue_dataset = ldm.create_dataset(self.lue_filename)
+      lue_dataset = ldm.create_dataset(self.lue_filename)
 
       if self._debug:
-              ldm.assert_is_valid(self.lue_filename)
+          ldm.assert_is_valid(self.lue_filename)
 
 
 
     def _generate_lue_property(self, phen_name, property_set, prop):
 
-      pset = self.lue_dataset.phenomena[phen_name].property_sets[property_set.name]
+      dataset = ldm.open_dataset(self.lue_filename, 'w')
+
+      pset = dataset.phenomena[phen_name].property_sets[property_set.name]
 
       dtype = prop.values().values[0].dtype
 
@@ -129,7 +129,7 @@ class Campo(object):
 
           # Just create these once...
           if pset.object_tracker.active_object_id.nr_ids == 0:
-            pset.object_tracker.active_object_id.expand(time_boxes * nr_objects)[:] = self.lue_dataset.phenomena[phen_name].object_id[:]
+            pset.object_tracker.active_object_id.expand(time_boxes * nr_objects)[:] = dataset.phenomena[phen_name].object_id[:]
             pset.object_tracker.active_set_index.expand(time_boxes)[:] = 0
 
             time_domain = pset.time_domain
@@ -149,7 +149,7 @@ class Campo(object):
 
           # Just create these once...
           if pset.object_tracker.active_object_id.nr_ids == 0:
-            pset.object_tracker.active_object_id.expand(time_boxes * nr_objects)[:] = self.lue_dataset.phenomena[phen_name].object_id[:]
+            pset.object_tracker.active_object_id.expand(time_boxes * nr_objects)[:] = dataset.phenomena[phen_name].object_id[:]
             pset.object_tracker.active_set_index.expand(time_boxes)[:] = 0
 
             time_domain = pset.time_domain
@@ -187,7 +187,7 @@ class Campo(object):
             shapes[idx][0] = item[4]
             shapes[idx][1] = item[5]
 
-          lue_prop.value.expand(self.lue_dataset.phenomena[phen_name].object_id[:], shapes)
+          lue_prop.value.expand(dataset.phenomena[phen_name].object_id[:], shapes)
 
 
         lue_prop.set_space_discretization(
@@ -202,6 +202,8 @@ class Campo(object):
 
 
     def _generate_lue_property_set(self, phen_name, property_set):
+
+      dataset = ldm.open_dataset(self.lue_filename, 'w')
 
       rank = -1
       space_type = None
@@ -226,11 +228,11 @@ class Campo(object):
         #  raise NotImplementedError
 
       if static:
-        tmp_pset = self.lue_dataset.phenomena[phen_name].add_property_set(property_set.name, space_configuration, np.dtype(np.float64), rank=rank)
+        tmp_pset = dataset.phenomena[phen_name].add_property_set(property_set.name, space_configuration, np.dtype(np.float64), rank=rank)
       else:
-        tmp_pset = self.lue_dataset.phenomena[phen_name].add_property_set(property_set.name, self._lue_time_configuration, self._lue_clock, space_configuration, np.dtype(np.float64), rank=rank)
+        tmp_pset = dataset.phenomena[phen_name].add_property_set(property_set.name, self._lue_time_configuration, self._lue_clock, space_configuration, np.dtype(np.float64), rank=rank)
 
-      tmp_pset = self.lue_dataset.phenomena[phen_name].property_sets[property_set.name]
+      tmp_pset = dataset.phenomena[phen_name].property_sets[property_set.name]
 
 
       # Assign coordinates
@@ -290,9 +292,10 @@ class Campo(object):
 
       nr_objects = pset.nr_objects
 
+      dataset = ldm.open_dataset(self.lue_filename, 'w')
 
-      self.lue_dataset.add_phenomenon(phenomenon.name)
-      tmp = self.lue_dataset.phenomena[phenomenon.name]
+      dataset.add_phenomenon(phenomenon.name)
+      tmp = dataset.phenomena[phenomenon.name]
       tmp.object_id.expand(nr_objects)[:] = np.arange(nr_objects, dtype=ldm.dtype.ID)
 
       for p in phenomenon.property_sets.values():
@@ -305,6 +308,7 @@ class Campo(object):
 
 
     def _lue_write_property(self, phen_name, pset, prop, timestep):
+      dataset = ldm.open_dataset(self.lue_filename, 'w')
 
       # todo restructure this method...
 
@@ -314,8 +318,8 @@ class Campo(object):
               if timestep is not None:
                 return
 
-      lue_pset = self.lue_dataset.phenomena[phen_name].property_sets[pset.name]
-      object_ids = self.lue_dataset.phenomena[phen_name].object_id[:]
+      lue_pset = dataset.phenomena[phen_name].property_sets[pset.name]
+      object_ids = dataset.phenomena[phen_name].object_id[:]
 
       if not prop.is_dynamic:
               lue_prop = lue_pset.properties[prop.name]
@@ -347,8 +351,9 @@ class Campo(object):
 
     def write(self, timestep=None):
       """ """
+      dataset = ldm.open_dataset(self.lue_filename, 'r')
       for p in self._phenomena:
-        if not p in self.lue_dataset.phenomena:
+        if not p in dataset.phenomena:
           self._generate_lue_phenomenon(self._phenomena[p])
 
         for pset in self._phenomena[p].property_sets.values():
@@ -366,8 +371,9 @@ class Campo(object):
 
       self._lue_time_configuration = ldm.TimeConfiguration(ldm.TimeDomainItemType.box)
 
-      self.lue_dataset.add_phenomenon('framework')
-      tmp = self.lue_dataset.phenomena['framework']
+      dataset = ldm.open_dataset(self.lue_filename, 'w')
+      dataset.add_phenomenon('framework')
+      tmp = dataset.phenomena['framework']
 
       self.lue_time_extent = tmp.add_property_set(
               "campo_time_cell",
