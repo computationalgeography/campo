@@ -4,10 +4,13 @@ and return it in such a way that it becomes easy for postprocessing
 using other Python packages.
 """
 import os
+import warnings
 
 import numpy as np
 import xarray as xr
 import pandas as pd
+
+warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
 
 import lue.data_model as ldm
 

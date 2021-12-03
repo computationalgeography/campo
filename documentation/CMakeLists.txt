@@ -26,7 +26,6 @@ file(WRITE ${CMAKE_BINARY_DIR}/source/lue/data_model/__init__.py
 )
 file(WRITE ${CMAKE_BINARY_DIR}/source/pcraster/__init__.py "")
 file(WRITE ${CMAKE_BINARY_DIR}/source/xarray/__init__.py "")
-file(WRITE ${CMAKE_BINARY_DIR}/source/pandas/__init__.py "")
 file(WRITE ${CMAKE_BINARY_DIR}/source/networkx/__init__.py "")
 file(WRITE ${CMAKE_BINARY_DIR}/source/osgeo/__init__.py "")
 file(WRITE ${CMAKE_BINARY_DIR}/source/osgeo/gdal/__init__.py "")

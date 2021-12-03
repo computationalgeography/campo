@@ -352,8 +352,12 @@ class Campo(object):
     def write(self, timestep=None):
       """ """
       dataset = ldm.open_dataset(self.lue_filename, 'r')
+      # Get list of phenomena such that we can close the dataset immediately
+      dataset_phenomena = dataset.phenomena.names
+      dataset = None
+
       for p in self._phenomena:
-        if not p in dataset.phenomena:
+        if not p in dataset_phenomena:
           self._generate_lue_phenomenon(self._phenomena[p])
 
         for pset in self._phenomena[p].property_sets.values():
