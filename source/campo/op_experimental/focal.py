@@ -444,7 +444,7 @@ def focal_agents(dest, weight, source, fail=False):
 
     cpus = multiprocessing.cpu_count()
     tasks = len(todos)
-    chunks = tasks // cpus
+    chunks = max(1, tasks // cpus)
 
     with futures.ProcessPoolExecutor(max_workers=cpus) as ex:
       results = ex.map(_focal_agents, todos, chunksize=chunks)
