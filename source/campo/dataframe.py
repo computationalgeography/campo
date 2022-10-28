@@ -14,6 +14,17 @@ warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
 
 import lue.data_model as ldm
 
+
+def _timeunit_pdname(unit):
+    """ Return string representation of time unit """
+    # We append an s to match Pandas keywords
+    res = '{}s'.format(unit)
+    if '.' in res:
+        res = res.partition('.')[2]
+
+    return res
+
+
 def point_agent(object_ids, space_domain):
   obj_idx = int(np.where(object_ids == object_ids[0])[0])
   dom = space_domain.value[:][obj_idx]
@@ -216,10 +227,7 @@ def select_variable_same_shape_constant_shape_arrays(
     origin = epoch.origin
     nr_units = clock.nr_units
 
-    # We append an s to match Pandas keywords
-    unit = '{}s'.format(clock.unit)
-
-    keys = { unit : nr_units }
+    keys = { _timeunit_pdname(clock.unit) : nr_units }
 
     # List of time steps
     timesteps = pd.date_range(origin, periods=nr_timesteps, freq=pd.DateOffset(**keys) ).values
@@ -325,10 +333,7 @@ def select_variable_different_shape_constant_shape_arrays(
     origin = epoch.origin
     nr_units = clock.nr_units
 
-    # We append an s to match Pandas keywords
-    unit = '{}s'.format(clock.unit)
-
-    keys = { unit : nr_units }
+    keys = { _timeunit_pdname(clock.unit) : nr_units }
 
     # List of time steps
     timesteps = pd.date_range(origin, periods=nr_timesteps, freq=pd.DateOffset(**keys) ).values
