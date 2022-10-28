@@ -50,8 +50,10 @@ jobs:
               remote_dir1: ${{ secrets.FTP_REMOTE_DIR1 }}
               remote_dir2: ${{ secrets.FTP_REMOTE_DIR2 }}
           run: |
+              mkdir -p $HOME/.ssh
+              echo "HostKeyAlgorithms ssh-rsa" >> $HOME/.ssh/config
+              echo "PubkeyAcceptedKeyTypes ssh-rsa" >> $HOME/.ssh/config
+              echo "StrictHostKeyChecking no" >> $HOME/.ssh/config
               cd build
-              mkdir -p ~/.ssh
-              echo $ftp_host >> ~/.ssh/known_hosts
               lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ $remote_dir1"
               lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ $remote_dir2"
