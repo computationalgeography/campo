@@ -10,6 +10,8 @@ jobs:
 
         name: "Build and deploy"
 
+        timeout-minutes: 15
+
         steps:
 
         - name: checkout campo
@@ -51,5 +53,5 @@ jobs:
               cd build
               mkdir -p ~/.ssh
               echo $ftp_host >> ~/.ssh/known_hosts
-              lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ $remote_dir1"
-              lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;mirror --verbose --reverse --continue package/dist/ $remote_dir2"
+              lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ $remote_dir1"
+              lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ $remote_dir2"
