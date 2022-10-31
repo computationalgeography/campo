@@ -44,7 +44,6 @@ jobs:
           env:
               ftp_server: ${{ secrets.FTP_SERVER }}
               ftp_port: ${{ secrets.FTP_PORT }}
-              ftp_host: ${{ secrets.FTP_HOST }}
               ftp_username: ${{ secrets.FTP_USERNAME }}
               ftp_password: ${{ secrets.FTP_PASSWORD }}
               remote_dir1: ${{ secrets.FTP_REMOTE_DIR1 }}

@@ -49,8 +49,9 @@ message(STATUS "  Build configuration:")
 message(STATUS "    Python interpreter:   " ${Python3_EXECUTABLE})
 message(STATUS "    Python version:       " ${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}.${Python3_VERSION_PATCH})
 message(STATUS "    Site-packages:        " ${Python3_SITELIB})
+message(STATUS "  Build wheel           : " ${CAMPO_BUILD_WHEEL} )
 message(STATUS "-------------------------------------------------")
 
 
 # Only configured for packaging source code required to build a package!
-include(CampoPackaging)
+# include(CampoPackaging)
