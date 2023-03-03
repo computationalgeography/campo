@@ -1,9 +1,4 @@
-import numpy as np
-import os
 import csv
-
-import lue
-import lue.data_model as ldm
 
 from .points import Points
 from .areas import Areas
