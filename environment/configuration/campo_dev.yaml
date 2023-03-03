@@ -1,0 +1,16 @@
+name: campo_dev
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3
+  - numpy
+  - sphinx
+  - cmake
+  - pandas
+  - lue
+  - pcraster
+  - xarray
+  - pandas
+  - gdal
+  - networkx

@@ -13,7 +13,7 @@ set(CMAKE_MODULE_PATH
 )
 
 
-set(DEV_CURRENT_YEAR "2022")
+set(DEV_CURRENT_YEAR "2023")
 
 set(${PROJECT_NAME}_ORGANISATION_NAME "Computational Geography group, Dept of Physical Geography, Utrecht University")
 set(${PROJECT_NAME}_COPYRIGHT

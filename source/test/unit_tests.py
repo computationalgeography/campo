@@ -9,15 +9,17 @@ import test_phenomenon
 import test_propertyset
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     suite = unittest.TestSuite()
-    #suite.addTest(unittest.makeSuite(extract_const_diff.TestConstDiff))
-    #suite.addTest(unittest.makeSuite(extract_const_same.TestConstSame))
-    #suite.addTest(unittest.makeSuite(extract_dyn_same.TestDynSame))
-    #suite.addTest(unittest.makeSuite(extract_dyn_diff.TestDynDiff))
-    suite.addTest(unittest.makeSuite(test_phenomenon.TestPhenomenon))
-    suite.addTest(unittest.makeSuite(test_propertyset.TestPropertyset))
+
+    suite.addTest(unittest.TestLoader().loadTestsFromModule(test_phenomenon))
+    suite.addTest(unittest.TestLoader().loadTestsFromModule(test_propertyset))
+
+    suite.addTest(unittest.TestLoader().loadTestsFromModule(extract_const_diff))
+    suite.addTest(unittest.TestLoader().loadTestsFromModule(extract_const_same))
+    # suite.addTest(unittest.TestLoader().loadTestsFromModule(extract_dyn_same))
+    # suite.addTest(unittest.TestLoader().loadTestsFromModule(extract_dyn_diff))
 
     result = unittest.TextTestRunner(verbosity=3).run(suite)
     test_result = (0 if result.wasSuccessful() else 1)
