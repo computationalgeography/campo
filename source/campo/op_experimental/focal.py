@@ -297,7 +297,7 @@ def _focal_agents(values):
 
       pcraster.setclone(nr_rows, nr_cols, cellsize, minX, maxY)
 
-      raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight, numpy.nan)
+      raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight.astype("float32"), numpy.nan)
 
 
       point_values = numpy.empty(nr_locs)
@@ -505,7 +505,7 @@ def focal_agents(dest, weight, source, fail=False):
 
       pcraster.setclone(nr_rows, nr_cols, cellsize, minX, maxY)
 
-      raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight, numpy.nan)
+      raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight.astype("float32"), numpy.nan)
 
       point_values.fill(numpy.nan)
 

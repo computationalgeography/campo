@@ -24,7 +24,7 @@ def _spatial_operation(area_property, spatial_operation):
 
         pcraster.setclone(rows, cols, cellsize, west, north)
 
-        raster = pcraster.numpy2pcr( pcraster.Scalar, item,numpy.nan)
+        raster = pcraster.numpy2pcr( pcraster.Scalar, item.astype("float32"), numpy.nan)
 
 
 
@@ -163,8 +163,8 @@ def _pspread(values):
   pcraster.setclone(clone[0], clone[1], clone[2], clone[3], clone[4])
 
   arg1_raster = pcraster.numpy2pcr(pcraster.Nominal, start_locations_values, -999) #numpy.nan)
-  frictiondist_raster = pcraster.numpy2pcr(pcraster.Scalar, frictiondist_values, numpy.nan)
-  friction_raster = pcraster.numpy2pcr(pcraster.Scalar, friction_values, numpy.nan)
+  frictiondist_raster = pcraster.numpy2pcr(pcraster.Scalar, frictiondist_values.astype("float32"), numpy.nan)
+  friction_raster = pcraster.numpy2pcr(pcraster.Scalar, friction_values.astype("float32"), numpy.nan)
   result_raster = pcraster.spread(arg1_raster, frictiondist_raster, friction_raster)
 
   return idx, pcraster.pcr2numpy(result_raster, numpy.nan)
@@ -228,8 +228,8 @@ def spread(start_locations, frictiondist, friction):
     frictionvalues = friction.values().values[idx]
 
     arg1_raster = pcraster.numpy2pcr(pcraster.Nominal, values, -99999) #numpy.nan)
-    frictiondist_raster = pcraster.numpy2pcr(pcraster.Scalar, frictiondistvalues, numpy.nan)
-    friction_raster = pcraster.numpy2pcr(pcraster.Scalar, frictionvalues, numpy.nan)
+    frictiondist_raster = pcraster.numpy2pcr(pcraster.Scalar, frictiondistvalues.astype("float32"), numpy.nan)
+    friction_raster = pcraster.numpy2pcr(pcraster.Scalar, frictionvalues.astype("float32"), numpy.nan)
 
     result_raster = pcraster.spread(arg1_raster, frictiondist_raster, friction_raster)
     result_item = pcraster.pcr2numpy(result_raster, numpy.nan)
