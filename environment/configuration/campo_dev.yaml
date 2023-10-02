@@ -3,14 +3,15 @@ channels:
   - conda-forge
   - nodefaults
 dependencies:
-  - python=3
+  - python=3.11
   - numpy
-  - sphinx
+  - sphinx=5.3
   - cmake
   - pandas
-  - lue
+  - lue>0.3.6
+  - hpx=1.9.0
   - pcraster
   - xarray
-  - pandas
   - gdal
   - networkx
+

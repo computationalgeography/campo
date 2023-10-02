@@ -1,18 +1,15 @@
 import copy
 import numpy
 import math
-import sys
 import multiprocessing
-import datetime
-import warnings
 from concurrent import futures
 
 
 
-from osgeo import gdal
 from osgeo import ogr
 from osgeo import osr
 
+ogr.UseExceptions()
 
 import pcraster
 

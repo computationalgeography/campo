@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 
 project(campo
-  VERSION 0.3.3
+  VERSION 0.3.5
   DESCRIPTION "Modelling framework for fields and agents"
   HOMEPAGE_URL "https://campo.computationalgeography.org/"
   LANGUAGES NONE
@@ -51,7 +51,3 @@ message(STATUS "    Python version:       " ${Python3_VERSION_MAJOR}.${Python3_V
 message(STATUS "    Site-packages:        " ${Python3_SITELIB})
 message(STATUS "  Build wheel           : " ${CAMPO_BUILD_WHEEL} )
 message(STATUS "-------------------------------------------------")
-
-
-# Only configured for packaging source code required to build a package!
-# include(CampoPackaging)

@@ -2,6 +2,8 @@ from osgeo import gdal
 from osgeo import osr
 from osgeo import ogr
 
+gdal.UseExceptions()
+
 import math
 import numpy as np
 

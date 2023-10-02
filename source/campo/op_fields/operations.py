@@ -1,16 +1,11 @@
 from concurrent import futures
-import os
 import copy
 import numpy
-import datetime
 import multiprocessing
-import sys
 
-from osgeo import gdal, ogr, osr
 
 from ..property import Property
 
-import time
 import pcraster
 
 def _spatial_operation(area_property, spatial_operation):
@@ -188,7 +183,7 @@ def spread(start_locations, frictiondist, friction):
   :rtype: Property
 
   For concepts of this operation calculated on each agent see
-  https://pcraster.geo.uu.nl/pcraster/4.3.0/documentation/pcraster_manual/sphinx/op_spread.html
+  https://pcraster.geo.uu.nl/pcraster/latest/documentation/pcraster_manual/sphinx/op_spread.html
   """
 
 

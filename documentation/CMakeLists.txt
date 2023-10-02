@@ -16,22 +16,6 @@ configure_file(conf.py.in
 )
 
 
-# Hack to mimic Python modules
-# this way we don't need to install the packages for documentation building
-# similar with PCRaster, maks empty dir to allow for module import
-file(WRITE ${CMAKE_BINARY_DIR}/source/lue/data_model/__init__.py
-"class Unit(object):
-  day,month,year,second,minute,week,hour=1,1,1,1,1,1,1
-"
-)
-file(WRITE ${CMAKE_BINARY_DIR}/source/pcraster/__init__.py "")
-file(WRITE ${CMAKE_BINARY_DIR}/source/xarray/__init__.py "")
-file(WRITE ${CMAKE_BINARY_DIR}/source/networkx/__init__.py "")
-file(WRITE ${CMAKE_BINARY_DIR}/source/osgeo/__init__.py "")
-file(WRITE ${CMAKE_BINARY_DIR}/source/osgeo/gdal/__init__.py "")
-file(WRITE ${CMAKE_BINARY_DIR}/source/osgeo/osr/__init__.py "")
-file(WRITE ${CMAKE_BINARY_DIR}/source/osgeo/ogr/__init__.py "")
-
 set(SOURCES
   index.rst
   general/introduction.rst

@@ -5,16 +5,12 @@ from osgeo import osr
 import os
 import subprocess
 import tempfile
-import numpy
 import shutil
-import copy
-
-import lue.data_model as ldm
 
 from ..dataframe import *
 from ..utils import _color_message
 
-
+gdal.UseExceptions()
 
 def to_gpkg(dataframe, filename, crs='', timestep=None):
   """ Exports point agent properties to a GeoPackage

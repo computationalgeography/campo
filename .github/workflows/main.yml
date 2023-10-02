@@ -25,9 +25,9 @@ jobs:
               sudo apt-get --yes install lftp
         - uses: conda-incubator/setup-miniconda@v2
           with:
-              activate-environment: campo-doc
+              activate-environment: campo
               environment-file: environment/configuration/conda_environment.yaml
-              python-version: 3.8
+              python-version: 3.11
               auto-activate-base: false
 
         - name: build
