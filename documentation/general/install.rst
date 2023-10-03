@@ -7,8 +7,8 @@ Supported Python versions are 3.6 or higher.
 Installing Python
 -----------------
 
-We suggest to install |miniconda|, a Python package and environment management system.
-An alternative distribution is |anaconda| provided by Continuum Analytics.
+We suggest to install the |mambaforge| distribution.
+Alternative distributions are |miniconda|, or |anaconda| provided by Continuum Analytics.
 The user guide and short reference on the conda pacakge manager can be found |minicondadoc|.
 
 
@@ -36,6 +36,11 @@ You can test your installation afterwards by printing the Campo version number
    python -c "import campo; print(campo.__version__)"
 
 
+
+
+.. |mambaforge| raw:: html
+
+   <a href="https://mamba.readthedocs.io/en/latest/mamba-installation.html" target="_blank">Mambaforge</a>
 
 
 .. |miniconda| raw:: html
