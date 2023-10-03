@@ -4,55 +4,74 @@ on: [push]
 
 jobs:
 
-    build_and_deploy:
-
+    build:
         runs-on: ubuntu-22.04
-
-        name: "Build and deploy"
-
+        name: "Build Campo"
         timeout-minutes: 15
 
         steps:
 
-        - name: checkout campo
-          uses: actions/checkout@v3
+            - name: Checkout Campo
+              uses: actions/checkout@v3
 
-        - name: configure system
-          run: |
-              # sudo apt-get update
-              # sudo apt-get upgrade
-              # sudo apt-get autoremove
-              sudo apt-get --yes install lftp
-        - uses: conda-incubator/setup-miniconda@v2
-          with:
-              activate-environment: campo
-              environment-file: environment/configuration/conda_environment.yaml
-              python-version: 3.11
-              auto-activate-base: false
+            - name: configure system
+              run: |
+                  # sudo apt-get update
+                  # sudo apt-get upgrade
+                  # sudo apt-get autoremove
+                  sudo apt-get --yes install lftp
 
-        - name: build
-          shell: bash -l {0}
-          run: |
-              mkdir build
-              cd build
-              cmake .. -DCAMPO_BUILD_WHEEL=ON
-              make documentation
-              make install
-              rm -f package/dist/*gz
+            - uses: conda-incubator/setup-miniconda@v2
+              with:
+                  activate-environment: campo
+                  environment-file: environment/configuration/conda_environment.yaml
+                  python-version: 3.11
+                  auto-activate-base: false
 
-        - name: deploy
-          env:
-              ftp_server: ${{ secrets.FTP_SERVER }}
-              ftp_port: ${{ secrets.FTP_PORT }}
-              ftp_username: ${{ secrets.FTP_USERNAME }}
-              ftp_password: ${{ secrets.FTP_PASSWORD }}
-              remote_dir1: ${{ secrets.FTP_REMOTE_DIR1 }}
-              remote_dir2: ${{ secrets.FTP_REMOTE_DIR2 }}
-          run: |
-              mkdir -p $HOME/.ssh
-              echo "HostKeyAlgorithms ssh-rsa" >> $HOME/.ssh/config
-              echo "PubkeyAcceptedKeyTypes ssh-rsa" >> $HOME/.ssh/config
-              echo "StrictHostKeyChecking no" >> $HOME/.ssh/config
-              cd build
-              lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ $remote_dir1"
-              lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ $remote_dir2"
+            - name: Build
+              shell: bash -l {0}
+              run: |
+                  mkdir build
+                  cd build
+                  cmake .. -DCAMPO_BUILD_WHEEL=ON
+                  make documentation
+                  make install
+                  rm -f package/dist/*gz
+
+
+    deploy_wheel:
+        runs-on: ubuntu-22.04
+        name: "Deploy wheel"
+        needs: build
+        timeout-minutes: 5
+
+        steps:
+
+            - name: Deploy wheel
+              env:
+                  ftp_server: ${{ secrets.FTP_SERVER }}
+                  ftp_port: ${{ secrets.FTP_PORT }}
+                  ftp_username: ${{ secrets.FTP_USERNAME }}
+                  ftp_password: ${{ secrets.FTP_PASSWORD }}
+                  remote_dir1: ${{ secrets.FTP_REMOTE_DIR1 }}
+                  remote_dir2: ${{ secrets.FTP_REMOTE_DIR2 }}
+              run: |
+                  mkdir -p $HOME/.ssh
+                  echo "HostKeyAlgorithms ssh-rsa" >> $HOME/.ssh/config
+                  echo "PubkeyAcceptedKeyTypes ssh-rsa" >> $HOME/.ssh/config
+                  echo "StrictHostKeyChecking no" >> $HOME/.ssh/config
+                  cd build
+                  lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ $remote_dir2"
+
+
+    deploy_website:
+        runs-on: ubuntu-22.04
+        name: "Deploy website"
+        needs: deploy_wheel
+        timeout-minutes: 5
+
+        steps:
+
+            - name: Deploy documentation
+              run: |
+                  lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ $remote_dir1"
