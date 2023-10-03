@@ -37,7 +37,7 @@ jobs:
               run: |
                   mkdir ${{ env.build-directory }}
                   cd ${{ env.build-directory }}
-                  cmake ${{ source-directory }} -DCAMPO_BUILD_WHEEL=ON
+                  cmake ${{ env.source-directory }} -DCAMPO_BUILD_WHEEL=ON
                   make documentation
                   make install
                   rm -f package/dist/*gz
@@ -73,6 +73,7 @@ jobs:
         name: "Deploy website"
         needs: deploy_wheel
         timeout-minutes: 5
+        if: github.ref == 'refs/heads/master'
 
         steps:
 
