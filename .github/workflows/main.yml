@@ -2,6 +2,10 @@ name: Build and deploy
 
 on: [push]
 
+env:
+    source-directory: $GITHUB_WORKSPACE
+    build-directory: $GITHUB_WORKSPACE/build
+
 jobs:
 
     build:
@@ -31,9 +35,9 @@ jobs:
             - name: Build
               shell: bash -l {0}
               run: |
-                  mkdir build
-                  cd build
-                  cmake .. -DCAMPO_BUILD_WHEEL=ON
+                  mkdir ${{ env.build-directory }}
+                  cd ${{ env.build-directory }}
+                  cmake ${{ source-directory }} -DCAMPO_BUILD_WHEEL=ON
                   make documentation
                   make install
                   rm -f package/dist/*gz
@@ -60,7 +64,7 @@ jobs:
                   echo "HostKeyAlgorithms ssh-rsa" >> $HOME/.ssh/config
                   echo "PubkeyAcceptedKeyTypes ssh-rsa" >> $HOME/.ssh/config
                   echo "StrictHostKeyChecking no" >> $HOME/.ssh/config
-                  cd build
+                  cd ${{ env.build-directory }}
                   lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ $remote_dir2"
 
 
@@ -74,4 +78,5 @@ jobs:
 
             - name: Deploy documentation
               run: |
+                  cd ${{ env.build-directory }}
                   lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ $remote_dir1"
