@@ -10,7 +10,7 @@ jobs:
 
     build:
         runs-on: ubuntu-22.04
-        name: "Build Campo"
+        name: "Build and deploy"
         timeout-minutes: 15
 
         steps:
@@ -42,15 +42,6 @@ jobs:
                   make install
                   rm -f package/dist/*gz
 
-
-    deploy_wheel:
-        runs-on: ubuntu-22.04
-        name: "Deploy wheel"
-        needs: build
-        timeout-minutes: 5
-
-        steps:
-
             - name: Deploy wheel
               env:
                   ftp_server: ${{ secrets.FTP_SERVER }}
@@ -67,17 +58,15 @@ jobs:
                   cd ${{ env.build-directory }}
                   lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ $remote_dir2"
 
-
-    deploy_website:
-        runs-on: ubuntu-22.04
-        name: "Deploy website"
-        needs: deploy_wheel
-        timeout-minutes: 5
-        if: github.ref == 'refs/heads/master'
-
-        steps:
-
             - name: Deploy documentation
+              if: github.ref == 'refs/heads/master'
+              env:
+                  ftp_server: ${{ secrets.FTP_SERVER }}
+                  ftp_port: ${{ secrets.FTP_PORT }}
+                  ftp_username: ${{ secrets.FTP_USERNAME }}
+                  ftp_password: ${{ secrets.FTP_PASSWORD }}
+                  remote_dir1: ${{ secrets.FTP_REMOTE_DIR1 }}
+                  remote_dir2: ${{ secrets.FTP_REMOTE_DIR2 }}
               run: |
                   cd ${{ env.build-directory }}
                   lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ $remote_dir1"
