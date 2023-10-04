@@ -17,7 +17,7 @@ set(DEV_CURRENT_YEAR "2023")
 
 set(${PROJECT_NAME}_ORGANISATION_NAME "Computational Geography group, Dept of Physical Geography, Utrecht University")
 set(${PROJECT_NAME}_COPYRIGHT
-     "2020, ${DEV_CURRENT_YEAR}, ${${PROJECT_NAME}_ORGANISATION_NAME}")
+     "2020 - ${DEV_CURRENT_YEAR}, ${${PROJECT_NAME}_ORGANISATION_NAME}")
 
 
 find_package (Python3 COMPONENTS Interpreter NumPy)

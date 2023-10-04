@@ -1,3 +1,5 @@
+add_subdirectory(general)
+
 if(EXISTS "sphinx_rtd_theme")
   set(sphinx_rtd_theme_repository "sphinx_rtd_theme")
 else()

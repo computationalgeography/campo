@@ -15,11 +15,13 @@ The user guide and short reference on the conda pacakge manager can be found |mi
 Installing Campo using Conda
 ----------------------------
 
-You can install Campo in an existing environment with
+You can install the latest Campo version with
 
 .. code-block:: console
 
-   conda install -c conda-forge campo
+   conda create --name campo -c conda-forge python=3.11 campo
+   # or
+   mamba create --name campo -c conda-forge python=3.11 campo
 
 
 ..
@@ -31,11 +33,7 @@ You can install Campo in an existing environment with
 
 You can test your installation afterwards by printing the Campo version number
 
-.. code-block:: console
-
-   python -c "import campo; print(campo.__version__)"
-
-
+.. include:: install_test.rst
 
 
 .. |mambaforge| raw:: html
