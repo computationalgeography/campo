@@ -4,7 +4,7 @@ on: [push]
 
 env:
     source-directory: $GITHUB_WORKSPACE
-    build-directory: $RUNNER_TEMP/build
+    build-directory: /tmp/build
     ftp_server: ${{ secrets.FTP_SERVER }}
     ftp_port: ${{ secrets.FTP_PORT }}
     ftp_username: ${{ secrets.FTP_USERNAME }}
