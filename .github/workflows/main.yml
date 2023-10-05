@@ -18,7 +18,7 @@ jobs:
     build:
         runs-on: ubuntu-22.04
         name: "Build and deploy"
-        timeout-minutes: 15
+        timeout-minutes: 8
 
         steps:
 
@@ -49,6 +49,12 @@ jobs:
                   make install
                   rm -f package/dist/*gz
 
+    deploy_wheel:
+        runs-on: ubuntu-22.04
+        name: "Deploy wheel"
+        needs: build
+        timeout-minutes: 5
+        steps:
             - name: Deploy wheel
               run: |
                   mkdir -p $HOME/.ssh
@@ -58,12 +64,25 @@ jobs:
                   cd ${{ env.build-directory }}
                   lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ ${{ env.remote_dir2 }}"
 
+    deploy_docs:
+        runs-on: ubuntu-22.04
+        name: "Deploy documentation"
+        needs: deploy_wheel
+        timeout-minutes: 5
+        steps:
             - name: Deploy documentation
               if: github.ref == 'refs/heads/master'
               run: |
                   cd ${{ env.build-directory }}
                   lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir1 }}"
 
+
+    deploy_devdocs:
+        runs-on: ubuntu-22.04
+        name: "Deploy development documentation"
+        needs: deploy_wheel
+        timeout-minutes: 5
+        steps:
             - name: Deploy development documentation
               run: |
                   cd ${{ env.build-directory }}
