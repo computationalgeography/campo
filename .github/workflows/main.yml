@@ -70,3 +70,14 @@ jobs:
               run: |
                   cd ${{ env.build-directory }}
                   lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ $remote_dir1"
+
+            - name: Deploy development documentation
+              env:
+                  ftp_server: ${{ secrets.FTP_SERVER }}
+                  ftp_port: ${{ secrets.FTP_PORT }}
+                  ftp_username: ${{ secrets.FTP_USERNAME }}
+                  ftp_password: ${{ secrets.FTP_PASSWORD }}
+                  remote_dir3: ${{ secrets.FTP_REMOTE_DIR3 }}
+              run: |
+                  cd ${{ env.build-directory }}
+                  lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ $remote_dir3"
