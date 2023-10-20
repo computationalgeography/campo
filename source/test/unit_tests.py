@@ -7,6 +7,7 @@ import extract_dyn_same
 import extract_dyn_diff
 import test_phenomenon
 import test_propertyset
+import test_property
 
 
 if __name__ == "__main__":
@@ -15,6 +16,7 @@ if __name__ == "__main__":
 
     suite.addTest(unittest.TestLoader().loadTestsFromModule(test_phenomenon))
     suite.addTest(unittest.TestLoader().loadTestsFromModule(test_propertyset))
+    suite.addTest(unittest.TestLoader().loadTestsFromModule(test_property))
 
     suite.addTest(unittest.TestLoader().loadTestsFromModule(extract_const_diff))
     suite.addTest(unittest.TestLoader().loadTestsFromModule(extract_const_same))

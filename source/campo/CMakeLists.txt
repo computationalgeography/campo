@@ -6,6 +6,7 @@ configure_file(
 set(SOURCES
   __init__.py
   areas.py
+  config.py
   dataframe.py
   dataset.py
   phenomenon.py
