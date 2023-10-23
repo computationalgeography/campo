@@ -6,6 +6,7 @@ set(SOURCES
   unit_tests.py
   test_phenomenon.py
   test_propertyset.py
+  test_property.py
 )
 
 

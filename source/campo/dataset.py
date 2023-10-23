@@ -1,18 +1,21 @@
 import os
 import numpy as np
 
+import pcraster as pcr
+
 import lue.data_model as ldm
 
 from .points import Points
 from .areas import Areas
 from .phenomenon import Phenomenon
 
+import campo.config as cc
 
 
 class Campo(object):
     """ """
 
-    def __init__(self, debug=False):
+    def __init__(self, seed=None, cpus=1, debug=False):
 
       self._phenomena = {}
       self._nr_timesteps = None
@@ -25,7 +28,16 @@ class Campo(object):
       self._clock_unit_value = None
       self._clock_stepsize = None
 
+      if seed is None:
+        cc.rng = np.random.default_rng()
+      else:
+        cc.seed = seed
+        pcr.setrandomseed(cc.seed)
+        cc.rng = np.random.default_rng(cc.seed)
 
+      if cpus > 1:
+        cc.cpus = cpus
+        raise NotImplementedError(f"WIP cpus")
 
 
     def __repr__(self, indent=0):

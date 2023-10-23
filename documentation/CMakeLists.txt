@@ -25,6 +25,7 @@ set(SOURCES
   general/install.rst
   general/sourcecode.rst
   general/indices.rst
+  general/changes.rst
   operations/index.rst
   operations/dataframe.rst
 )

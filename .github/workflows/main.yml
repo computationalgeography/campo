@@ -4,14 +4,21 @@ on: [push]
 
 env:
     source-directory: $GITHUB_WORKSPACE
-    build-directory: $GITHUB_WORKSPACE/build
+    build-directory: /tmp/build
+    ftp_server: ${{ secrets.FTP_SERVER }}
+    ftp_port: ${{ secrets.FTP_PORT }}
+    ftp_username: ${{ secrets.FTP_USERNAME }}
+    ftp_password: ${{ secrets.FTP_PASSWORD }}
+    remote_dir1: ${{ secrets.FTP_REMOTE_DIR1 }}
+    remote_dir2: ${{ secrets.FTP_REMOTE_DIR2 }}
+    remote_dir3: ${{ secrets.FTP_REMOTE_DIR3 }}
 
 jobs:
 
     build:
         runs-on: ubuntu-22.04
         name: "Build and deploy"
-        timeout-minutes: 15
+        timeout-minutes: 8
 
         steps:
 
@@ -43,30 +50,21 @@ jobs:
                   rm -f package/dist/*gz
 
             - name: Deploy wheel
-              env:
-                  ftp_server: ${{ secrets.FTP_SERVER }}
-                  ftp_port: ${{ secrets.FTP_PORT }}
-                  ftp_username: ${{ secrets.FTP_USERNAME }}
-                  ftp_password: ${{ secrets.FTP_PASSWORD }}
-                  remote_dir1: ${{ secrets.FTP_REMOTE_DIR1 }}
-                  remote_dir2: ${{ secrets.FTP_REMOTE_DIR2 }}
               run: |
                   mkdir -p $HOME/.ssh
                   echo "HostKeyAlgorithms ssh-rsa" >> $HOME/.ssh/config
                   echo "PubkeyAcceptedKeyTypes ssh-rsa" >> $HOME/.ssh/config
                   echo "StrictHostKeyChecking no" >> $HOME/.ssh/config
                   cd ${{ env.build-directory }}
-                  lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ $remote_dir2"
+                  lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ ${{ env.remote_dir2 }}"
 
             - name: Deploy documentation
               if: github.ref == 'refs/heads/master'
-              env:
-                  ftp_server: ${{ secrets.FTP_SERVER }}
-                  ftp_port: ${{ secrets.FTP_PORT }}
-                  ftp_username: ${{ secrets.FTP_USERNAME }}
-                  ftp_password: ${{ secrets.FTP_PASSWORD }}
-                  remote_dir1: ${{ secrets.FTP_REMOTE_DIR1 }}
-                  remote_dir2: ${{ secrets.FTP_REMOTE_DIR2 }}
               run: |
                   cd ${{ env.build-directory }}
-                  lftp -c "open --user $ftp_username --password $ftp_password -p $ftp_port $ftp_server;set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ $remote_dir1"
+                  lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir1 }}"
+
+            - name: Deploy development documentation
+              run: |
+                  cd ${{ env.build-directory }}
+                  lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir3 }}"
