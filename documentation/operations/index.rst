@@ -40,7 +40,9 @@ Operations
 
    abs
    exp
+   normal
    uniform
+   random_integers
    where
 
 

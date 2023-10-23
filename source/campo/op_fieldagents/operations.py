@@ -32,17 +32,23 @@ def uniform(lower, upper):
 
   tmp_prop = Property('emptyuniformname', lower.pset_uuid, lower.space_domain, lower.shapes)
 
+  if isinstance(lower.space_domain, Points):
+      shape = 1
+  elif isinstance(lower.space_domain, Areas):
+      shape = (int(lower.space_domain.row_discr[0]), int(lower.space_domain.col_discr[0]))
+  else:
+      raise NotImplementedError
+
   for idx in range(lower.nr_objects):
     values = None
     if isinstance(lower.space_domain, Points):
       lower_value = lower.values()[idx][0]
       upper_value = upper.values()[idx][0]
-      values = cc.rng.uniform(low=lower_value, high=upper_value, size=1)
+      values = cc.rng.uniform(low=lower_value, high=upper_value, size=shape)
     elif isinstance(lower.space_domain, Areas):
-      raise NotImplementedError("WIP")
-      if seed != 0:
-        numpy.random.seed(seed + idx)
-      values = numpy.random.uniform(lower.values()[idx], upper.values()[idx], (int(lower.space_domain.row_discr[idx]), int(lower.space_domain.col_discr[idx])))
+      lower_value = lower.values()[idx]
+      upper_value = upper.values()[idx]
+      values = cc.rng.uniform(low=lower_value, high=upper_value, size=shape)
     else:
       raise NotImplementedError
 
@@ -74,17 +80,23 @@ def normal(mean, stddev):
 
   tmp_prop = Property('emptynormalname', mean.pset_uuid, mean.space_domain, mean.shapes)
 
+  if isinstance(mean.space_domain, Points):
+      shape = 1
+  elif isinstance(mean.space_domain, Areas):
+      shape = (int(mean.space_domain.row_discr[0]), int(mean.space_domain.col_discr[0]))
+  else:
+      raise NotImplementedError
+
   for idx in range(mean.nr_objects):
     values = None
     if isinstance(mean.space_domain, Points):
       mean_value = mean.values()[idx][0]
       stddev_value = stddev.values()[idx][0]
-      values = cc.rng.normal(loc=mean_value, scale=stddev_value, size=1)
+      values = cc.rng.normal(loc=mean_value, scale=stddev_value, size=shape)
     elif isinstance(mean.space_domain, Areas):
-      raise NotImplementedError("WIP")
-      if seed != 0:
-        numpy.random.seed(seed + idx)
-      values = numpy.random.normal(lower.values()[idx], upper.values()[idx], (int(lower.space_domain.row_discr[idx]), int(lower.space_domain.col_discr[idx])))
+      mean_value = mean.values()[idx]
+      stddev_value = stddev.values()[idx]
+      values = cc.rng.normal(loc=mean_value, scale=stddev_value, size=shape)
     else:
       raise NotImplementedError
 
@@ -94,16 +106,14 @@ def normal(mean, stddev):
 
 
 
-def random_integers(lower, upper, seed=0):
+def random_integers(lower, upper):
   """ Returns for each object random_integers values. Can be applied to fields and objects
 
   :param lower: lower boundary
   :type lower:  Property
   :param upper: upper boundary
   :type upper: Property
-  :param seed: random seed (default 0)
-  :type seed: int
-  :returns: a property with random integers values
+  :returns: a property with random integers values from lower (inclusive) to upper (exclusive)
   :rtype: Property
 
   """
@@ -120,17 +130,23 @@ def random_integers(lower, upper, seed=0):
 
   tmp_prop = Property('emptynormalname', lower.pset_uuid, lower.space_domain, lower.shapes)
 
+  if isinstance(lower.space_domain, Points):
+      shape = 1
+  elif isinstance(lower.space_domain, Areas):
+      shape = (int(lower.space_domain.row_discr[0]), int(lower.space_domain.col_discr[0]))
+  else:
+      raise NotImplementedError
 
   for idx in range(lower.nr_objects):
     values = None
     if isinstance(lower.space_domain, Points):
-      if seed != 0:
-        numpy.random.seed(seed + idx)
-      values = numpy.random.random_integers(lower.values()[idx], upper.values()[idx])
+      lower_value = lower.values()[idx][0]
+      upper_value = upper.values()[idx][0]
+      values = cc.rng.integers(low=lower_value, high=upper_value, size=shape)
     elif isinstance(lower.space_domain, Areas):
-      if seed != 0:
-        numpy.random.seed(seed + idx)
-      values = numpy.random.random_integers(lower.values()[idx], upper.values()[idx], (int(lower.space_domain.row_discr[idx]), int(lower.space_domain.col_discr[idx])))
+      lower_value = lower.values()[idx]
+      upper_value = upper.values()[idx]
+      values = cc.rng.integers(low=lower_value, high=upper_value, size=shape)
     else:
       raise NotImplementedError
 

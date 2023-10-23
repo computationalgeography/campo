@@ -23,5 +23,6 @@ You can find more information about this project on the `Campo <https://campo.co
    operations/dataframe.rst
    general/install.rst
    general/sourcecode.rst
+   general/changes.rst
    general/indices.rst
    Campo project website <https://campo.computationalgeography.org/>
