@@ -556,3 +556,17 @@ def select(
 
     return result
 
+
+
+
+def coordinates(dataset, phenomenon, propertyset, timestep):
+
+    lue_pset = dataset.phenomena[phenomenon].property_sets[propertyset]
+    object_ids = dataset.phenomena[phenomenon].object_id[:]
+
+
+    time_start_idx = len(object_ids) * (timestep - 1)
+    time_end_idx = time_start_idx + len(object_ids)
+
+    vals = lue_pset.space_domain.value[time_start_idx:time_end_idx]
+    return vals

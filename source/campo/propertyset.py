@@ -16,13 +16,21 @@ class PropertySet(object):
 
     def __init__(self, name, nr_agents, space_domain, shape):
 
-      self._properties = {}
-      self._name = name
-      self._nr_agents = nr_agents
-      self._space_domain = space_domain
-      self._shape = shape
-      self._uuid = uuid.uuid4()
+        self._properties = {}
+        self._name = name
+        self._nr_agents = nr_agents
+        self._space_domain = space_domain
+        self._shape = shape
+        self._uuid = uuid.uuid4()
 
+        self._is_mobile = False
+        self._phenomenon_name = None
+        self._lue_filename = None
+
+
+    @property
+    def is_mobile(self):
+        return self._is_mobile
 
 
     @property
@@ -191,6 +199,7 @@ class PropertySet(object):
 
 
     def __getattr__(self, name):
+
       if name in self._properties:
         return self._properties[name]
       else:
@@ -200,9 +209,12 @@ class PropertySet(object):
 
 
     def __setattr__(self, name, value):
-
       if name.startswith('_', 0, 1):
         self.__dict__[name] = value
+      elif name == "is_mobile":
+         self._is_mobile = value
+      elif name == "set_coordinates":
+          self._set_coordinates(value)
       else:
         # We assume the modeller wants to access an existing property
         if name in self._properties:
@@ -211,7 +223,6 @@ class PropertySet(object):
           # Create a new property
           p = Property(name, self._uuid, self._space_domain, self._shape, value)
           self._properties[name] = p
-
 
 
 
@@ -227,4 +238,16 @@ class PropertySet(object):
           msg += self._properties[p].__repr__(indent+2)
 
       return msg
+
+
+    def get_space_domain(self, timestep=None):
+      """ """
+
+      return self._space_domain
+
+
+
+    def set_space_domain(self, context, timestep=None):
+        pass
+
 

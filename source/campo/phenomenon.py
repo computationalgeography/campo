@@ -98,6 +98,7 @@ class Phenomenon(object):
       assert self._nr_objects == nr_objects
 
       p = PropertySet(pset_name, nr_objects, domain, shape)
+      p._phenomenon_name = self._name
       self._property_sets[pset_name] = p
 
       self._nr_psets += 1

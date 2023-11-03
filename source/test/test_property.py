@@ -67,7 +67,7 @@ class TestProperty(unittest.TestCase):
         arr.fill(500)
 
         for idx, value in enumerate(self.a.field.c.values()):
-            self.assertEqual(True, (arr==value).all())
+            self.assertTrue((arr==value).all())
 
 
     def test_5(self):
@@ -85,7 +85,7 @@ class TestProperty(unittest.TestCase):
                         [[ -9.90024704, -5.48276371, -10.96084726],
                         [ -7.31352726, -5.87024706, -7.55273572]]])
         for idx, value in enumerate(self.a.field.c.values()):
-            self.assertEqual(True, (np.isclose(arr[idx], value).all()))
+            self.assertTrue((np.isclose(arr[idx], value).all()))
 
 
     def test_6(self):
@@ -104,7 +104,7 @@ class TestProperty(unittest.TestCase):
                         [ 5.16034298, -1.75169424,  3.8325035 ]]])
 
         for idx, value in enumerate(self.a.field.c.values()):
-            self.assertEqual(True, (np.isclose(arr[idx], value).all()))
+            self.assertTrue((np.isclose(arr[idx], value).all()))
 
 
     def test_7(self):
@@ -134,4 +134,4 @@ class TestProperty(unittest.TestCase):
                         [ 0,  0,  5]]])
 
         for idx, value in enumerate(self.a.field.c.values()):
-            self.assertEqual(True, (arr[idx]==value).all())
+            self.assertTrue((arr[idx]==value).all())
