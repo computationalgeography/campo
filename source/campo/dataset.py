@@ -8,6 +8,7 @@ import lue.data_model as ldm
 from .points import Points
 from .areas import Areas
 from .phenomenon import Phenomenon
+from .utils import _color_message
 
 import campo.config as cc
 
@@ -230,13 +231,16 @@ class Campo(object):
           space_type = ldm.SpaceDomainItemType.box
           rank = 2
 
-        #if not space_domain.mobile:
-      space_configuration = ldm.SpaceConfiguration(
-          ldm.Mobility.stationary,
-          space_type
-          )
-        #else:
-        #  raise NotImplementedError
+      if(property_set.is_mobile and not static):
+           space_configuration = ldm.SpaceConfiguration(
+              ldm.Mobility.mobile,
+              space_type
+              )
+      else:
+          space_configuration = ldm.SpaceConfiguration(
+              ldm.Mobility.stationary,
+              space_type
+              )
 
       if static:
         tmp_pset = dataset.phenomena[phen_name].add_property_set(property_set.name, space_configuration, np.dtype(np.float64), rank=rank)
@@ -249,24 +253,39 @@ class Campo(object):
       tmp_pset = dataset.phenomena[phen_name].property_sets[property_set.name]
 
 
+      space_coordinate_dtype = tmp_pset.space_domain.value.dtype
+
       # Assign coordinates
       if space_type == ldm.SpaceDomainItemType.point:
 
-        space_coordinate_dtype = tmp_pset.space_domain.value.dtype
+        nr_timesteps_and_objects = None
+        if (property_set.is_mobile):
+            # Coordinates per timestep
+            nr_timesteps_and_objects = property_set.nr_objects * self._nr_timesteps
+        else:
+            nr_timesteps_and_objects = property_set.nr_objects
 
-        tmp_values = np.ones((property_set.nr_objects, 2), dtype=tmp_pset.space_domain.value.dtype)
+        tmp_values = np.empty((nr_timesteps_and_objects, 2), dtype=space_coordinate_dtype)
 
+        # only for the initial
         for idx, item in enumerate(property_set.space_domain):
-          tmp_values[idx, 0] = item[0]
-          tmp_values[idx, 1] = item[1]
-        tmp_pset.space_domain.value.expand(property_set.nr_objects)[-property_set.nr_objects:] = tmp_values
+              tmp_values[idx, 0] = item[0]
+              tmp_values[idx, 1] = item[1]
 
+        tmp_pset.space_domain.value.expand(nr_timesteps_and_objects)[-nr_timesteps_and_objects:] = tmp_values
+
+        time_boxes = 1
+
+        if tmp_pset.object_tracker.active_object_id.nr_ids == 0:
+            tmp_pset.object_tracker.active_object_id.expand(time_boxes * nr_timesteps_and_objects)[:] = np.arange(nr_timesteps_and_objects)
+            tmp_pset.object_tracker.active_set_index.expand(time_boxes)[:] = 0
+            time_domain = tmp_pset.time_domain
+            time_domain.value.expand(time_boxes)[:] = np.array([0, self._nr_timesteps])
 
       elif space_type == ldm.SpaceDomainItemType.box:
 
-        space_coordinate_dtype = tmp_pset.space_domain.value.dtype
 
-        tmp_values = np.zeros((property_set.nr_objects, 4), dtype=tmp_pset.space_domain.value.dtype)
+        tmp_values = np.empty((property_set.nr_objects, 4), dtype=tmp_pset.space_domain.value.dtype)
 
         for idx, item in enumerate(property_set.space_domain):
           tmp_values[idx, 0] = item[0]
@@ -337,6 +356,21 @@ class Campo(object):
       lue_pset = dataset.phenomena[phen_name].property_sets[pset.name]
       object_ids = dataset.phenomena[phen_name].object_id[:]
 
+      if pset._lue_filename is None:
+          pset._lue_filename = self.lue_filename
+
+      # Agents mobile during time
+      if(pset.is_mobile and timestep is not None):
+        coord_start_idx = len(object_ids) * (timestep - 1)
+        coord_end_idx = coord_start_idx + len(object_ids)
+
+        campo_pset = self._phenomena[phen_name].property_sets[pset.name]
+        campo_coords_ts = campo_pset.space_domain._get_coordinates()
+
+        lue_pset.space_domain.value[coord_start_idx:coord_end_idx] = campo_coords_ts
+
+
+      # Writing property values
       if not prop.is_dynamic:
               lue_prop = lue_pset.properties[prop.name]
               if isinstance(prop.space_domain, Points):
@@ -368,19 +402,26 @@ class Campo(object):
 
 
     def write(self, timestep=None):
-      """ """
-      dataset = ldm.open_dataset(self.lue_filename, 'r')
-      # Get list of phenomena such that we can close the dataset immediately
-      dataset_phenomena = dataset.phenomena.names
-      dataset = None
+        """ Writing current state to a LUE dataset
 
-      for p in self._phenomena:
-        if not p in dataset_phenomena:
-          self._generate_lue_phenomenon(self._phenomena[p])
+        :param timestep: None for initial, integer timestep number otherwise
+        """
+        if (not self._nr_timesteps):
+            msg = _color_message(f"Number of timesteps not yet specified, use set_time")
+            raise RuntimeError(msg)
+
+        dataset = ldm.open_dataset(self.lue_filename, 'r')
+        # Get list of phenomena such that we can close the dataset immediately
+        dataset_phenomena = dataset.phenomena.names
+        dataset = None
+
+        for p in self._phenomena:
+            if not p in dataset_phenomena:
+                self._generate_lue_phenomenon(self._phenomena[p])
 
         for pset in self._phenomena[p].property_sets.values():
-          for prop in pset.properties.values():
-            self._lue_write_property(p, pset, prop, timestep)
+            for prop in pset.properties.values():
+                self._lue_write_property(p, pset, prop, timestep)
 
 
     def set_time(self, start, unit, stepsize, nrTimeSteps):
@@ -390,6 +431,9 @@ class Campo(object):
       self._clock_unit_value = unit.value
       self._clock_stepsize = stepsize
 
+      if (not self.lue_filename):
+          msg = _color_message(f"Dataset filename not yet specified, use create_dataset before")
+          raise RuntimeError(msg)
 
       epoch = ldm.Epoch(ldm.Epoch.Kind.common_era, self._start_timestep, ldm.Calendar.gregorian)
       clock = ldm.Clock(epoch, self._clock_unit_value, self._clock_stepsize)

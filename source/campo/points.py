@@ -14,6 +14,8 @@ class Points(object):
     self.xcoord = None
     self.ycoord = None
 
+    self._coordinates = None
+
     self._mobile = mobile
 
     self.iter_idx = 0
@@ -78,7 +80,7 @@ class Points(object):
       #self.xcoord = x
       #self.ycoord = y
 
-      v = numpy.zeros((self.nr_items,2))
+      v = numpy.empty((self.nr_items,2))
       for idx, item in enumerate(content):
         v[idx,0] = item[0]
         v[idx,1] = item[1]
@@ -87,6 +89,8 @@ class Points(object):
       self.xcoord = v[:,0]
       self.ycoord = v[:,1]
 
+
+      self._coordinates = numpy.empty((self.nr_items, 2))
 
 
   def __iter__(self):
@@ -98,6 +102,7 @@ class Points(object):
             raise StopIteration
 
         values = (self.xcoord[self.iter_idx], self.ycoord[self.iter_idx])
+        values = self.xcoord[self.iter_idx], self.ycoord[self.iter_idx]
         self.iter_idx += 1
 
         return values
@@ -109,3 +114,14 @@ class Points(object):
 
   def __repr__(self):
     return 'Point'
+
+
+  def _get_coordinates(self):
+
+      self._coordinates[:,0] = self.xcoord
+      self._coordinates[:,1] = self.ycoord
+      return self._coordinates
+
+
+  def _set_coordinates(self, values):
+      self._coordinates = values

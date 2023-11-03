@@ -7,6 +7,8 @@ set(SOURCES
   test_phenomenon.py
   test_propertyset.py
   test_property.py
+  test_mobile_agents.py
+  test_dataframe.py
 )
 
 
