@@ -1,16 +1,125 @@
 import math
-import pandas as pd
-from osgeo import gdal
-from osgeo import osr
 import os
 import subprocess
 import tempfile
 import shutil
 
+from osgeo import gdal, ogr, osr
+import pandas as pd
+
 from ..dataframe import *
 from ..utils import _color_message
 
 gdal.UseExceptions()
+
+
+def to_df(dataframe, timestep=None):
+  """ Exports point agent properties to a Pandas dataframe
+
+  :param dataframe: Input dataframe from LUE dataset
+  :type dataframe: dataframe
+  :param crs: Coordinate Reference System, e.g. 'EPSG:4326'
+  :type crs: str
+  :param timestep: None for static data or timestep for dynamic data
+  :type timestep: int
+  """
+
+  phen_name = dataframe.keys()
+
+  if not timestep:
+
+    for phen_name in dataframe.keys():
+      phen = dataframe[phen_name]
+      for pset_name in phen.keys():
+        propset = dataframe[phen_name][pset_name]
+
+        if propset['_campo_space_type'] == 'static_same_point':
+          dfObj = pd.DataFrame()
+
+          property_names = list(propset.keys())
+          property_names.remove('_campo_space_type')
+
+
+          for prop_name in property_names:
+            dfObj['CoordX'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
+            dfObj['CoordY'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
+
+            for prop_name in property_names:
+              prop = dataframe[phen_name][pset_name][prop_name]
+              dfObj[prop_name] = prop['values'].data
+
+          return dfObj
+        else:
+          msg = _color_message('Only for static point agents')
+          raise TypeError(msg)
+
+  else:
+
+    for phen_name in dataframe.keys():
+      phen = dataframe[phen_name]
+      for pset_name in phen.keys():
+        propset = dataframe[phen_name][pset_name]
+
+        if not propset['_campo_space_type'] == 'dynamic_same_point':
+          raise NotImplementedError
+
+        dfObj = pd.DataFrame()
+
+        property_names = list(propset.keys())
+        property_names.remove('_campo_space_type')
+
+
+        for prop_name in property_names:
+            dfObj['CoordX'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
+            dfObj['CoordY'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
+
+        for prop_name in property_names:
+          p = dataframe[phen_name][pset_name][prop_name]
+          # User provided timestep to array index
+          ts = timestep - 1
+          dfObj[prop_name] = p['values'].values[:,ts]
+
+          return dfObj
+
+
+def mobile_points_to_gpkg(coords, dataframe, filename, crs=""):
+
+  # rewrite coordinates with ones from current timestep
+  dataframe["CoordX"] = coords[:,0]
+  dataframe["CoordY"] = coords[:,1]
+
+  with tempfile.TemporaryDirectory() as tmpdir:
+      layername, tail = os.path.splitext(os.path.basename(filename))
+
+      csv_fname = os.path.join(tmpdir, f'{layername}.csv')
+      csvt_fname = os.path.join(tmpdir, f'{layername}.csvt')
+
+      columns = []
+      for c in dataframe:
+        if dataframe[c].dtype.kind == 'f':
+          columns.append('Real')
+        elif dataframe[c].dtype.kind == 'i':
+          columns.append('Integer')
+        else:
+          columns.append('String')
+
+      columns = ','.join(map(str, columns))
+      with open(csvt_fname, 'w') as content:
+        content.write(columns)
+
+      dataframe.to_csv(csv_fname, index=False)
+
+      s_srs = ''
+      t_srs = ''
+      if crs != '':
+        s_srs = f'-s_srs {crs}'
+        t_srs = f'-t_srs {crs}'
+
+
+      cmd = f'ogr2ogr {s_srs} {t_srs} -oo X_POSSIBLE_NAMES=CoordX -oo Y_POSSIBLE_NAMES=CoordY -f GPKG {filename} {csv_fname}'
+      subprocess.check_call(cmd, shell=True, stdout=subprocess.DEVNULL)
+
+
 
 def to_gpkg(dataframe, filename, crs='', timestep=None):
   """ Exports point agent properties to a GeoPackage

@@ -26,5 +26,5 @@ conda install -c conda-forge campo
 
 ## Build status
 
-[![Build and deploy](https://github.com/computationalgeography/campo/workflows/Build%20and%20deploy/badge.svg)](https://github.com/computationalgeography/campo/actions)
+[![Build and deploy](https://github.com/computationalgeography/campo/actions/workflows/main.yaml/badge.svg)](https://github.com/computationalgeography/campo/actions/main.yaml)
 
