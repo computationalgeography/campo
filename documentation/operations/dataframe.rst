@@ -168,3 +168,4 @@ Reference
    to_csv
    to_gpkg
    to_tiff
+   to_geotiff

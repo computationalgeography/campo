@@ -3,10 +3,11 @@ channels:
   - conda-forge
   - nodefaults
 dependencies:
+  - cmake
   - python=3.11
   - numpy
   - sphinx=5.3
-  - cmake
+  - sphinx-autodoc-typehints
   - pandas
   - lue>0.3.6
   - hpx=1.9.0

@@ -4,6 +4,7 @@ set(SOURCES
   extract_dyn_diff.py
   extract_dyn_same.py
   unit_tests.py
+  test_dynamic_model.py
   test_phenomenon.py
   test_propertyset.py
   test_property.py

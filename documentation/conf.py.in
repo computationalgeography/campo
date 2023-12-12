@@ -33,7 +33,8 @@ release = '${campo_VERSION}'
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.ifconfig',
-    'sphinx.ext.autosummary'
+    'sphinx.ext.autosummary',
+    'sphinx_autodoc_typehints'
 ]
 
 autosummary_generate=True

@@ -10,6 +10,7 @@ import test_propertyset
 import test_property
 import test_mobile_agents
 import test_dataframe
+import test_dynamic_model
 
 
 if __name__ == "__main__":
@@ -26,6 +27,7 @@ if __name__ == "__main__":
     # suite.addTest(unittest.TestLoader().loadTestsFromModule(extract_dyn_diff))
 
     suite.addTest(unittest.TestLoader().loadTestsFromModule(test_mobile_agents))
+    suite.addTest(unittest.TestLoader().loadTestsFromModule(test_dynamic_model))
     suite.addTest(unittest.TestLoader().loadTestsFromModule(test_dataframe))
 
     result = unittest.TextTestRunner(verbosity=3).run(suite)
