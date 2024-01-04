@@ -8,6 +8,7 @@ from ..property import Property
 
 import pcraster
 
+
 def _spatial_operation(area_property, spatial_operation):
 
     for item_idx, item in enumerate(area_property.values):

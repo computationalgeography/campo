@@ -41,6 +41,7 @@ def agents_average(prop):
 
     return tmp_prop
 
+
 def get_others(start_prop, dest_prop, buffer_size):
     # re-use the previous approach to obtain the neighbours within a buffer
     values = numpy.zeros((len(start_prop.space_domain),len(dest_prop.space_domain)), dtype=numpy.int8)

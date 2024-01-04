@@ -3,6 +3,7 @@ from collections import OrderedDict
 
 from . import property
 
+
 class Values(object):
 
     def __init__(self, nr_objects, shapes, values):

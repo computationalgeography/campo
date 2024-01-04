@@ -32,12 +32,14 @@ def point_agent(object_ids, space_domain):
     else:
         return False
 
+
 def object_indices(object_ids, selection):
     res = []
     for item in selection:
         idx = int(np.where(object_ids == item)[0])
         res.append(idx)
     return res
+
 
 def select_constant_same_shape_arrays(
         property_set,

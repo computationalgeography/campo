@@ -8,6 +8,7 @@ def _color_message(message, colour_start='\033[31m'):
     colour_end = '\033[0m'
     return f'{colour_start}{message}{colour_end}'
 
+
 class TimeDomain(enum.Enum):
     """ Enum to indicate time domain of a property set """
     static = 1
