@@ -60,7 +60,6 @@ def select_constant_same_shape_arrays(
     else:
         raise NotImplementedError
 
-
     for prop in properties:
         prop_name = prop.id.name
         xr_dataset = {}
@@ -97,7 +96,6 @@ def select_constant_same_shape_arrays(
 
         xr_dataset['values'] = da
 
-
         result[prop_name] = xr_dataset
 
     return result
@@ -127,8 +125,6 @@ def select_constant_different_shape_arrays(
         space_discretization = properties[0].space_discretization_property()
     else:
         raise NotImplementedError
-
-
 
     # here we hopefully have object ids, domain, discretisation and values
     # and assume it's 2d space fttb
@@ -189,7 +185,6 @@ def select_variable_same_shape_constant_shape_arrays(
     # Each array is a same_shape.constant_shape.Property
     # Each array can be translated to ...
     result = {}
-
 
     property_set_name = property_set.id.name
 
@@ -267,7 +262,6 @@ def select_variable_same_shape_constant_shape_arrays(
 
         xr_dataset['values'] = da
 
-
         result[prop_name] = xr_dataset
 
     return result
@@ -295,7 +289,6 @@ def select_variable_different_shape_constant_shape_arrays(
     # Each array is a different_shape.constant_shape.Property
     # Each array can be translated to ...
     result = {}
-
 
     property_set_name = property_set.id.name
 
@@ -337,7 +330,6 @@ def select_variable_different_shape_constant_shape_arrays(
 
     # List of time steps
     timesteps = pd.date_range(origin, periods=nr_timesteps, freq=pd.DateOffset(**keys) ).values
-
 
     # here we hopefully have object ids, domain, discretisation and values
     # and assume it's 2d space fttb
@@ -458,20 +450,17 @@ def select_constant_arrays(
         return select_constant_different_shape_arrays(property_set, arrays[ldm.ShapePerObject.different], all_object_ids, object_ids)
 
 
-
 def select_variable_arrays(
         property_set,
         arrays,
         all_object_ids,
         object_ids):
 
-
     if ldm.ShapePerObject.same in arrays:
         return select_variable_same_shape_arrays(property_set, arrays[ldm.ShapePerObject.same], all_object_ids, object_ids)
 
     if ldm.ShapePerObject.different in arrays:
         return select_variable_different_shape_arrays(property_set, arrays[ldm.ShapePerObject.different], all_object_ids, object_ids)
-
 
 
 def select_arrays(
@@ -522,7 +511,6 @@ def select(
         msg = 'Could not find one of the properties named {}'.format(property_names)
         raise ValueError(msg)
 
-
     # Group properties by value_variability, shape_per_object, shape_variability
     arrays = {}
 
@@ -557,13 +545,10 @@ def select(
     return result
 
 
-
-
 def coordinates(dataset, phenomenon, propertyset, timestep):
 
     lue_pset = dataset.phenomena[phenomenon].property_sets[propertyset]
     object_ids = dataset.phenomena[phenomenon].object_id[:]
-
 
     time_start_idx = len(object_ids) * (timestep - 1)
     time_end_idx = time_start_idx + len(object_ids)

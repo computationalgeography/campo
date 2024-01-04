@@ -6,7 +6,6 @@ import subprocess
 from ..property import Property
 
 
-
 def _PropOp(arg1, op):
 
     if not isinstance(arg1, Property):
@@ -19,7 +18,6 @@ def _PropOp(arg1, op):
         tmp_prop.values()[idx] = op(arg1.values()[idx])
 
     return tmp_prop
-
 
 
 def _PropOpB(arg1, arg2, op, cast_type=None):
@@ -48,7 +46,6 @@ def _PropOpB(arg1, arg2, op, cast_type=None):
     return tmp_prop
 
 
-
 def _AOpProp(number, arg2, op):
     tmp_prop = copy.deepcopy(arg2)
 
@@ -63,8 +60,6 @@ def _AOpProp(number, arg2, op):
     return tmp_prop
 
 
-
-
 def log(property):
     """ Calculates the absolute value for each object the property values.
 
@@ -74,7 +69,6 @@ def log(property):
     :rtype: Property
     """
     return _PropOp(property, numpy.log)
-
 
 
 def abs(property):
@@ -99,8 +93,6 @@ def exp(property):
     return _PropOp(property, numpy.exp)
 
 
-
-
 def mul(self, other):
     """ Multiplication, equivalent to the * operator.
 
@@ -116,7 +108,6 @@ def mul(self, other):
     :rtype: Property
     """
     return _PropOpB(self, other, numpy.multiply)
-
 
 
 def rmul(self, number):
@@ -144,8 +135,6 @@ def rsub(self, number):
     return _AOpProp(number, self, numpy.subtract)
 
 
-
-
 def add(self, other):
     """ Addition, equivalent to the + operator.
 
@@ -167,7 +156,6 @@ def add(self, other):
 def radd(self, number):
 
     return add(self, number)
-
 
 
 def divide(self, other):
@@ -208,12 +196,8 @@ def rpower(self, number):
     return _AOpProp(number, self, numpy.power)
 
 
-
 def neg(self):
     return -1 * self
-
-
-
 
 
 def not_equal(self, other):
@@ -232,7 +216,6 @@ def greater(self, other):
     """ Equivalent to the > operator.
     """
     return _PropOpB(self, other, numpy.greater, numpy.uint8)
-
 
 
 def greater_equal(self, other):
@@ -255,7 +238,6 @@ def less_equal(self, other):
 
 def logical_and(self, other):
     return _PropOpB(self, other, numpy.logical_and, numpy.uint8)
-
 
 
 def _bool(self):

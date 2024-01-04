@@ -6,8 +6,6 @@ from .propertyset import PropertySet
 from .utils import _color_message
 
 
-
-
 class Phenomenon(object):
     """ """
 
@@ -19,7 +17,6 @@ class Phenomenon(object):
         self._nr_psets = 0
 
         self._epsg = None
-
 
     def set_epsg(self, epsg):
         """ Setting Coordinate Reference System (CRS) for the spatial domain
@@ -33,11 +30,8 @@ class Phenomenon(object):
 
         self._epsg = epsg
 
-
-
     def __len__(self):
         return len(self._property_sets)
-
 
     def __getattr__(self, property_set_name):
 
@@ -46,8 +40,6 @@ class Phenomenon(object):
         else:
             msg = _color_message(f"No property set '{property_set_name}' in phenomenon '{self._name}'")
             raise TypeError(msg)
-
-
 
     def _read_domain(self, filename):
 
@@ -69,24 +61,20 @@ class Phenomenon(object):
 
                 shape = [(1,)] * nr_objects
 
-
             elif len(content[0]) == 6:
                 # field agents
                 domain = Areas()
                 domain.read(filename)
                 shape = [(int(domain.row_discr[i]), int(domain.col_discr[i])) for i in range(nr_objects)]
 
-
             else:
                 raise NotImplementedError
-
 
         assert nr_objects is not None
         assert domain is not None
         assert shape is not None
 
         return nr_objects, domain, shape
-
 
     def add_property_set(self, pset_name, filename):
         """ """
@@ -105,11 +93,6 @@ class Phenomenon(object):
 
         if self._epsg:
             p.space_domain.epsg = self._epsg
-
-
-
-
-
 
     @property
     def nr_propertysets(self):
@@ -149,6 +132,5 @@ class Phenomenon(object):
             for p in self._property_sets:
                 msg += '\n'
                 msg += self._property_sets[p].__repr__(indent+1)
-
 
         return msg

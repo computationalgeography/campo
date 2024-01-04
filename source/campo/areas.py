@@ -29,12 +29,9 @@ class Areas(object):
         self.row_discr = None
         self.col_discr = None
 
-
         self._mobile = mobile
 
-
         self._epsg = None
-
 
     @property
     def epsg(self):
@@ -49,7 +46,6 @@ class Areas(object):
     def mobile(self):
         return self._mobile
 
-
     @property
     def nr_items(self):
         return self._nr_items
@@ -58,9 +54,7 @@ class Areas(object):
     def nr_items(self, value):
         self._nr_items = value
 
-
     def read(self, filename):
-
 
         with open(filename, 'r') as csvfile:
             reader = csv.reader(csvfile)
@@ -70,7 +64,6 @@ class Areas(object):
 
             self.p1 = Points()
             self.p2 = Points()
-
 
             x1 = numpy.zeros(self.nr_items)
             y1 = numpy.zeros(self.nr_items)
@@ -95,10 +88,8 @@ class Areas(object):
             self.p2.xcoord = x2
             self.p2.ycoord = y2
 
-
             self.row_discr = xdiscr
             self.col_discr = ydiscr
-
 
     def __iter__(self):
         return self
@@ -118,7 +109,6 @@ class Areas(object):
         self.iter_idx += 1
 
         return values
-
 
     def __repr__(self):
         return 'Area'

@@ -14,7 +14,6 @@ class TimeDomain(enum.Enum):
     dynamic = 2
 
 
-
 class TimeDiscretization(enum.Enum):
     """ Enum to indicate temporal discretisation of a property set """
     static = 1

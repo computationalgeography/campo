@@ -4,12 +4,10 @@ import uuid
 import lue.data_model as ldm
 
 
-
 from .points import Points
 from .areas import Areas
 from .property import Property
 from .utils import TimeDiscretization, _color_message
-
 
 
 class PropertySet(object):
@@ -27,11 +25,9 @@ class PropertySet(object):
         self._phenomenon_name = None
         self._lue_filename = None
 
-
     @property
     def is_mobile(self):
         return self._is_mobile
-
 
     @property
     def uuid(self):
@@ -41,7 +37,6 @@ class PropertySet(object):
     def space_domain(self):
         return self.space_domain
 
-
     @property
     def time_domain(self):
         return self.time_domain
@@ -50,11 +45,9 @@ class PropertySet(object):
     def domain(self):
         return self._domain
 
-
     @property
     def nr_objects(self):
         return self._nr_agents
-
 
     @property
     def name(self):
@@ -68,7 +61,6 @@ class PropertySet(object):
     def properties(self):
         return self._properties
 
-
     @property
     def shapes(self):
         return self._shape
@@ -76,34 +68,27 @@ class PropertySet(object):
     def __len__(self):
         return len(self._properties)
 
-
-
     def set_space_domain(self, variable, values):
         assert isinstance(variable, str)
         if isinstance(values, Points):
 
             self._domain = values
 
-
         elif isinstance(values, Areas):
 
             self._domain = values
 
-
         else:
             raise NotImplementedError
 
-
         for p in self._properties:
             p.pset_domain = self._domain
-
 
     def add_property(self, property_name, dtype=np.float64, time_discretisation=TimeDiscretization.dynamic, rank=None, shape=None):
         assert isinstance(property_name, str)
         assert self._lue_dataset_name is not None
 
         self.time_discretisation = time_discretisation
-
 
         # FAME
         self.shapes = None
@@ -118,7 +103,6 @@ class PropertySet(object):
             self.shapes = [(int(self._domain.row_discr[i]), int(self._domain.col_discr[i])) for i in range(len(self._domain.row_discr))]
         else:
             raise NotImplementedError
-
 
         p = Property(self._phen, self.shapes, self._uuid, self._domain, self.time_discretisation)
         p.name = property_name
@@ -150,8 +134,6 @@ class PropertySet(object):
             #p_shape = (2,1)
             #prop = pset.add_property(property_name, dtype=np.dtype(dtype), shape=p_shape, value_variability=lue.ValueVariability.variable)
 
-
-
             if self.time_discretisation == TimeDiscretization.dynamic:
                 prop = pset.add_property(property_name, dtype=np.dtype(dtype), rank=2,
                   shape_per_object=ldm.ShapePerObject.different,
@@ -168,7 +150,6 @@ class PropertySet(object):
             for idx, item in enumerate(p.pset_domain):
                 space_discr.value[idx]= [item[4], item[5]]
                 #prop.value.expand(idx, item, nr_timesteps)
-
 
             prop.set_space_discretization(
                 ldm.SpaceDiscretization.regular_grid,
@@ -189,14 +170,10 @@ class PropertySet(object):
 
                 prop.value.expand(self._lue_dataset.phenomena[self._lue_phenomenon_name].object_id[:], shapes)
 
-
-
         else:
             raise NotImplementedError
 
         ldm.assert_is_valid(self._lue_dataset_name)
-
-
 
     def __getattr__(self, name):
 
@@ -205,8 +182,6 @@ class PropertySet(object):
         else:
             msg = _color_message(f"No property '{name}' in property set '{self._name}'")
             raise TypeError(msg)
-
-
 
     def __setattr__(self, name, value):
         if name.startswith('_', 0, 1):
@@ -224,8 +199,6 @@ class PropertySet(object):
                 p = Property(name, self._uuid, self._space_domain, self._shape, value)
                 self._properties[name] = p
 
-
-
     def __repr__(self, indent=0):
         msg = '{}Property set: {}\n'.format('  ' * indent, self.name)
         msg += '{}Type: {}'.format('  ' * (indent+1), self.space_domain)
@@ -239,13 +212,10 @@ class PropertySet(object):
 
         return msg
 
-
     def get_space_domain(self, timestep=None):
         """ """
 
         return self._space_domain
-
-
 
     def set_space_domain(self, context, timestep=None):
         pass

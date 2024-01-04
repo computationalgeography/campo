@@ -40,7 +40,6 @@ class Campo(object):
             cc.cpus = cpus
             raise NotImplementedError(f"WIP cpus")
 
-
     def __repr__(self, indent=0):
         msg = '{}Campo:\n'.format('  ' * indent)
         if len(self._phenomena) == 0:
@@ -50,8 +49,6 @@ class Campo(object):
                 msg += self._phenomena[p].__repr__(indent + 1)
 
         return msg
-
-
 
     def _add_framework(self, nr_objects):
         """      """
@@ -84,8 +81,6 @@ class Campo(object):
         if self._debug:
             ldm.assert_is_valid(self.lue_filename)
 
-
-
     def add_phenomenon(self, phenomenon_name):
 
         if phenomenon_name in self._phenomena:
@@ -96,8 +91,6 @@ class Campo(object):
         self._phenomena[phenomenon_name] = phen
 
         return phen
-
-
 
     def create_dataset(self, filename, working_dir=os.getcwd()):
         """ """
@@ -116,8 +109,6 @@ class Campo(object):
 
         if self._debug:
             ldm.assert_is_valid(self.lue_filename)
-
-
 
     def _generate_lue_property(self, phen_name, property_set, prop):
 
@@ -148,7 +139,6 @@ class Campo(object):
                 lue_prop = pset.add_property(prop.name, dtype=np.dtype(dtype))
                 lue_prop.value.expand(nr_objects)
 
-
         elif isinstance(property_set.space_domain, Areas):
 
             if prop.is_dynamic:
@@ -171,7 +161,6 @@ class Campo(object):
                 # Different shape
                 lue_prop = pset.add_property(prop.name, dtype=np.dtype(dtype), rank=2)
 
-
             space_discr = pset.campo_discretization
 
             # if number of rows/columns not yet set...
@@ -184,7 +173,6 @@ class Campo(object):
                     shapes[idx] = [item[4], item[5]]
 
                 space_discr.value[:] = shapes
-
 
             rank = 2
             if prop.is_dynamic:
@@ -199,7 +187,6 @@ class Campo(object):
 
                 lue_prop.value.expand(dataset.phenomena[phen_name].object_id[:], shapes)
 
-
             lue_prop.set_space_discretization(
                 ldm.SpaceDiscretization.regular_grid,
                 space_discr)
@@ -211,7 +198,6 @@ class Campo(object):
 
         if self._debug:
             ldm.assert_is_valid(self.lue_filename)
-
 
     def _generate_lue_property_set(self, phen_name, property_set):
 
@@ -252,7 +238,6 @@ class Campo(object):
 
         tmp_pset = dataset.phenomena[phen_name].property_sets[property_set.name]
 
-
         space_coordinate_dtype = tmp_pset.space_domain.value.dtype
 
         # Assign coordinates
@@ -284,7 +269,6 @@ class Campo(object):
 
         elif space_type == ldm.SpaceDomainItemType.box:
 
-
             tmp_values = np.empty((property_set.nr_objects, 4), dtype=tmp_pset.space_domain.value.dtype)
 
             for idx, item in enumerate(property_set.space_domain):
@@ -304,13 +288,8 @@ class Campo(object):
             tmp_prop = tmp_pset.add_property('campo_discretization', dtype=ldm.dtype.Count, shape=(2,))
             tmp_prop.value.expand(property_set.nr_objects)
 
-
-
         else:
             raise NotImplementedError
-
-
-
 
         for prop in property_set.properties.values():
             self._generate_lue_property(phen_name, property_set, prop)
@@ -319,7 +298,6 @@ class Campo(object):
 
         if self._debug:
             ldm.assert_is_valid(self.lue_filename)
-
 
     def _generate_lue_phenomenon(self,  phenomenon):
         pset = next(iter(phenomenon.property_sets.values()))
@@ -339,8 +317,6 @@ class Campo(object):
 
         if self._debug:
             ldm.assert_is_valid(self.lue_filename)
-
-
 
     def _lue_write_property(self, phen_name, pset, prop, timestep):
         dataset = ldm.open_dataset(self.lue_filename, 'w')
@@ -368,7 +344,6 @@ class Campo(object):
             campo_coords_ts = campo_pset.space_domain._get_coordinates()
 
             lue_pset.space_domain.value[coord_start_idx:coord_end_idx] = campo_coords_ts
-
 
         # Writing property values
         if not prop.is_dynamic:
@@ -400,7 +375,6 @@ class Campo(object):
         if self._debug:
             ldm.assert_is_valid(self.lue_filename)
 
-
     def write(self, timestep=None):
         """ Writing current state to a LUE dataset
 
@@ -422,7 +396,6 @@ class Campo(object):
         for pset in self._phenomena[p].property_sets.values():
             for prop in pset.properties.values():
                 self._lue_write_property(p, pset, prop, timestep)
-
 
     def set_time(self, start, unit, stepsize, nrTimeSteps):
         """  """

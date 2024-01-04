@@ -5,7 +5,6 @@ import multiprocessing
 from concurrent import futures
 
 
-
 from osgeo import ogr
 from osgeo import osr
 
@@ -57,7 +56,6 @@ def get_others(start_prop, dest_prop, buffer_size):
     field = ogr.FieldDefn('uid', ogr.OFTInteger)
     lyr_dest.CreateField(field)
 
-
     # Plain storing of object order (id)
     for idx, p in enumerate(dest_prop.space_domain):
         point = ogr.Geometry(ogr.wkbPoint)
@@ -70,10 +68,8 @@ def get_others(start_prop, dest_prop, buffer_size):
 
         lyr_dest.CreateFeature(feat)
 
-
     lyr_dest = None
     lyr_dest = ds.GetLayer('uid')
-
 
     for idx, p in enumerate(start_prop.space_domain):
 
@@ -87,7 +83,6 @@ def get_others(start_prop, dest_prop, buffer_size):
         feat.SetGeometry(poly)
         lyr_dist.CreateFeature(feat)
 
-
         lyr_dest.SetSpatialFilter(poly)
 
         lyr_dest.Clip(lyr_dist, lyr_shop, options=['SKIP_FAILURES=NO'])
@@ -100,15 +95,11 @@ def get_others(start_prop, dest_prop, buffer_size):
     return values
 
 
-
-
 def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default_value, ret_prop):
     # start_prop carries start locations
     # dest_prop value layer to obtain neighbour values
 
     tmp_prop = copy.deepcopy(ret_prop)
-
-
 
     # Brute assumption here for the CRS, this should be in the dataset itself somewhere...
     spatial_ref = osr.SpatialReference()
@@ -120,28 +111,15 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
     geo_out = 'foodenv.gpkg'
     # ds = ogr.GetDriverByName('GPKG').CreateDataSource(geo_out)
 
-
-
     memdriver = ogr.GetDriverByName('MEMORY')
     ds = memdriver.CreateDataSource(geo_out)
-
-
-
-
-
-
-
-
-
 
     # Second we make a point feature from which we will obtain the values
     # Holding all objects
     lyr_stores = ds.CreateLayer('values', geom_type=ogr.wkbPoint, srs=spatial_ref)
 
-
     field = ogr.FieldDefn('value', ogr.OFTReal)
     lyr_stores.CreateField(field)
-
 
     # ToDo: Here we need to get the object ids, actually...
     for idx, p in enumerate(dest_prop):#.pset_domain):
@@ -155,7 +133,6 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
         feat.SetField('value', val)
 
         lyr_stores.CreateFeature(feat)
-
 
     lyr_stores = None
     lyr_stores = ds.GetLayer('values')
@@ -174,7 +151,6 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
         feat = ogr.Feature(lyr_dist.GetLayerDefn())
         feat.SetGeometry(poly)
         lyr_dist.CreateFeature(feat)
-
 
         lyr_stores.SetSpatialFilter(poly)
 
@@ -199,11 +175,7 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
         ds.DeleteLayer('destination_locations')
         ds.DeleteLayer('source_buffer')
 
-
     return tmp_prop
-
-
-
 
 
 def _focal_agents(values):
@@ -221,7 +193,6 @@ def _focal_agents(values):
     crs = values[10]
     d_domain = values[11]
     d_values = values[12]
-
 
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromEPSG(crs)
@@ -258,12 +229,10 @@ def _focal_agents(values):
     lyr_dst = None
     lyr_dst = ds.GetLayer(lname)
 
-
     # Raster for points to query
     nr_rows = extent[4]
     nr_cols = extent[5]
     cellsize = math.fabs(extent[2] - extent[0]) / nr_cols
-
 
     #
     minX = extent[0]
@@ -298,7 +267,6 @@ def _focal_agents(values):
     pcraster.setclone(nr_rows, nr_cols, cellsize, minX, maxY)
 
     raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight.astype("float32"), numpy.nan)
-
 
     point_values = numpy.empty(nr_locs)
     point_values.fill(numpy.nan)
@@ -339,9 +307,6 @@ def _focal_agents(values):
     return idx, result
 
 
-
-
-
 def focal_agents(dest, weight, source, fail=False):
     """
 
@@ -351,7 +316,6 @@ def focal_agents(dest, weight, source, fail=False):
 
     source: point property (values to gather from)
     """
-
 
     # hack rename...
     source_point = dest
@@ -387,13 +351,10 @@ def focal_agents(dest, weight, source, fail=False):
 
     assert dst_crs == field_crs
 
-
     tmp_prop = Property('emptyfocal_agents', dest.uuid, dest.space_domain, dest.shapes, numpy.nan)
-
 
     #spatial_ref = osr.SpatialReference()
     #spatial_ref.ImportFromEPSG(point_crs)
-
 
     #ds = ogr.GetDriverByName('MEMORY').CreateDataSource('mem')
 
@@ -403,7 +364,6 @@ def focal_agents(dest, weight, source, fail=False):
 
     #field = ogr.FieldDefn('value', ogr.OFTReal)
     #lyr_dst.CreateField(field)
-
 
     #for idx, p in enumerate(dest_prop.space_domain):
         #point = ogr.Geometry(ogr.wkbPoint)
@@ -438,7 +398,6 @@ def focal_agents(dest, weight, source, fail=False):
         item = (idx, 'tmp_prop', nr_locs, values_weight, extent, 'spatial_ref', 'lyr_dst', 'operation', fail, 'dprop', point_crs, d_domain, d_values)
         todos.append(item)
 
-
     cpus = multiprocessing.cpu_count()
     tasks = len(todos)
     chunks = max(1, tasks // cpus)
@@ -462,12 +421,10 @@ def focal_agents(dest, weight, source, fail=False):
 
         extent = source_field.space_domain._extent(idx)
 
-
         # Raster for points to query
         nr_rows = extent[4]
         nr_cols = extent[5]
         cellsize = math.fabs(extent[2] - extent[0]) / nr_cols
-
 
         minX = extent[0]
         maxY = extent[3]
@@ -533,10 +490,7 @@ def focal_agents(dest, weight, source, fail=False):
 
         tmp_prop.values()[idx] = res
 
-
     return tmp_prop
-
-
 
 
 def where(condition, property1, property2):
@@ -552,7 +506,6 @@ def where(condition, property1, property2):
     if not isinstance(property2, Property):
         msg = _color_message('property2 must be of type Property')
         raise TypeError(msg)
-
 
     allowed = numpy.array([0, 1])
     for item in condition.values().values:

@@ -22,7 +22,6 @@ class Points(object):
 
         self._epsg = None
 
-
     @property
     def epsg(self):
         return self._epsg
@@ -52,7 +51,6 @@ class Points(object):
     def ycoord(self, value):
         self._ycoord = value
 
-
     @property
     def nr_items(self):
         return self._nr_items
@@ -60,7 +58,6 @@ class Points(object):
     @nr_items.setter
     def nr_items(self, value):
         self._nr_items = value
-
 
     def read(self, filename):
 
@@ -89,9 +86,7 @@ class Points(object):
             self.xcoord = v[:,0]
             self.ycoord = v[:,1]
 
-
             self._coordinates = numpy.empty((self.nr_items, 2))
-
 
     def __iter__(self):
         return self
@@ -107,21 +102,17 @@ class Points(object):
 
         return values
 
-
     def __len__(self):
         return len(self.xcoord)
 
-
     def __repr__(self):
         return 'Point'
-
 
     def _get_coordinates(self):
 
         self._coordinates[:,0] = self.xcoord
         self._coordinates[:,1] = self.ycoord
         return self._coordinates
-
 
     def _set_coordinates(self, values):
         self._coordinates = values

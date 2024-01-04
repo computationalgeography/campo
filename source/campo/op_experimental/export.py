@@ -39,7 +39,6 @@ def to_df(dataframe, timestep=None):
                     property_names = list(propset.keys())
                     property_names.remove('_campo_space_type')
 
-
                     for prop_name in property_names:
                         dfObj['CoordX'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
                         dfObj['CoordY'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
@@ -67,7 +66,6 @@ def to_df(dataframe, timestep=None):
 
                 property_names = list(propset.keys())
                 property_names.remove('_campo_space_type')
-
 
                 for prop_name in property_names:
                     dfObj['CoordX'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
@@ -115,10 +113,8 @@ def mobile_points_to_gpkg(coords, dataframe, filename, crs=""):
             s_srs = f'-s_srs {crs}'
             t_srs = f'-t_srs {crs}'
 
-
         cmd = f'ogr2ogr {s_srs} {t_srs} -oo X_POSSIBLE_NAMES=CoordX -oo Y_POSSIBLE_NAMES=CoordY -f GPKG {filename} {csv_fname}'
         subprocess.check_call(cmd, shell=True, stdout=subprocess.DEVNULL)
-
 
 
 def to_gpkg(dataframe, filename, crs='', timestep=None):
@@ -148,7 +144,6 @@ def to_gpkg(dataframe, filename, crs='', timestep=None):
 
                     property_names = list(propset.keys())
                     property_names.remove('_campo_space_type')
-
 
                     for prop_name in property_names:
                         dfObj['CoordX'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
@@ -185,7 +180,6 @@ def to_gpkg(dataframe, filename, crs='', timestep=None):
                             s_srs = f'-s_srs {crs}'
                             t_srs = f'-t_srs {crs}'
 
-
                         cmd = f'ogr2ogr {s_srs} {t_srs} -oo X_POSSIBLE_NAMES=CoordX -oo Y_POSSIBLE_NAMES=CoordY -f GPKG {filename} {csv_fname}'
                         subprocess.check_call(cmd, shell=True, stdout=subprocess.DEVNULL)
 
@@ -212,7 +206,6 @@ def to_gpkg(dataframe, filename, crs='', timestep=None):
                 property_names = list(propset.keys())
                 property_names.remove('_campo_space_type')
 
-
                 for prop_name in property_names:
                     dfObj['CoordX'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
                     dfObj['CoordY'] = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
@@ -222,7 +215,6 @@ def to_gpkg(dataframe, filename, crs='', timestep=None):
                     # User provided timestep to array index
                     ts = timestep - 1
                     dfObj[prop_name] = p['values'].values[:,ts]
-
 
                 with tempfile.TemporaryDirectory() as tmpdir:
                     layername, tail = os.path.splitext(os.path.basename(filename))
@@ -256,12 +248,6 @@ def to_gpkg(dataframe, filename, crs='', timestep=None):
                     subprocess.check_call(cmd, shell=True, stdout=subprocess.DEVNULL)
 
 
-
-
-
-
-
-
 def to_tiff(dataframe, crs="", directory="", timestep=None):
     """ Exports field agent property to a set of GeoTIFF outputs
 
@@ -274,8 +260,6 @@ def to_tiff(dataframe, crs="", directory="", timestep=None):
     :param timestep: None for static data or timestep for dynamic data
     :type timestep: int
     """
-
-
 
     if not timestep:
         for phen_name in dataframe.keys():
@@ -317,7 +301,6 @@ def to_tiff(dataframe, crs="", directory="", timestep=None):
                             dtype = gdal.GDT_Byte
                         else:
                             raise NotImplementedError
-
 
                         dst_ds = gdal.GetDriverByName('GTiff').Create(fname, cols, rows, 1, dtype)
                         dst_ds.SetGeoTransform(geotransform)
@@ -371,7 +354,6 @@ def to_csv(dataframe, filename):
                 property_names = list(propset.keys())
                 property_names.remove('_campo_space_type')
 
-
                 for prop_name in property_names:
                     xcoord = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
                     ycoord = dataframe[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
@@ -387,10 +369,8 @@ def to_csv(dataframe, filename):
                     for a in range(p['values'].shape[0]):
                         dfObj[f'ag{a}'] = p['values'].values[a]
 
-
                     outname = f'{fname}_{prop_name}.csv'
                     dfObj.to_csv(outname, index=False)
-
 
             elif propset['_campo_space_type'] == 'static_same_point':
                 dfObj = pd.DataFrame()
@@ -412,15 +392,11 @@ def to_csv(dataframe, filename):
             else:
                 raise NotImplementedError
 
-
     return
-
-
 
             #for prop_name in propset.keys():
                 #dfObj['CoordX'] = frame[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
                 #dfObj['CoordY'] = frame[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
-
 
             #for prop_name in propset.keys():
                 #prop = frame[phen_name][pset_name][prop_name]
@@ -434,7 +410,6 @@ def to_csv(dataframe, filename):
     #dfObj.to_csv(filename, index=False)
 
 
-
 def create_point_pdf(frame, filename):
 
     phen_name = frame.keys()
@@ -443,7 +418,6 @@ def create_point_pdf(frame, filename):
     data_dir = os.path.join(wdir,'data')
 
     tmp_csv = os.path.join(data_dir, 'agents.csv')
-
 
     phen_name = frame.keys()
 
@@ -458,7 +432,6 @@ def create_point_pdf(frame, filename):
                 dfObj['x'] = frame[phen_name][pset_name][prop_name]['coordinates'].data[:, 0]
                 dfObj['y'] = frame[phen_name][pset_name][prop_name]['coordinates'].data[:, 1]
 
-
             for prop_name in propset.keys():
                 prop = frame[phen_name][pset_name][prop_name]
 
@@ -472,17 +445,13 @@ def create_point_pdf(frame, filename):
 
     subprocess.check_call(cmd, shell=True, stdout=subprocess.DEVNULL)
 
-
     cmd = 'gdal_translate -of PDF -a_srs EPSG:28992 data/clone.tiff points.pdf -co OGR_DATASOURCE=out.vrt'
 
     clone_path = os.path.join(data_dir, 'clone.tiff')
     vrt_path = os.path.join(data_dir, 'sources.vrt')
     cmd = 'gdal_translate -of PDF -a_srs EPSG:28992 {} {} -co OGR_DATASOURCE={}'.format(clone_path, filename, vrt_path)
 
-
     subprocess.check_call(cmd, shell=True, stdout=subprocess.DEVNULL)
-
-
 
 
 def create_field_pdf(frame, filename):
@@ -497,7 +466,6 @@ def create_field_pdf(frame, filename):
         shutil.rmtree(tmpdir)
 
     os.mkdir(tmpdir)
-
 
     #with tempfile.TemporaryDirectory() as tmpdir:
     fnames = []
@@ -530,7 +498,6 @@ def create_field_pdf(frame, filename):
                     fnames.append(fname)
                     lnames.append('shop{:03d}'.format(obj_id))
 
-
                     dst_ds = gdal.GetDriverByName('GTiff').Create(fname, cols, rows, 1, gdal.GDT_Byte)
                     dst_ds.SetGeoTransform(geotransform)
                     srs = osr.SpatialReference()
@@ -538,7 +505,6 @@ def create_field_pdf(frame, filename):
                     dst_ds.SetProjection(srs.ExportToWkt())
                     dst_ds.GetRasterBand(1).WriteArray(data)
                     dst_ds = None
-
 
     outfile = os.path.join(wdir, filename)
     clone = os.path.join(data_dir, 'clone.tiff')
@@ -548,17 +514,12 @@ def create_field_pdf(frame, filename):
     rasters = ','.join(fnames)
     names = ','.join(lnames)
 
-
     cmd = 'gdal_translate -q -of PDF -a_srs EPSG:28992 {} {} -co OGR_DATASOURCE={} -co OGR_DISPLAY_FIELD="roads" -co EXTRA_RASTERS={} -co EXTRA_RASTERS_LAYER_NAME={} -co OFF_LAYERS={}'.format(clone, outfile,roads,rasters,names,names )
     #cmd = 'gdal_translate -q -of PDF -a_srs EPSG:28992 {} {} -co OGR_DATASOURCE={} -co OGR_DISPLAY_FIELD="roads" -co EXTRA_RASTERS={} -co EXTRA_RASTERS_LAYER_NAME={}'.format(clone, outfile,roads,rasters,names)
     cmd = 'gdal_translate -q -of PDF -a_srs EPSG:28992 {} {} -co OGR_DATASOURCE={} -co EXTRA_RASTERS={} -co EXTRA_RASTERS_LAYER_NAME={}'.format(clone, outfile,roads,rasters,names)
 
     subprocess.check_call(cmd, shell=True, stdout=subprocess.DEVNULL)
     shutil.rmtree(tmpdir)
-
-
-
-
 
 
 def _gdal_datatype(data_type):

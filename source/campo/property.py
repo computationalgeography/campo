@@ -5,7 +5,6 @@ import numpy as np
 from .values import Values
 
 
-
 class Property(object):
     def __init__(self, name, pset_uuid, pset_domain, shape, initial_value = np.nan):
 
@@ -20,7 +19,6 @@ class Property(object):
 
         self._values = Values(self._nr_agents, self._shape, initial_value)
 
-
     @property
     def is_dynamic(self):
         return self._is_dynamic
@@ -28,7 +26,6 @@ class Property(object):
     @is_dynamic.setter
     def is_dynamic(self, value):
         self._is_dynamic = value
-
 
     def values(self):
         return self._values
@@ -45,7 +42,6 @@ class Property(object):
     def space_domain(self):
         return self._pset_domain
 
-
     @property
     def name(self):
         return self._name
@@ -56,7 +52,6 @@ class Property(object):
 
     def set_values(self, values):
         self._values = Values(self._nr_agents, self._shape, values)
-
 
     def __repr__(self, indent=0):
         msg = '{}Property: {}'.format('  ' * indent, self.name)

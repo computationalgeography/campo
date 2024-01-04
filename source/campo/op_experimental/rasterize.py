@@ -8,23 +8,15 @@ import math
 import numpy as np
 
 
-
 from ..points import Points
 from ..areas import Areas
 from ..property import Property
 
 
-
-
-
-
-
 def feature_to_raster(field_pset, point_pset):
-
 
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromEPSG(28992)
-
 
     ogr_source=ogr.GetDriverByName('MEMORY').CreateDataSource('memSource')
 
@@ -53,10 +45,8 @@ def feature_to_raster(field_pset, point_pset):
         nr_cols = int(area[5])
         cellsize = cellsize = math.fabs(area[2] - area[0]) / nr_cols
 
-
         minX = area[0]
         maxY = area[3]
-
 
         target_ds = gdal.GetDriverByName('MEM').Create('', nr_cols, nr_rows, 1, gdal.GDT_Byte)
         target_ds.SetGeoTransform((minX, cellsize, 0, maxY, 0, -cellsize))
@@ -71,33 +61,24 @@ def feature_to_raster(field_pset, point_pset):
 
         tmp_prop.values()[idx] = array
 
-
     return tmp_prop
-
-
-
-
 
 
 def feature_to_raster_all(field_pset, point_pset):
 
-
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromEPSG(28992)
-
 
     outdriver=ogr.GetDriverByName('MEMORY')
     source=outdriver.CreateDataSource('memData')
     tmp=outdriver.Open('memData', 1)
     lyr = source.CreateLayer('locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
 
-
     for coordinate in point_pset.space_domain:
         feat = ogr.Feature(lyr.GetLayerDefn())
         feat.SetGeometry(ogr.CreateGeometryFromWkt('POINT({} {})'.format(float(coordinate[0]), float(coordinate[1]))))
 
         lyr.CreateFeature(feat)
-
 
     tmp_prop = Property('emptycreatename', field_pset.uuid, field_pset.space_domain, field_pset.shapes)
 
@@ -107,10 +88,8 @@ def feature_to_raster_all(field_pset, point_pset):
         nr_cols = int(area[5])
         cellsize = cellsize = math.fabs(area[2] - area[0]) / nr_cols
 
-
         minX = area[0]
         maxY = area[3]
-
 
         target_ds = gdal.GetDriverByName('MEM').Create('', nr_cols, nr_rows, 1, gdal.GDT_Byte)
         target_ds.SetGeoTransform((minX, cellsize, 0, maxY, 0, -cellsize))
@@ -125,9 +104,7 @@ def feature_to_raster_all(field_pset, point_pset):
 
         tmp_prop.values()[idx] = array
 
-
     return tmp_prop
-
 
 
 def feature_values_to_raster(field_pset, point_pset, point_prop):

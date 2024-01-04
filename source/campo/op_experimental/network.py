@@ -6,8 +6,6 @@ import networkx as nx
 from ..values import Values
 
 
-
-
 def neighbour_network(nodes, neighbours, probability, seed=None):
 
     G = nx.watts_strogatz_graph(n=nodes, k=neighbours, p=probability, seed=seed)
@@ -25,7 +23,6 @@ def network_average_def(source_prop, value_prop, default):
 
     tmp_prop = copy.deepcopy(source_prop)
 
-
     shapes = [()] * tmp_prop.nr_objects
 
     tmp_prop._values = Values(tmp_prop.nr_objects, shapes, numpy.nan)
@@ -41,16 +38,12 @@ def network_average_def(source_prop, value_prop, default):
                 val += nval
             tmp_prop.values()[idx] = val / len(neighbour_ids[0])
 
-
     return tmp_prop
-
-
 
 
 def network_average(source_prop, value_prop, fname):
 
     tmp_prop = copy.deepcopy(value_prop)
-
 
     for idx,i in enumerate(tmp_prop.values()):
         neighbour_ids = numpy.nonzero(source_prop.values()[idx]>0)
@@ -61,9 +54,7 @@ def network_average(source_prop, value_prop, fname):
             val += nval
         tmp_prop.values()[idx] = val / len(neighbour_ids[0])
 
-
     return tmp_prop
-
 
 
 def spread_neighbours(neighbours, threshold, random_seed, breeds, mask, albedos, ages, seed=None):

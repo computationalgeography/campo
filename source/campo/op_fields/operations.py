@@ -10,7 +10,6 @@ import pcraster
 
 def _spatial_operation(area_property, spatial_operation):
 
-
     for item_idx, item in enumerate(area_property.values):
 
         west = area_property.pset_domain.p1.xcoord[item_idx]
@@ -19,14 +18,11 @@ def _spatial_operation(area_property, spatial_operation):
         rows = int(area_property.pset_domain.row_discr[item_idx])
         cols = int(area_property.pset_domain.col_discr[item_idx])
 
-
         cellsize = (area_property.pset_domain.p2.xcoord[item_idx] - west ) / cols
 
         pcraster.setclone(rows, cols, cellsize, west, north)
 
         raster = pcraster.numpy2pcr( pcraster.Scalar, item.astype("float32"), numpy.nan)
-
-
 
 
 def _new_property_from_property(area_property, multiplier):
@@ -54,9 +50,6 @@ def _new_property_from_property(area_property, multiplier):
     return new_prop
 
 
-
-
-
 def _set_current_clone(area_property, item_idx):
 
     west = area_property.space_domain.p1.xcoord[item_idx]
@@ -65,27 +58,19 @@ def _set_current_clone(area_property, item_idx):
     rows = int(area_property.space_domain.row_discr[item_idx])
     cols = int(area_property.space_domain.col_discr[item_idx])
 
-
     cellsize = (area_property.space_domain.p2.xcoord[item_idx] - west ) / cols
 
     pcraster.setclone(rows, cols, cellsize, west, north)
 
 
-
-
 def _spatial_operation_one_argument(area_property, spatial_operation, pcr_type):
-
 
     # generate a property to store the result
     result_prop = _new_property_from_property(area_property, 0.0)
 
-
-
     for item_idx, item in enumerate(area_property.values):
 
-
         _set_current_clone(area_property, item_idx)
-
 
         arg_raster = pcraster.numpy2pcr(pcr_type, item, numpy.nan)
 
@@ -94,16 +79,10 @@ def _spatial_operation_one_argument(area_property, spatial_operation, pcr_type):
 
         result_prop.values[item_idx] = result_item
 
-
-
     return result_prop
 
 
-
-
-
 def _spatial_operation_two_arguments(arg1_property, arg2_property, spatial_operation, pcr_type):
-
 
     # generate a property to store the result
     result_prop = _new_property_from_property(arg1_property, 0.0)
@@ -121,16 +100,6 @@ def _spatial_operation_two_arguments(arg1_property, arg2_property, spatial_opera
         result_prop.values()[item_idx] = result_item
 
     return result_prop
-
-
-
-
-
-
-
-
-
-
 
 
 def slope(area_property):
@@ -186,7 +155,6 @@ def spread(start_locations, frictiondist, friction):
     https://pcraster.geo.uu.nl/pcraster/latest/documentation/pcraster_manual/sphinx/op_spread.html
     """
 
-
     result_prop = Property('emptyspreadname', start_locations.pset_uuid, start_locations.space_domain, start_locations.shapes)
 
     todo = []
@@ -217,7 +185,6 @@ def spread(start_locations, frictiondist, friction):
         result_prop.values().values[result[0]] = result[1]
 
     return result_prop
-
 
     # sequential
     for idx in start_locations.values().values.keys():

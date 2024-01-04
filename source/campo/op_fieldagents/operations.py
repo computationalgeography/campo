@@ -105,7 +105,6 @@ def normal(mean, stddev):
     return tmp_prop
 
 
-
 def random_integers(lower, upper):
     """ Returns for each object random_integers values. Can be applied to fields and objects
 

@@ -22,17 +22,14 @@ class Values(object):
         else:
             raise NotImplementedError
 
-
     def _init_array(self, shapes, values):
 
         for idx, shape in enumerate(shapes):
             self.values[idx] = values[idx]
 
-
     def _init_numbers(self, shapes, values):
 
         dim = len(shapes[0])
-
 
         for idx, shape in enumerate(shapes):
             tmp = None
@@ -45,15 +42,10 @@ class Values(object):
 
             self.values[idx] = tmp
 
-
     def _init_prop(self, shapes, values):
 
         for idx, shape in enumerate(shapes):
             self.values[idx] = values.values().values[idx]
-
-
-
-
 
     def __setitem__(self, index, value):
 
@@ -62,10 +54,8 @@ class Values(object):
 
         self.values[index] = value
 
-
     def __getitem__(self, index):
         return self.values[index]
-
 
     def __iter__(self):
         return self
