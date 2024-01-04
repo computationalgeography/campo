@@ -27,7 +27,7 @@ def network_average_def(source_prop, value_prop, default):
 
     tmp_prop._values = Values(tmp_prop.nr_objects, shapes, numpy.nan)
 
-    for idx,i in enumerate(tmp_prop.values()):
+    for idx, i in enumerate(tmp_prop.values()):
         neighbour_ids = numpy.nonzero(source_prop.values()[idx]>0)
         val = 0.0
         if len(neighbour_ids[0]) == 0:
@@ -45,7 +45,7 @@ def network_average(source_prop, value_prop, fname):
 
     tmp_prop = copy.deepcopy(value_prop)
 
-    for idx,i in enumerate(tmp_prop.values()):
+    for idx, i in enumerate(tmp_prop.values()):
         neighbour_ids = numpy.nonzero(source_prop.values()[idx]>0)
         val = 0.0
         for n in neighbour_ids[0]:
@@ -68,7 +68,7 @@ def spread_neighbours(neighbours, threshold, random_seed, breeds, mask, albedos,
     mask_val = numpy.zeros(len(mask.values().values))
     new_mask = numpy.zeros(len(mask.values().values))
 
-    for idx,it in enumerate(mask.values()):
+    for idx, it in enumerate(mask.values()):
         mask_val[idx] = it
         new_mask[idx] = it
     rseed = random_seed.values().values
@@ -76,7 +76,7 @@ def spread_neighbours(neighbours, threshold, random_seed, breeds, mask, albedos,
     albedo = albedos.values().values
     age = ages.values().values
 
-    for agent_id,neigh in enumerate(neighbours.values()):
+    for agent_id, neigh in enumerate(neighbours.values()):
         is_active =  mask_val[agent_id] == 1
 
         # only actives of the current timestep do something
@@ -107,6 +107,6 @@ def spread_neighbours(neighbours, threshold, random_seed, breeds, mask, albedos,
                     age[select] = numpy.array([1])
 
     # update mask with new alives
-    for idx,v in enumerate(mask.values()):
+    for idx, v in enumerate(mask.values()):
         mask.values()[idx] = numpy.array([new_mask[idx]])
 

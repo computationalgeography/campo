@@ -77,14 +77,14 @@ class Points(object):
             #self.xcoord = x
             #self.ycoord = y
 
-            v = numpy.empty((self.nr_items,2))
+            v = numpy.empty((self.nr_items, 2))
             for idx, item in enumerate(content):
-                v[idx,0] = item[0]
-                v[idx,1] = item[1]
+                v[idx, 0] = item[0]
+                v[idx, 1] = item[1]
              # numpy.random.shuffle(v)
 
-            self.xcoord = v[:,0]
-            self.ycoord = v[:,1]
+            self.xcoord = v[:, 0]
+            self.ycoord = v[:, 1]
 
             self._coordinates = numpy.empty((self.nr_items, 2))
 
@@ -110,8 +110,8 @@ class Points(object):
 
     def _get_coordinates(self):
 
-        self._coordinates[:,0] = self.xcoord
-        self._coordinates[:,1] = self.ycoord
+        self._coordinates[:, 0] = self.xcoord
+        self._coordinates[:, 1] = self.ycoord
         return self._coordinates
 
     def _set_coordinates(self, values):

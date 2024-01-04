@@ -44,7 +44,7 @@ def agents_average(prop):
 
 def get_others(start_prop, dest_prop, buffer_size):
     # re-use the previous approach to obtain the neighbours within a buffer
-    values = numpy.zeros((len(start_prop.space_domain),len(dest_prop.space_domain)), dtype=numpy.int8)
+    values = numpy.zeros((len(start_prop.space_domain), len(dest_prop.space_domain)), dtype=numpy.int8)
 
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromEPSG(28992)
@@ -123,7 +123,7 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
     lyr_stores.CreateField(field)
 
     # ToDo: Here we need to get the object ids, actually...
-    for idx, p in enumerate(dest_prop):#.pset_domain):
+    for idx, p in enumerate(dest_prop): #.pset_domain):
         point = ogr.Geometry(ogr.wkbPoint)
 
         point.AddPoint(p[0], p[1])

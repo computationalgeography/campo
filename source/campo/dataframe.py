@@ -80,7 +80,7 @@ def select_constant_same_shape_arrays(
             dim = 'xlr, ylr, xul, yul'
             result['_campo_space_type'] = 'static_same_field'
 
-        da = xr.DataArray(coordinates, coords={'id':sel_oids}, dims=['id', dim])
+        da = xr.DataArray(coordinates, coords={'id': sel_oids}, dims=['id', dim])
 
         xr_dataset['coordinates'] = da
 
@@ -91,9 +91,9 @@ def select_constant_same_shape_arrays(
         if point_agent(object_ids, space_domain):
             dim = ['id']
         else:
-            dim = ['id', 'x','y']
+            dim = ['id', 'x', 'y']
 
-        da = xr.DataArray(val_sel, coords={'id':sel_oids}, dims=dim)
+        da = xr.DataArray(val_sel, coords={'id': sel_oids}, dims=dim)
 
         xr_dataset['values'] = da
 
@@ -162,10 +162,10 @@ def select_constant_different_shape_arrays(
 
             x = []
             y = []
-            for r in range(0,int(nr_cols)):
+            for r in range(0, int(nr_cols)):
                 x.append(xul + r * x_cellsize)
 
-            for c in range(0,int (nr_rows)):
+            for c in range(0, int (nr_rows)):
                 y.append(yul - c * y_cellsize)
 
             da = xr.DataArray(val, coords=[y, x], dims=['ycoord', 'xcoord'])
@@ -246,7 +246,7 @@ def select_variable_same_shape_constant_shape_arrays(
         else:
             dim = 'xlr, ylr, xul, yul'
             result['_campo_space_type'] = 'dynamic_same_field'
-        da = xr.DataArray(coordinates, coords={'id':sel_oids}, dims=['id', dim])
+        da = xr.DataArray(coordinates, coords={'id': sel_oids}, dims=['id', dim])
 
         xr_dataset['coordinates'] = da
 
@@ -257,9 +257,9 @@ def select_variable_same_shape_constant_shape_arrays(
         if point_agent(object_ids, space_domain):
             dim = ['id', 'time']
         else:
-            dim = ['id', 'time', 'x','y']
+            dim = ['id', 'time', 'x', 'y']
 
-        da = xr.DataArray(val_sel, coords={'id':sel_oids}, dims=dim)
+        da = xr.DataArray(val_sel, coords={'id': sel_oids}, dims=dim)
 
         xr_dataset['values'] = da
 
@@ -370,10 +370,10 @@ def select_variable_different_shape_constant_shape_arrays(
 
             x = []
             y = []
-            for r in range(0,int(nr_cols)):
+            for r in range(0, int(nr_cols)):
                 x.append(xul + r * x_cellsize)
 
-            for c in range(0,int (nr_rows)):
+            for c in range(0, int (nr_rows)):
                 y.append(yul + c * y_cellsize)
 
             da = xr.DataArray(val, coords=[timesteps, y, x], dims=['time', 'ycoord', 'xcoord'])

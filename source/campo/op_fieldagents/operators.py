@@ -51,7 +51,7 @@ def _AOpProp(number, arg2, op):
     if isinstance(number, (int, float)):
         argument1 = numpy.full(tmp_prop.nr_objects, number)
 
-    for idx,i in enumerate(arg2.values()):
+    for idx, i in enumerate(arg2.values()):
         tmp_prop.values()[idx] = op(argument1[idx], arg2.values()[idx])
 
     return tmp_prop

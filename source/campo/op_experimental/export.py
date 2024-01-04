@@ -75,7 +75,7 @@ def to_df(dataframe, timestep=None):
                     p = dataframe[phen_name][pset_name][prop_name]
                     # User provided timestep to array index
                     ts = timestep - 1
-                    dfObj[prop_name] = p['values'].values[:,ts]
+                    dfObj[prop_name] = p['values'].values[:, ts]
 
                     return dfObj
 
@@ -83,8 +83,8 @@ def to_df(dataframe, timestep=None):
 def mobile_points_to_gpkg(coords, dataframe, filename, crs=""):
 
     # rewrite coordinates with ones from current timestep
-    dataframe["CoordX"] = coords[:,0]
-    dataframe["CoordY"] = coords[:,1]
+    dataframe["CoordX"] = coords[:, 0]
+    dataframe["CoordY"] = coords[:, 1]
 
     with tempfile.TemporaryDirectory() as tmpdir:
         layername, tail = os.path.splitext(os.path.basename(filename))
@@ -214,7 +214,7 @@ def to_gpkg(dataframe, filename, crs='', timestep=None):
                     p = dataframe[phen_name][pset_name][prop_name]
                     # User provided timestep to array index
                     ts = timestep - 1
-                    dfObj[prop_name] = p['values'].values[:,ts]
+                    dfObj[prop_name] = p['values'].values[:, ts]
 
                 with tempfile.TemporaryDirectory() as tmpdir:
                     layername, tail = os.path.splitext(os.path.basename(filename))
@@ -266,7 +266,7 @@ def to_tiff(dataframe, crs="", directory="", timestep=None):
             phen = dataframe[phen_name]
             for pset_name in phen.keys():
                 propset = dataframe[phen_name][pset_name]
-                if propset['_campo_space_type'] == 'static_same_point':# or propset['_campo_space_type'] == 'diff_same_point':
+                if propset['_campo_space_type'] == 'static_same_point': # or propset['_campo_space_type'] == 'diff_same_point':
                     msg = _color_message('Only for field agents')
                     raise TypeError(msg)
 
@@ -415,7 +415,7 @@ def create_point_pdf(frame, filename):
     phen_name = frame.keys()
 
     wdir = os.getcwd()
-    data_dir = os.path.join(wdir,'data')
+    data_dir = os.path.join(wdir, 'data')
 
     tmp_csv = os.path.join(data_dir, 'agents.csv')
 
@@ -459,7 +459,7 @@ def create_field_pdf(frame, filename):
     phen_name = frame.keys()
 
     wdir = os.getcwd()
-    data_dir = os.path.join(wdir,'data')
+    data_dir = os.path.join(wdir, 'data')
 
     tmpdir = 'tmp'
     if os.path.exists(tmpdir):
@@ -514,9 +514,9 @@ def create_field_pdf(frame, filename):
     rasters = ','.join(fnames)
     names = ','.join(lnames)
 
-    cmd = 'gdal_translate -q -of PDF -a_srs EPSG:28992 {} {} -co OGR_DATASOURCE={} -co OGR_DISPLAY_FIELD="roads" -co EXTRA_RASTERS={} -co EXTRA_RASTERS_LAYER_NAME={} -co OFF_LAYERS={}'.format(clone, outfile,roads,rasters,names,names )
+    cmd = 'gdal_translate -q -of PDF -a_srs EPSG:28992 {} {} -co OGR_DATASOURCE={} -co OGR_DISPLAY_FIELD="roads" -co EXTRA_RASTERS={} -co EXTRA_RASTERS_LAYER_NAME={} -co OFF_LAYERS={}'.format(clone, outfile, roads, rasters, names, names )
     #cmd = 'gdal_translate -q -of PDF -a_srs EPSG:28992 {} {} -co OGR_DATASOURCE={} -co OGR_DISPLAY_FIELD="roads" -co EXTRA_RASTERS={} -co EXTRA_RASTERS_LAYER_NAME={}'.format(clone, outfile,roads,rasters,names)
-    cmd = 'gdal_translate -q -of PDF -a_srs EPSG:28992 {} {} -co OGR_DATASOURCE={} -co EXTRA_RASTERS={} -co EXTRA_RASTERS_LAYER_NAME={}'.format(clone, outfile,roads,rasters,names)
+    cmd = 'gdal_translate -q -of PDF -a_srs EPSG:28992 {} {} -co OGR_DATASOURCE={} -co EXTRA_RASTERS={} -co EXTRA_RASTERS_LAYER_NAME={}'.format(clone, outfile, roads, rasters, names)
 
     subprocess.check_call(cmd, shell=True, stdout=subprocess.DEVNULL)
     shutil.rmtree(tmpdir)
