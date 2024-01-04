@@ -26,28 +26,28 @@ def _timeunit_pdname(unit):
 
 
 def point_agent(object_ids, space_domain):
-  obj_idx = int(np.where(object_ids == object_ids[0])[0])
-  dom = space_domain.value[:][obj_idx]
-  if len(dom) == 2:
-    return True
-  else:
-    return False
+    obj_idx = int(np.where(object_ids == object_ids[0])[0])
+    dom = space_domain.value[:][obj_idx]
+    if len(dom) == 2:
+        return True
+    else:
+        return False
 
 def object_indices(object_ids, selection):
-  res = []
-  for item in selection:
-    idx = int(np.where(object_ids == item)[0])
-    res.append(idx)
-  return res
+    res = []
+    for item in selection:
+        idx = int(np.where(object_ids == item)[0])
+        res.append(idx)
+    return res
 
 def select_constant_same_shape_arrays(
         property_set,
         properties,
         object_ids,
         object_selection):
-    # Each array is a same_shape.Property
-    # Each array can be translated to a single array with an additional
-    # dimension for object IDs
+        # Each array is a same_shape.Property
+        # Each array can be translated to a single array with an additional
+        # dimension for object IDs
     result = {}
 
     property_set_name = property_set.id.name
@@ -56,9 +56,9 @@ def select_constant_same_shape_arrays(
     space_discretization = None
 
     if property_set.has_space_domain:
-      space_domain = property_set.space_domain
+        space_domain = property_set.space_domain
     else:
-      raise NotImplementedError
+        raise NotImplementedError
 
 
     for prop in properties:
@@ -74,11 +74,11 @@ def select_constant_same_shape_arrays(
         coordinates = np.take(dom, sel_idx, axis=0)
 
         if point_agent(object_ids, space_domain):
-          dim = 'x, y'
-          result['_campo_space_type'] = 'static_same_point'
+            dim = 'x, y'
+            result['_campo_space_type'] = 'static_same_point'
         else:
-          dim = 'xlr, ylr, xul, yul'
-          result['_campo_space_type'] = 'static_same_field'
+            dim = 'xlr, ylr, xul, yul'
+            result['_campo_space_type'] = 'static_same_field'
 
         da = xr.DataArray(coordinates, coords={'id':sel_oids}, dims=['id', dim])
 
@@ -89,9 +89,9 @@ def select_constant_same_shape_arrays(
         val_sel = np.take(val, sel_idx, axis=0)
 
         if point_agent(object_ids, space_domain):
-          dim = ['id']
+            dim = ['id']
         else:
-          dim = ['id', 'x','y']
+            dim = ['id', 'x','y']
 
         da = xr.DataArray(val_sel, coords={'id':sel_oids}, dims=dim)
 
@@ -119,63 +119,63 @@ def select_constant_different_shape_arrays(
     space_discretization = None
 
     if property_set.has_space_domain:
-      space_domain = property_set.space_domain
+        space_domain = property_set.space_domain
     else:
-      raise NotImplementedError
+        raise NotImplementedError
 
     if properties[0].space_is_discretized:
         space_discretization = properties[0].space_discretization_property()
     else:
-      raise NotImplementedError
+        raise NotImplementedError
 
 
 
     # here we hopefully have object ids, domain, discretisation and values
     # and assume it's 2d space fttb
     for prop in properties:
-      # One xarray per property
-      prop_name = prop.id.name
+        # One xarray per property
+        prop_name = prop.id.name
 
-      xr_dataset = {}
+        xr_dataset = {}
 
-      # Individual data arrays due to different shapes
-      for oid in object_selection:
-        obj_idx = int(np.where(object_ids == oid)[0])
+        # Individual data arrays due to different shapes
+        for oid in object_selection:
+            obj_idx = int(np.where(object_ids == oid)[0])
 
-        dom = space_domain.value[:][obj_idx]
-        dis = space_discretization.value[:][obj_idx]
-        val = prop.value[oid][:]
+            dom = space_domain.value[:][obj_idx]
+            dis = space_discretization.value[:][obj_idx]
+            val = prop.value[oid][:]
 
-        nr_rows, nr_cols = dis
+            nr_rows, nr_cols = dis
 
-        xul = dom[0]
-        yul = dom[1]
-        xlr = dom[2]
-        ylr = dom[3]
+            xul = dom[0]
+            yul = dom[1]
+            xlr = dom[2]
+            ylr = dom[3]
 
-        if nr_rows > 0:
-          y_cellsize = (yul - ylr) / nr_rows
-        else:
-          y_cellsize = 0
+            if nr_rows > 0:
+                y_cellsize = (yul - ylr) / nr_rows
+            else:
+                y_cellsize = 0
 
-        if nr_cols > 0:
-          x_cellsize = (xlr - xul) / nr_cols
-        else:
-          x_cellsize = 0
+            if nr_cols > 0:
+                x_cellsize = (xlr - xul) / nr_cols
+            else:
+                x_cellsize = 0
 
-        x = []
-        y = []
-        for r in range(0,int(nr_cols)):
-          x.append(xul + r * x_cellsize)
+            x = []
+            y = []
+            for r in range(0,int(nr_cols)):
+                x.append(xul + r * x_cellsize)
 
-        for c in range(0,int (nr_rows)):
-          y.append(yul - c * y_cellsize)
+            for c in range(0,int (nr_rows)):
+                y.append(yul - c * y_cellsize)
 
-        da = xr.DataArray(val, coords=[y, x], dims=['ycoord', 'xcoord'])
+            da = xr.DataArray(val, coords=[y, x], dims=['ycoord', 'xcoord'])
 
-        xr_dataset[oid] = da
+            xr_dataset[oid] = da
 
-      result[prop_name] = xr_dataset
+        result[prop_name] = xr_dataset
 
     return result
 
@@ -199,19 +199,19 @@ def select_variable_same_shape_constant_shape_arrays(
     time_discretization = None
 
     if property_set.has_space_domain:
-      space_domain = property_set.space_domain
+        space_domain = property_set.space_domain
     else:
-      raise NotImplementedError
+        raise NotImplementedError
 
     #if properties[0].space_is_discretized:
-        #space_discretization = properties[0].space_discretization_property()
+            #space_discretization = properties[0].space_discretization_property()
     #else:
-      #raise NotImplementedError
+        #raise NotImplementedError
 
     if property_set.has_time_domain:
-      time_domain = property_set.time_domain
+        time_domain = property_set.time_domain
     else:
-      raise NotImplementedError
+        raise NotImplementedError
 
     object_tracker = property_set.object_tracker
 
@@ -245,11 +245,11 @@ def select_variable_same_shape_constant_shape_arrays(
         coordinates = np.take(dom, sel_idx, axis=0)
 
         if point_agent(object_ids, space_domain):
-          dim = 'x, y'
-          result['_campo_space_type'] = 'dynamic_same_point'
+            dim = 'x, y'
+            result['_campo_space_type'] = 'dynamic_same_point'
         else:
-          dim = 'xlr, ylr, xul, yul'
-          result['_campo_space_type'] = 'dynamic_same_field'
+            dim = 'xlr, ylr, xul, yul'
+            result['_campo_space_type'] = 'dynamic_same_field'
         da = xr.DataArray(coordinates, coords={'id':sel_oids}, dims=['id', dim])
 
         xr_dataset['coordinates'] = da
@@ -259,9 +259,9 @@ def select_variable_same_shape_constant_shape_arrays(
         val_sel = np.take(val, sel_idx, axis=0)
 
         if point_agent(object_ids, space_domain):
-          dim = ['id', 'time']
+            dim = ['id', 'time']
         else:
-          dim = ['id', 'time', 'x','y']
+            dim = ['id', 'time', 'x','y']
 
         da = xr.DataArray(val_sel, coords={'id':sel_oids}, dims=dim)
 
@@ -305,19 +305,19 @@ def select_variable_different_shape_constant_shape_arrays(
     time_discretization = None
 
     if property_set.has_space_domain:
-      space_domain = property_set.space_domain
+        space_domain = property_set.space_domain
     else:
-      raise NotImplementedError
+        raise NotImplementedError
 
     if properties[0].space_is_discretized:
         space_discretization = properties[0].space_discretization_property()
     else:
-      raise NotImplementedError
+        raise NotImplementedError
 
     if property_set.has_time_domain:
-      time_domain = property_set.time_domain
+        time_domain = property_set.time_domain
     else:
-      raise NotImplementedError
+        raise NotImplementedError
 
     object_tracker = property_set.object_tracker
 
@@ -342,52 +342,52 @@ def select_variable_different_shape_constant_shape_arrays(
     # here we hopefully have object ids, domain, discretisation and values
     # and assume it's 2d space fttb
     for prop in properties:
-      # One xarray per property
-      prop_name = prop.id.name
+        # One xarray per property
+        prop_name = prop.id.name
 
-      xr_dataset = {}
+        xr_dataset = {}
 
-      # Individual data arrays due to different shapes
-      for oid in object_selection:
-        obj_idx = int(np.where(object_ids == oid)[0])
+        # Individual data arrays due to different shapes
+        for oid in object_selection:
+            obj_idx = int(np.where(object_ids == oid)[0])
 
-        dom = space_domain.value[:][obj_idx]
-        dis = space_discretization.value[:][obj_idx]
+            dom = space_domain.value[:][obj_idx]
+            dis = space_discretization.value[:][obj_idx]
 
-        val = prop.value[oid][:]
+            val = prop.value[oid][:]
 
-        nr_rows, nr_cols = dis
-        assert nr_rows != 0
-        assert nr_cols != 0
+            nr_rows, nr_cols = dis
+            assert nr_rows != 0
+            assert nr_cols != 0
 
-        xul = dom[0]
-        yul = dom[1]
-        xlr = dom[2]
-        ylr = dom[3]
+            xul = dom[0]
+            yul = dom[1]
+            xlr = dom[2]
+            ylr = dom[3]
 
-        if nr_rows > 0:
-          y_cellsize = abs(yul - ylr) / nr_rows
-        else:
-          y_cellsize = 0
+            if nr_rows > 0:
+                y_cellsize = abs(yul - ylr) / nr_rows
+            else:
+                y_cellsize = 0
 
-        if nr_cols > 0:
-          x_cellsize = abs(xlr - xul) / nr_cols
-        else:
-          x_cellsize = 0
+            if nr_cols > 0:
+                x_cellsize = abs(xlr - xul) / nr_cols
+            else:
+                x_cellsize = 0
 
-        x = []
-        y = []
-        for r in range(0,int(nr_cols)):
-          x.append(xul + r * x_cellsize)
+            x = []
+            y = []
+            for r in range(0,int(nr_cols)):
+                x.append(xul + r * x_cellsize)
 
-        for c in range(0,int (nr_rows)):
-          y.append(yul + c * y_cellsize)
+            for c in range(0,int (nr_rows)):
+                y.append(yul + c * y_cellsize)
 
-        da = xr.DataArray(val, coords=[timesteps, y, x], dims=['time', 'ycoord', 'xcoord'])
+            da = xr.DataArray(val, coords=[timesteps, y, x], dims=['time', 'ycoord', 'xcoord'])
 
-        xr_dataset[oid] = da
+            xr_dataset[oid] = da
 
-      result[prop_name] = xr_dataset
+        result[prop_name] = xr_dataset
 
     return result
 
@@ -519,8 +519,8 @@ def select(
                 #break
 
     if not properties_by_property_set:
-      msg = 'Could not find one of the properties named {}'.format(property_names)
-      raise ValueError(msg)
+        msg = 'Could not find one of the properties named {}'.format(property_names)
+        raise ValueError(msg)
 
 
     # Group properties by value_variability, shape_per_object, shape_variability

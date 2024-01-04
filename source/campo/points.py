@@ -3,100 +3,100 @@ import numpy
 
 
 class Points(object):
-  def __init__(self, mobile=False):
+    def __init__(self, mobile=False):
 
-    self.nr_items = None
+        self.nr_items = None
 
-    self.space_dimension_constant = None
+        self.space_dimension_constant = None
 
-    self.nr_dimensions = 2
+        self.nr_dimensions = 2
 
-    self.xcoord = None
-    self.ycoord = None
+        self.xcoord = None
+        self.ycoord = None
 
-    self._coordinates = None
+        self._coordinates = None
 
-    self._mobile = mobile
+        self._mobile = mobile
 
-    self.iter_idx = 0
+        self.iter_idx = 0
 
-    self._epsg = None
-
-
-  @property
-  def epsg(self):
-      return self._epsg
-
-  @epsg.setter
-  def epsg(self, epsg):
-      assert isinstance(epsg, int)
-      self._epsg = epsg
-
-  @property
-  def mobile(self):
-    return self._mobile
-
-  @property
-  def xcoord(self):
-    return self._xcoord
-
-  @xcoord.setter
-  def xcoord(self, value):
-    self._xcoord = value
-
-  @property
-  def ycoord(self):
-    return self._ycoord
-
-  @ycoord.setter
-  def ycoord(self, value):
-    self._ycoord = value
+        self._epsg = None
 
 
-  @property
-  def nr_items(self):
-    return self._nr_items
+    @property
+    def epsg(self):
+        return self._epsg
 
-  @nr_items.setter
-  def nr_items(self, value):
-    self._nr_items = value
+    @epsg.setter
+    def epsg(self, epsg):
+        assert isinstance(epsg, int)
+        self._epsg = epsg
 
+    @property
+    def mobile(self):
+        return self._mobile
 
-  def read(self, filename):
+    @property
+    def xcoord(self):
+        return self._xcoord
 
-    with open(filename, 'r') as csvfile:
-      reader = csv.reader(csvfile)
-      content = list(reader)
+    @xcoord.setter
+    def xcoord(self, value):
+        self._xcoord = value
 
-      self.nr_items = len(content)
+    @property
+    def ycoord(self):
+        return self._ycoord
 
-      #x = numpy.zeros(self.nr_items)
-      #y = numpy.zeros(self.nr_items)
-
-      #for idx, item in enumerate(content):
-        #x[idx] = item[0]
-        #y[idx] = item[1]
-
-      #self.xcoord = x
-      #self.ycoord = y
-
-      v = numpy.empty((self.nr_items,2))
-      for idx, item in enumerate(content):
-        v[idx,0] = item[0]
-        v[idx,1] = item[1]
-     # numpy.random.shuffle(v)
-
-      self.xcoord = v[:,0]
-      self.ycoord = v[:,1]
+    @ycoord.setter
+    def ycoord(self, value):
+        self._ycoord = value
 
 
-      self._coordinates = numpy.empty((self.nr_items, 2))
+    @property
+    def nr_items(self):
+        return self._nr_items
+
+    @nr_items.setter
+    def nr_items(self, value):
+        self._nr_items = value
 
 
-  def __iter__(self):
-    return self
+    def read(self, filename):
 
-  def __next__(self):
+        with open(filename, 'r') as csvfile:
+            reader = csv.reader(csvfile)
+            content = list(reader)
+
+            self.nr_items = len(content)
+
+            #x = numpy.zeros(self.nr_items)
+            #y = numpy.zeros(self.nr_items)
+
+            #for idx, item in enumerate(content):
+              #x[idx] = item[0]
+              #y[idx] = item[1]
+
+            #self.xcoord = x
+            #self.ycoord = y
+
+            v = numpy.empty((self.nr_items,2))
+            for idx, item in enumerate(content):
+                v[idx,0] = item[0]
+                v[idx,1] = item[1]
+             # numpy.random.shuffle(v)
+
+            self.xcoord = v[:,0]
+            self.ycoord = v[:,1]
+
+
+            self._coordinates = numpy.empty((self.nr_items, 2))
+
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
         if self.iter_idx == self.nr_items:
             self.iter_idx = 0
             raise StopIteration
@@ -108,20 +108,20 @@ class Points(object):
         return values
 
 
-  def __len__(self):
-      return len(self.xcoord)
+    def __len__(self):
+        return len(self.xcoord)
 
 
-  def __repr__(self):
-    return 'Point'
+    def __repr__(self):
+        return 'Point'
 
 
-  def _get_coordinates(self):
+    def _get_coordinates(self):
 
-      self._coordinates[:,0] = self.xcoord
-      self._coordinates[:,1] = self.ycoord
-      return self._coordinates
+        self._coordinates[:,0] = self.xcoord
+        self._coordinates[:,1] = self.ycoord
+        return self._coordinates
 
 
-  def _set_coordinates(self, values):
-      self._coordinates = values
+    def _set_coordinates(self, values):
+        self._coordinates = values

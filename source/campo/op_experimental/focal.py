@@ -20,112 +20,110 @@ from ..utils import _color_message
 
 
 def agents_average(prop):
-  """returns average value of property values """
-  if not isinstance(prop, Property):
-    raise NotImplementedError
+    """returns average value of property values """
+    if not isinstance(prop, Property):
+        raise NotImplementedError
 
-  if not isinstance(prop.space_domain, Points):
-    raise NotImplementedError
+    if not isinstance(prop.space_domain, Points):
+        raise NotImplementedError
 
-  tmp_prop = copy.deepcopy(prop)
-  nr_objects = tmp_prop.nr_objects
+    tmp_prop = copy.deepcopy(prop)
+    nr_objects = tmp_prop.nr_objects
 
-  tmp = numpy.zeros(nr_objects)
+    tmp = numpy.zeros(nr_objects)
 
-  for i in range(0, nr_objects):
-    tmp[i] = tmp_prop.values()[i]
+    for i in range(0, nr_objects):
+        tmp[i] = tmp_prop.values()[i]
 
-  tmp_values = numpy.average(tmp)
+    tmp_values = numpy.average(tmp)
 
-  for i in range(0, nr_objects):
-    tmp_prop.values()[i] = tmp_values
+    for i in range(0, nr_objects):
+        tmp_prop.values()[i] = tmp_values
 
-  return tmp_prop
+    return tmp_prop
 
 def get_others(start_prop, dest_prop, buffer_size):
-  # re-use the previous approach to obtain the neighbours within a buffer
-  values = numpy.zeros((len(start_prop.space_domain),len(dest_prop.space_domain)), dtype=numpy.int8)
+    # re-use the previous approach to obtain the neighbours within a buffer
+    values = numpy.zeros((len(start_prop.space_domain),len(dest_prop.space_domain)), dtype=numpy.int8)
 
-  spatial_ref = osr.SpatialReference()
-  spatial_ref.ImportFromEPSG(28992)
+    spatial_ref = osr.SpatialReference()
+    spatial_ref.ImportFromEPSG(28992)
 
-  memdriver = ogr.GetDriverByName('MEMORY')
-  ds = memdriver.CreateDataSource('tmp.gpkg')
+    memdriver = ogr.GetDriverByName('MEMORY')
+    ds = memdriver.CreateDataSource('tmp.gpkg')
 
-  # Destination layer
-  lyr_dest = ds.CreateLayer('uid', geom_type=ogr.wkbPoint, srs=spatial_ref)
-  field = ogr.FieldDefn('uid', ogr.OFTInteger)
-  lyr_dest.CreateField(field)
-
-
-  # Plain storing of object order (id)
-  for idx, p in enumerate(dest_prop.space_domain):
-    point = ogr.Geometry(ogr.wkbPoint)
-
-    point.AddPoint(p[0], p[1])
-    feat = ogr.Feature(lyr_dest.GetLayerDefn())
-    feat.SetGeometry(point)
-
-    feat.SetField('uid', idx)
-
-    lyr_dest.CreateFeature(feat)
+    # Destination layer
+    lyr_dest = ds.CreateLayer('uid', geom_type=ogr.wkbPoint, srs=spatial_ref)
+    field = ogr.FieldDefn('uid', ogr.OFTInteger)
+    lyr_dest.CreateField(field)
 
 
-  lyr_dest = None
-  lyr_dest = ds.GetLayer('uid')
+    # Plain storing of object order (id)
+    for idx, p in enumerate(dest_prop.space_domain):
+        point = ogr.Geometry(ogr.wkbPoint)
+
+        point.AddPoint(p[0], p[1])
+        feat = ogr.Feature(lyr_dest.GetLayerDefn())
+        feat.SetGeometry(point)
+
+        feat.SetField('uid', idx)
+
+        lyr_dest.CreateFeature(feat)
 
 
-  for idx, p in enumerate(start_prop.space_domain):
-
-    lyr_shop = ds.CreateLayer('destination_locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
-    # just a round buffer
-    lyr_dist = ds.CreateLayer('source_buffer', geom_type=ogr.wkbPolygon, srs=spatial_ref)
-    point = ogr.Geometry(ogr.wkbPoint)
-    point.AddPoint(p[0], p[1])
-    poly = point.Buffer(float(buffer_size.values()[idx]))
-    feat = ogr.Feature(lyr_dist.GetLayerDefn())
-    feat.SetGeometry(poly)
-    lyr_dist.CreateFeature(feat)
+    lyr_dest = None
+    lyr_dest = ds.GetLayer('uid')
 
 
-    lyr_dest.SetSpatialFilter(poly)
+    for idx, p in enumerate(start_prop.space_domain):
 
-    lyr_dest.Clip(lyr_dist, lyr_shop, options=['SKIP_FAILURES=NO'])
+        lyr_shop = ds.CreateLayer('destination_locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
+        # just a round buffer
+        lyr_dist = ds.CreateLayer('source_buffer', geom_type=ogr.wkbPolygon, srs=spatial_ref)
+        point = ogr.Geometry(ogr.wkbPoint)
+        point.AddPoint(p[0], p[1])
+        poly = point.Buffer(float(buffer_size.values()[idx]))
+        feat = ogr.Feature(lyr_dist.GetLayerDefn())
+        feat.SetGeometry(poly)
+        lyr_dist.CreateFeature(feat)
 
-    for target in lyr_shop:
 
-        uid = target.GetField('uid')
-        values[idx, uid] = 1
+        lyr_dest.SetSpatialFilter(poly)
 
-  return values
+        lyr_dest.Clip(lyr_dist, lyr_shop, options=['SKIP_FAILURES=NO'])
+
+        for target in lyr_shop:
+
+            uid = target.GetField('uid')
+            values[idx, uid] = 1
+
+    return values
 
 
 
 
 def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default_value, ret_prop):
-  # start_prop carries start locations
-  # dest_prop value layer to obtain neighbour values
+    # start_prop carries start locations
+    # dest_prop value layer to obtain neighbour values
 
-  tmp_prop = copy.deepcopy(ret_prop)
-
-
-
-  # Brute assumption here for the CRS, this should be in the dataset itself somewhere...
-  spatial_ref = osr.SpatialReference()
-  spatial_ref.ImportFromEPSG(28992)
-
-  # First we make a point feature with houses
-  name = 'houses'
-
-  geo_out = 'foodenv.gpkg'
-  # ds = ogr.GetDriverByName('GPKG').CreateDataSource(geo_out)
+    tmp_prop = copy.deepcopy(ret_prop)
 
 
 
-  memdriver = ogr.GetDriverByName('MEMORY')
-  ds = memdriver.CreateDataSource(geo_out)
+    # Brute assumption here for the CRS, this should be in the dataset itself somewhere...
+    spatial_ref = osr.SpatialReference()
+    spatial_ref.ImportFromEPSG(28992)
+
+    # First we make a point feature with houses
+    name = 'houses'
+
+    geo_out = 'foodenv.gpkg'
+    # ds = ogr.GetDriverByName('GPKG').CreateDataSource(geo_out)
 
 
+
+    memdriver = ogr.GetDriverByName('MEMORY')
+    ds = memdriver.CreateDataSource(geo_out)
 
 
 
@@ -134,73 +132,75 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
 
 
 
-  # Second we make a point feature from which we will obtain the values
-  # Holding all objects
-  lyr_stores = ds.CreateLayer('values', geom_type=ogr.wkbPoint, srs=spatial_ref)
 
 
-  field = ogr.FieldDefn('value', ogr.OFTReal)
-  lyr_stores.CreateField(field)
+    # Second we make a point feature from which we will obtain the values
+    # Holding all objects
+    lyr_stores = ds.CreateLayer('values', geom_type=ogr.wkbPoint, srs=spatial_ref)
 
 
-  # ToDo: Here we need to get the object ids, actually...
-  for idx, p in enumerate(dest_prop):#.pset_domain):
-    point = ogr.Geometry(ogr.wkbPoint)
-
-    point.AddPoint(p[0], p[1])
-    feat = ogr.Feature(lyr_stores.GetLayerDefn())
-    feat.SetGeometry(point)
-
-    val = value_prop.values()[idx]
-    feat.SetField('value', val)
-
-    lyr_stores.CreateFeature(feat)
+    field = ogr.FieldDefn('value', ogr.OFTReal)
+    lyr_stores.CreateField(field)
 
 
-  lyr_stores = None
-  lyr_stores = ds.GetLayer('values')
+    # ToDo: Here we need to get the object ids, actually...
+    for idx, p in enumerate(dest_prop):#.pset_domain):
+        point = ogr.Geometry(ogr.wkbPoint)
 
-  default_value = default_value.values()[0]#,...]
-  # For each object in point locations:
-  c = 0
-  for idx, p in enumerate(start_prop): #.pset_domain:
+        point.AddPoint(p[0], p[1])
+        feat = ogr.Feature(lyr_stores.GetLayerDefn())
+        feat.SetGeometry(point)
 
-    lyr_shop = ds.CreateLayer('destination_locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
-    # just a round buffer
-    lyr_dist = ds.CreateLayer('source_buffer', geom_type=ogr.wkbPolygon, srs=spatial_ref)
-    point = ogr.Geometry(ogr.wkbPoint)
-    point.AddPoint(p[0], p[1])
-    poly = point.Buffer(float(buffer_size.values()[idx]))
-    feat = ogr.Feature(lyr_dist.GetLayerDefn())
-    feat.SetGeometry(poly)
-    lyr_dist.CreateFeature(feat)
+        val = value_prop.values()[idx]
+        feat.SetField('value', val)
+
+        lyr_stores.CreateFeature(feat)
 
 
-    lyr_stores.SetSpatialFilter(poly)
+    lyr_stores = None
+    lyr_stores = ds.GetLayer('values')
 
-    lyr_stores.Clip(lyr_dist, lyr_shop, options=['SKIP_FAILURES=NO'])
+    default_value = default_value.values()[0]#,...]
+    # For each object in point locations:
+    c = 0
+    for idx, p in enumerate(start_prop): #.pset_domain:
 
-    shops_within = lyr_shop.GetFeatureCount()
-
-    object_value = 0.0
-    if shops_within == 0:
-      object_value = default_value
-    else:
-      val = 0.0
-      fcount = 0
-      for shop_feat in lyr_shop:
-        val += shop_feat.GetField('value')
-        fcount += 1
-
-      object_value = val / fcount
-
-    tmp_prop.values()[idx] = object_value
-
-    ds.DeleteLayer('destination_locations')
-    ds.DeleteLayer('source_buffer')
+        lyr_shop = ds.CreateLayer('destination_locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
+        # just a round buffer
+        lyr_dist = ds.CreateLayer('source_buffer', geom_type=ogr.wkbPolygon, srs=spatial_ref)
+        point = ogr.Geometry(ogr.wkbPoint)
+        point.AddPoint(p[0], p[1])
+        poly = point.Buffer(float(buffer_size.values()[idx]))
+        feat = ogr.Feature(lyr_dist.GetLayerDefn())
+        feat.SetGeometry(poly)
+        lyr_dist.CreateFeature(feat)
 
 
-  return tmp_prop
+        lyr_stores.SetSpatialFilter(poly)
+
+        lyr_stores.Clip(lyr_dist, lyr_shop, options=['SKIP_FAILURES=NO'])
+
+        shops_within = lyr_shop.GetFeatureCount()
+
+        object_value = 0.0
+        if shops_within == 0:
+            object_value = default_value
+        else:
+            val = 0.0
+            fcount = 0
+            for shop_feat in lyr_shop:
+                val += shop_feat.GetField('value')
+                fcount += 1
+
+            object_value = val / fcount
+
+        tmp_prop.values()[idx] = object_value
+
+        ds.DeleteLayer('destination_locations')
+        ds.DeleteLayer('source_buffer')
+
+
+    return tmp_prop
 
 
 
@@ -208,35 +208,35 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
 
 def _focal_agents(values):
 #(idx, tmp_prop, nr_locs, values_weight, extent, spatial_ref, lyr_dst, operation, fail, dest_prop, point_crs, d_domain, d_values)
-      idx = values[0]
-      #tmp_prop = values[1]
-      nr_locs = values[2]
-      values_weight = values[3]
-      extent = values[4]
-      #spatial_ref = values[5]
-      #lyr_dst = values[6]
-      #operation = values[7]
-      fail = values[8]
-      #dest_prop = values[9]
-      crs = values[10]
-      d_domain = values[11]
-      d_values = values[12]
+    idx = values[0]
+    #tmp_prop = values[1]
+    nr_locs = values[2]
+    values_weight = values[3]
+    extent = values[4]
+    #spatial_ref = values[5]
+    #lyr_dst = values[6]
+    #operation = values[7]
+    fail = values[8]
+    #dest_prop = values[9]
+    crs = values[10]
+    d_domain = values[11]
+    d_values = values[12]
 
 
-      spatial_ref = osr.SpatialReference()
-      spatial_ref.ImportFromEPSG(crs)
+    spatial_ref = osr.SpatialReference()
+    spatial_ref.ImportFromEPSG(crs)
 
-      ds = ogr.GetDriverByName('MEMORY').CreateDataSource(f'mem{idx}')
+    ds = ogr.GetDriverByName('MEMORY').CreateDataSource(f'mem{idx}')
 
-      # Second we make a point feature from which we will obtain the locations
-      # Holding all objects
-      lname = f'locations{idx}'
-      lyr_dst = ds.CreateLayer(lname, geom_type=ogr.wkbPoint, srs=spatial_ref)
+    # Second we make a point feature from which we will obtain the locations
+    # Holding all objects
+    lname = f'locations{idx}'
+    lyr_dst = ds.CreateLayer(lname, geom_type=ogr.wkbPoint, srs=spatial_ref)
 
-      field = ogr.FieldDefn('value', ogr.OFTReal)
-      lyr_dst.CreateField(field)
+    field = ogr.FieldDefn('value', ogr.OFTReal)
+    lyr_dst.CreateField(field)
 
-      for pidx, p in enumerate(d_domain):
+    for pidx, p in enumerate(d_domain):
         point = ogr.Geometry(ogr.wkbPoint)
 
         point.AddPoint(p[0], p[1])
@@ -244,9 +244,9 @@ def _focal_agents(values):
         feat.SetGeometry(point)
         val = None
         try:
-          val = d_values[pidx][0]
+            val = d_values[pidx][0]
         except:
-          val = d_values[pidx]
+            val = d_values[pidx]
 
         assert val
         feat.SetField('value', float(val))
@@ -255,88 +255,88 @@ def _focal_agents(values):
         feat = None
         point = None
 
-      lyr_dst = None
-      lyr_dst = ds.GetLayer(lname)
+    lyr_dst = None
+    lyr_dst = ds.GetLayer(lname)
 
 
-      # Raster for points to query
-      nr_rows = extent[4]
-      nr_cols = extent[5]
-      cellsize = math.fabs(extent[2] - extent[0]) / nr_cols
+    # Raster for points to query
+    nr_rows = extent[4]
+    nr_cols = extent[5]
+    cellsize = math.fabs(extent[2] - extent[0]) / nr_cols
 
 
-      #
-      minX = extent[0]
-      maxX = extent[2]
-      minY = extent[1]
-      maxY = extent[3]
+    #
+    minX = extent[0]
+    maxX = extent[2]
+    minY = extent[1]
+    maxY = extent[3]
 
-      extent_lyr = ds.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
-      assert extent_lyr
+    extent_lyr = ds.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
+    assert extent_lyr
 
-      feat = ogr.Feature(extent_lyr.GetLayerDefn())
+    feat = ogr.Feature(extent_lyr.GetLayerDefn())
 
-      ring = ogr.Geometry(ogr.wkbLinearRing)
+    ring = ogr.Geometry(ogr.wkbLinearRing)
 
-      ring.AddPoint(minX, maxY)
-      ring.AddPoint(maxX, maxY)
-      ring.AddPoint(maxX, minY)
-      ring.AddPoint(minX, minY)
-      ring.AddPoint(minX, maxY)
+    ring.AddPoint(minX, maxY)
+    ring.AddPoint(maxX, maxY)
+    ring.AddPoint(maxX, minY)
+    ring.AddPoint(minX, minY)
+    ring.AddPoint(minX, maxY)
 
-      poly = ogr.Geometry(ogr.wkbPolygon)
-      poly.AddGeometry(ring)
+    poly = ogr.Geometry(ogr.wkbPolygon)
+    poly.AddGeometry(ring)
 
-      feat.SetGeometry(poly)
-      extent_lyr.CreateFeature(feat)
+    feat.SetGeometry(poly)
+    extent_lyr.CreateFeature(feat)
 
-      intersect_layer = ds.CreateLayer('intersect', geom_type=ogr.wkbPoint, srs=spatial_ref)
-      assert intersect_layer
+    intersect_layer = ds.CreateLayer('intersect', geom_type=ogr.wkbPoint, srs=spatial_ref)
+    assert intersect_layer
 
-      lyr_dst.Intersection(extent_lyr, intersect_layer)
+    lyr_dst.Intersection(extent_lyr, intersect_layer)
 
-      pcraster.setclone(nr_rows, nr_cols, cellsize, minX, maxY)
+    pcraster.setclone(nr_rows, nr_cols, cellsize, minX, maxY)
 
-      raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight.astype("float32"), numpy.nan)
+    raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight.astype("float32"), numpy.nan)
 
 
-      point_values = numpy.empty(nr_locs)
-      point_values.fill(numpy.nan)
-      weight_values = numpy.empty(nr_locs)
-      weight_values.fill(numpy.nan)
+    point_values = numpy.empty(nr_locs)
+    point_values.fill(numpy.nan)
+    weight_values = numpy.empty(nr_locs)
+    weight_values.fill(numpy.nan)
 
-      for iidx, feature in enumerate(intersect_layer):
+    for iidx, feature in enumerate(intersect_layer):
         x = feature.GetGeometryRef().GetX()
         y = feature.GetGeometryRef().GetY()
 
         try:
-          # Only add points that are 'valid' PCRaster points
-          # coordinate lookup might fail if point returned by gdal is on lower and right border
-          field_value, valid = pcraster.cellvalue_by_coordinates(raster, x, y)
-          point_value = feature.GetField('value')
-          if valid:
-            point_values[iidx] = point_value
-            weight_values[iidx] = field_value
+            # Only add points that are 'valid' PCRaster points
+            # coordinate lookup might fail if point returned by gdal is on lower and right border
+            field_value, valid = pcraster.cellvalue_by_coordinates(raster, x, y)
+            point_value = feature.GetField('value')
+            if valid:
+                point_values[iidx] = point_value
+                weight_values[iidx] = field_value
         except:
-          pass
+            pass
 
-      indices = ~numpy.isnan(point_values)
-      masked_points = point_values[indices]
-      masked_weights = weight_values[indices]
+    indices = ~numpy.isnan(point_values)
+    masked_points = point_values[indices]
+    masked_weights = weight_values[indices]
 
-      result = numpy.nan
+    result = numpy.nan
 
-      if len(masked_weights) > 0:
+    if len(masked_weights) > 0:
         try:
-          result = numpy.average(masked_points, weights=masked_weights)
+            result = numpy.average(masked_points, weights=masked_weights)
         except ZeroDivisionError as r:
-          msg = _color_message(f'AgentID {idx}: {r}')
-          raise ZeroDivisionError(msg)
+            msg = _color_message(f'AgentID {idx}: {r}')
+            raise ZeroDivisionError(msg)
 
-      if fail == True:
+    if fail == True:
         assert not numpy.isnan(result)
 
-      return idx, result
+    return idx, result
 
 
 
@@ -359,16 +359,16 @@ def focal_agents(dest, weight, source, fail=False):
     dest_prop = source
 
     if not isinstance(source_point.space_domain, Points):
-      msg = _color_message(f'Property "{source_point.name}" must be of domain type Point')
-      raise TypeError(msg)
+        msg = _color_message(f'Property "{source_point.name}" must be of domain type Point')
+        raise TypeError(msg)
 
     if not isinstance(source_field.space_domain, Areas):
-      msg = _color_message(f'Property "{source_field.name}" must be of domain type Area')
-      raise TypeError(msg)
+        msg = _color_message(f'Property "{source_field.name}" must be of domain type Area')
+        raise TypeError(msg)
 
     if not isinstance(dest_prop.space_domain, Points):
-      msg = _color_message(f'Property "{dest_prop.name}" must be of domain type Point')
-      raise TypeError(msg)
+        msg = _color_message(f'Property "{dest_prop.name}" must be of domain type Point')
+        raise TypeError(msg)
 
     dst_crs = source_point.space_domain.epsg
     field_crs = source_field.space_domain.epsg
@@ -376,14 +376,14 @@ def focal_agents(dest, weight, source, fail=False):
 
     cnt = 1
     for arg in [dst_crs, field_crs, point_crs]:
-      if not arg:
-        msg = _color_message(f'Operation requires a CRS, set the EPSG code of the phenomenon (argument {cnt})')
-        raise ValueError(msg)
-      cnt += 1
+        if not arg:
+            msg = _color_message(f'Operation requires a CRS, set the EPSG code of the phenomenon (argument {cnt})')
+            raise ValueError(msg)
+        cnt += 1
 
     if field_crs != point_crs:
-      msg = _color_message(f'Incompatible CRS {field_crs} != {point_crs}')
-      raise ValueError(msg)
+        msg = _color_message(f'Incompatible CRS {field_crs} != {point_crs}')
+        raise ValueError(msg)
 
     assert dst_crs == field_crs
 
@@ -406,20 +406,20 @@ def focal_agents(dest, weight, source, fail=False):
 
 
     #for idx, p in enumerate(dest_prop.space_domain):
-      #point = ogr.Geometry(ogr.wkbPoint)
+        #point = ogr.Geometry(ogr.wkbPoint)
 
-      #point.AddPoint(p[0], p[1])
-      #feat = ogr.Feature(lyr_dst.GetLayerDefn())
-      #feat.SetGeometry(point)
+        #point.AddPoint(p[0], p[1])
+        #feat = ogr.Feature(lyr_dst.GetLayerDefn())
+        #feat.SetGeometry(point)
 
-      #try:
-        #val = dest_prop.values()[idx][0]
-      #except:
-        #val = dest_prop.values()[idx]
+        #try:
+            #val = dest_prop.values()[idx][0]
+        #except:
+            #val = dest_prop.values()[idx]
 
-      #feat.SetField('value', float(val))
+        #feat.SetField('value', float(val))
 
-      #lyr_dst.CreateFeature(feat)
+        #lyr_dst.CreateFeature(feat)
 
     #lyr_dst = None
     #lyr_dst = ds.GetLayer('locations')
@@ -428,15 +428,15 @@ def focal_agents(dest, weight, source, fail=False):
 
     todos = []
     for idx, p in enumerate(source_point.space_domain):
-      values_weight = source_field.values()[idx]
+        values_weight = source_field.values()[idx]
 
-      extent = source_field.space_domain._extent(idx)
+        extent = source_field.space_domain._extent(idx)
 
-      d_domain = dest_prop.space_domain
-      d_values = dest_prop.values()
+        d_domain = dest_prop.space_domain
+        d_values = dest_prop.values()
 
-      item = (idx, 'tmp_prop', nr_locs, values_weight, extent, 'spatial_ref', 'lyr_dst', 'operation', fail, 'dprop', point_crs, d_domain, d_values)
-      todos.append(item)
+        item = (idx, 'tmp_prop', nr_locs, values_weight, extent, 'spatial_ref', 'lyr_dst', 'operation', fail, 'dprop', point_crs, d_domain, d_values)
+        todos.append(item)
 
 
     cpus = multiprocessing.cpu_count()
@@ -444,10 +444,10 @@ def focal_agents(dest, weight, source, fail=False):
     chunks = max(1, tasks // cpus)
 
     with futures.ProcessPoolExecutor(max_workers=cpus) as ex:
-      results = ex.map(_focal_agents, todos, chunksize=chunks)
+        results = ex.map(_focal_agents, todos, chunksize=chunks)
 
     for result in results:
-      tmp_prop.values().values[result[0]] = result[1]
+        tmp_prop.values().values[result[0]] = result[1]
 
     return tmp_prop
     # sequential #
@@ -458,80 +458,80 @@ def focal_agents(dest, weight, source, fail=False):
     point_values.fill(numpy.nan)
 
     for idx, p in enumerate(source_point.space_domain):
-      values_weight = source_field.values()[idx]
+        values_weight = source_field.values()[idx]
 
-      extent = source_field.space_domain._extent(idx)
-
-
-      # Raster for points to query
-      nr_rows = extent[4]
-      nr_cols = extent[5]
-      cellsize = math.fabs(extent[2] - extent[0]) / nr_cols
+        extent = source_field.space_domain._extent(idx)
 
 
-      minX = extent[0]
-      maxY = extent[3]
+        # Raster for points to query
+        nr_rows = extent[4]
+        nr_cols = extent[5]
+        cellsize = math.fabs(extent[2] - extent[0]) / nr_cols
 
-      #if ds.GetLayerByName('extent'):
-      #      ds.DeleteLayer('extent')
-      #ds.DeleteLayer('extent')
 
-      ds_extent = ogr.GetDriverByName('MEMORY').CreateDataSource('ds_extent')
+        minX = extent[0]
+        maxY = extent[3]
 
-      extent_lyr = ds_extent.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
+        #if ds.GetLayerByName('extent'):
+        #      ds.DeleteLayer('extent')
+        #ds.DeleteLayer('extent')
 
-      feat = ogr.Feature(extent_lyr.GetLayerDefn())
+        ds_extent = ogr.GetDriverByName('MEMORY').CreateDataSource('ds_extent')
 
-      ring = ogr.Geometry(ogr.wkbLinearRing)
+        extent_lyr = ds_extent.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
 
-      ring.AddPoint(minX, maxY)
-      ring.AddPoint(minX + nr_cols * cellsize, maxY)
-      ring.AddPoint(minX + nr_cols * cellsize, maxY - nr_rows * cellsize)
-      ring.AddPoint(minX, maxY - nr_rows * cellsize)
-      ring.AddPoint(minX, maxY)
+        feat = ogr.Feature(extent_lyr.GetLayerDefn())
 
-      poly = ogr.Geometry(ogr.wkbPolygon)
-      poly.AddGeometry(ring)
+        ring = ogr.Geometry(ogr.wkbLinearRing)
 
-      feat.SetGeometry(poly)
-      extent_lyr.CreateFeature(feat)
+        ring.AddPoint(minX, maxY)
+        ring.AddPoint(minX + nr_cols * cellsize, maxY)
+        ring.AddPoint(minX + nr_cols * cellsize, maxY - nr_rows * cellsize)
+        ring.AddPoint(minX, maxY - nr_rows * cellsize)
+        ring.AddPoint(minX, maxY)
 
-      #if ds.GetLayerByName('intersect'):
-      #      ds.DeleteLayer('intersect')
+        poly = ogr.Geometry(ogr.wkbPolygon)
+        poly.AddGeometry(ring)
 
-      intersect_layer = ds_extent.CreateLayer('locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
+        feat.SetGeometry(poly)
+        extent_lyr.CreateFeature(feat)
 
-      lyr_dst.Intersection(extent_lyr, intersect_layer)
+        #if ds.GetLayerByName('intersect'):
+        #      ds.DeleteLayer('intersect')
 
-      pcraster.setclone(nr_rows, nr_cols, cellsize, minX, maxY)
+        intersect_layer = ds_extent.CreateLayer('locations', geom_type=ogr.wkbPoint, srs=spatial_ref)
 
-      raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight.astype("float32"), numpy.nan)
+        lyr_dst.Intersection(extent_lyr, intersect_layer)
 
-      point_values.fill(numpy.nan)
+        pcraster.setclone(nr_rows, nr_cols, cellsize, minX, maxY)
 
-      for idx, feature in enumerate(intersect_layer):
-        x = feature.GetGeometryRef().GetX()
-        y = feature.GetGeometryRef().GetY()
+        raster = pcraster.numpy2pcr(pcraster.Scalar, values_weight.astype("float32"), numpy.nan)
 
-        mask_value, valid = pcraster.cellvalue_by_coordinates(raster, x, y)
-        agent_value = feature.GetField('value')
-        point_values[idx] = mask_value * agent_value
+        point_values.fill(numpy.nan)
 
-      indices = ~numpy.isnan(point_values)
-      masked = point_values[indices]
+        for idx, feature in enumerate(intersect_layer):
+            x = feature.GetGeometryRef().GetX()
+            y = feature.GetGeometryRef().GetY()
 
-      res = 0
-      if operation == 'average':
-        res = numpy.average(masked)
-      elif operation == 'sum':
-        res = numpy.sum(masked)
-      else:
-        raise NotImplementedError
+            mask_value, valid = pcraster.cellvalue_by_coordinates(raster, x, y)
+            agent_value = feature.GetField('value')
+            point_values[idx] = mask_value * agent_value
 
-      if fail == True:
-        assert res != 0
+        indices = ~numpy.isnan(point_values)
+        masked = point_values[indices]
 
-      tmp_prop.values()[idx] = res
+        res = 0
+        if operation == 'average':
+            res = numpy.average(masked)
+        elif operation == 'sum':
+            res = numpy.sum(masked)
+        else:
+            raise NotImplementedError
+
+        if fail == True:
+            assert res != 0
+
+        tmp_prop.values()[idx] = res
 
 
     return tmp_prop
@@ -540,33 +540,33 @@ def focal_agents(dest, weight, source, fail=False):
 
 
 def where(condition, property1, property2):
-  """ returns property1 for true condition, property2 otherwise
-  """
+    """ returns property1 for true condition, property2 otherwise
+    """
 
-  if not isinstance(condition, Property):
-      msg = _color_message('condition must be of type Property')
-      raise TypeError(msg)
-  if not isinstance(property1, Property):
-      msg = _color_message('property1 must be of type Property')
-      raise TypeError(msg)
-  if not isinstance(property2, Property):
-      msg = _color_message('property2 must be of type Property')
-      raise TypeError(msg)
+    if not isinstance(condition, Property):
+        msg = _color_message('condition must be of type Property')
+        raise TypeError(msg)
+    if not isinstance(property1, Property):
+        msg = _color_message('property1 must be of type Property')
+        raise TypeError(msg)
+    if not isinstance(property2, Property):
+        msg = _color_message('property2 must be of type Property')
+        raise TypeError(msg)
 
 
-  allowed = numpy.array([0, 1])
-  for item in condition.values().values:
-      condition_val = condition.values()[item]
-      assert numpy.dtype(condition_val.dtype) == numpy.uint8, f'{condition_val.dtype} != numpy.uint8'
-      diff = numpy.setdiff1d(condition_val, allowed)
-      assert len(diff) == 0, 'Only 0 and 1 values allowed for condition'
+    allowed = numpy.array([0, 1])
+    for item in condition.values().values:
+        condition_val = condition.values()[item]
+        assert numpy.dtype(condition_val.dtype) == numpy.uint8, f'{condition_val.dtype} != numpy.uint8'
+        diff = numpy.setdiff1d(condition_val, allowed)
+        assert len(diff) == 0, 'Only 0 and 1 values allowed for condition'
 
-  tmp_prop = copy.deepcopy(property1)
+    tmp_prop = copy.deepcopy(property1)
 
-  for item in condition.values().values:
-    cval = condition.values()[item]
-    tval = property1.values()[item].astype(numpy.float64)
-    fval = property2.values()[item]
-    tmp_prop.values()[item] = numpy.where(cval, tval, fval)
+    for item in condition.values().values:
+        cval = condition.values()[item]
+        tval = property1.values()[item].astype(numpy.float64)
+        fval = property2.values()[item]
+        tmp_prop.values()[item] = numpy.where(cval, tval, fval)
 
-  return tmp_prop
+    return tmp_prop
