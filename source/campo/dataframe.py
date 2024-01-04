@@ -3,7 +3,6 @@ This module contains functions that select information from a LUE dataset
 and return it in such a way that it becomes easy for postprocessing
 using other Python packages.
 """
-import os
 import warnings
 
 import numpy as np

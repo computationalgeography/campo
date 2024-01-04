@@ -7,9 +7,6 @@ gdal.UseExceptions()
 import math
 import numpy as np
 
-
-from ..points import Points
-from ..areas import Areas
 from ..property import Property
 
 
