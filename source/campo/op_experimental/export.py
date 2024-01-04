@@ -4,7 +4,7 @@ import subprocess
 import tempfile
 import shutil
 
-from osgeo import gdal
+from osgeo import gdal, osr
 import pandas as pd
 
 from ..dataframe import *
