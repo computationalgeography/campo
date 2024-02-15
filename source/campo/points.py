@@ -1,8 +1,8 @@
 import csv
-import numpy
+import numpy as np
 
 
-class Points(object):
+class Points():
     def __init__(self, mobile=False):
 
         self.nr_items = None
@@ -40,16 +40,34 @@ class Points(object):
         return self._xcoord
 
     @xcoord.setter
-    def xcoord(self, value):
-        self._xcoord = value
+    def xcoord(self, values):
+        new_values = values
+        if new_values is not None:
+            if isinstance(values, list):
+                new_values = np.array(values)
+
+            if new_values.shape != (self.nr_items,):
+                msg = f"Number of provided coordinates ({new_values.shape[0]}) does not match number of agents ({self.nr_items})"
+                raise RuntimeError(msg)
+
+        self._xcoord = new_values
 
     @property
     def ycoord(self):
         return self._ycoord
 
     @ycoord.setter
-    def ycoord(self, value):
-        self._ycoord = value
+    def ycoord(self, values):
+        new_values = values
+        if new_values is not None:
+            if isinstance(values, list):
+                new_values = np.array(values)
+
+            if new_values.shape != (self.nr_items,):
+                msg = f"Number of provided coordinates ({new_values.shape[0]}) does not match number of agents ({self.nr_items})"
+                raise RuntimeError(msg)
+
+        self._ycoord = new_values
 
     @property
     def nr_items(self):
@@ -67,26 +85,15 @@ class Points(object):
 
             self.nr_items = len(content)
 
-            #x = numpy.zeros(self.nr_items)
-            #y = numpy.zeros(self.nr_items)
-
-            #for idx, item in enumerate(content):
-              #x[idx] = item[0]
-              #y[idx] = item[1]
-
-            #self.xcoord = x
-            #self.ycoord = y
-
-            v = numpy.empty((self.nr_items, 2))
+            v = np.empty((self.nr_items, 2))
             for idx, item in enumerate(content):
                 v[idx, 0] = item[0]
                 v[idx, 1] = item[1]
-             # numpy.random.shuffle(v)
 
             self.xcoord = v[:, 0]
             self.ycoord = v[:, 1]
 
-            self._coordinates = numpy.empty((self.nr_items, 2))
+            self._coordinates = np.empty((self.nr_items, 2))
 
     def __iter__(self):
         return self

@@ -63,7 +63,9 @@ class Areas(object):
             self.nr_items = len(content)
 
             self.p1 = Points()
+            self.p1.nr_items = self.nr_items
             self.p2 = Points()
+            self.p2.nr_items = self.nr_items
 
             x1 = numpy.zeros(self.nr_items)
             y1 = numpy.zeros(self.nr_items)

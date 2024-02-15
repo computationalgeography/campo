@@ -97,7 +97,7 @@ class TestMobileAgents(unittest.TestCase):
           curr_mp = self.a.mobile_points.get_space_domain(timestep)
           # set coordinates of current timestep
           curr_mp.xcoord = x_coords + timestep
-          curr_mp.ycoord = y_coords + timestep
+          curr_mp.ycoord = list(y_coords + timestep)
 
           self.a.mobile_points.set_space_domain(curr_mp, timestep)
 
