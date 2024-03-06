@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 
 project(campo
-  VERSION 0.3.10
+  VERSION 0.3.11
   DESCRIPTION "Modelling framework for fields and agents"
   HOMEPAGE_URL "https://campo.computationalgeography.org/"
   LANGUAGES NONE
@@ -15,7 +15,7 @@ set(CMAKE_MODULE_PATH
 
 set(DEV_CURRENT_YEAR "2024")
 
-set(${PROJECT_NAME}_ORGANISATION_NAME "Computational Geography group, Dept of Physical Geography, Utrecht University")
+set(${PROJECT_NAME}_ORGANISATION_NAME "Computational Geography group, Dept. of Physical Geography, Utrecht University")
 set(${PROJECT_NAME}_COPYRIGHT
      "2020 - ${DEV_CURRENT_YEAR}, ${${PROJECT_NAME}_ORGANISATION_NAME}")
 

@@ -393,9 +393,10 @@ class Campo(object):
             if not p in dataset_phenomena:
                 self._generate_lue_phenomenon(self._phenomena[p])
 
-        for pset in self._phenomena[p].property_sets.values():
-            for prop in pset.properties.values():
-                self._lue_write_property(p, pset, prop, timestep)
+        for phen in self._phenomena:
+            for pset in self._phenomena[phen].property_sets.values():
+                for prop in pset.properties.values():
+                    self._lue_write_property(phen, pset, prop, timestep)
 
     def set_time(self, start, unit, stepsize, nrTimeSteps):
         """  """
