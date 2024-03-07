@@ -22,7 +22,7 @@ add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/unit_tests.py
   DEPENDS ${SOURCES}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  COMMENT "Copying sources..."
+  COMMENT "Copying test sources..."
   COMMAND ${CMAKE_COMMAND} -E copy ${SOURCES} ${CMAKE_CURRENT_BINARY_DIR}
 )
 
@@ -31,7 +31,7 @@ add_test(
   NAME
     campo_unit_tests
   COMMAND
-    ${Python3_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/unit_tests.py
+    ${Python_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/unit_tests.py
 )
 
 
