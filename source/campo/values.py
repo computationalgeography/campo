@@ -15,18 +15,36 @@ class Values(object):
 
         if isinstance(values, (int, float)):
             self._init_numbers(shapes, values)
-
         elif isinstance(values, np.ndarray):
             self._init_array(shapes, values)
         elif isinstance(values, property.Property):
             self._init_prop(shapes, values)
         else:
-            raise NotImplementedError
+            msg = f"Setting values with '{type(values).__name__}' is not implemented. Use NumPy arrays instead."
+            raise NotImplementedError(msg)
 
     def _init_array(self, shapes, values):
 
+        dim = len(shapes[0])
+
+        if values.ndim == 2:
+            msg = f"Array of shape ({values.shape[0]}, {values.shape[1]}) cannot be assigned to one agent, use shape (1, {values.shape[0]}, {values.shape[1]})"
+            raise ValueError(msg)
+
+        if len(shapes) != values.shape[0]:
+            msg = f"Number of provided values ({values.shape[0]}) does not match number of agents ({len(shapes)})"
+            raise ValueError(msg)
+
         for idx, shape in enumerate(shapes):
-            self.values[idx] = values[idx]
+            if dim == 1:
+                self.values[idx] = np.array([values[idx]])
+            elif dim == 2:
+                if shape != values[idx].shape:
+                    msg = f"The provided shape {values[idx].shape} does not match the expected shape {shape}"
+                    raise ValueError(msg)
+                self.values[idx] = values[idx]
+            else:
+                raise NotImplementedError
 
     def _init_numbers(self, shapes, values):
 
