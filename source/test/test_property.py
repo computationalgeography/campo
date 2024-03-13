@@ -15,10 +15,10 @@ class TestProperty(unittest.TestCase):
     def setUpClass(self):
 
         # Some dummy spatial domain
-        with open('locations.csv', 'w') as content:
-            content.write('1,2\n3,4\n5,6\n7,8')
+        with open("locations.csv", "w") as content:
+            content.write("1,2\n3,4\n5,6\n7,8")
 
-        with open('extent.csv', 'w') as content:
+        with open("extent.csv", "w") as content:
             content.write("0,0,20,40,2,3\n")
             content.write("0,0,20,30,2,3\n")
             content.write("0,0,20,30,2,3\n")
@@ -26,11 +26,11 @@ class TestProperty(unittest.TestCase):
 
         self.ds = campo.Campo(seed=13)
 
-        self.a = self.ds.add_phenomenon('a')
-        self.a.add_property_set('b', 'locations.csv')
-        self.a.add_property_set('field', 'extent.csv')
+        self.a = self.ds.add_phenomenon("a")
+        self.a.add_property_set("b", "locations.csv")
+        self.a.add_property_set("field", "extent.csv")
 
-    def test_1(self):
+    def test_01(self):
         """ Point agents getting same values """
 
         self.a.b.c = 500
@@ -39,7 +39,7 @@ class TestProperty(unittest.TestCase):
         for idx, value in enumerate(self.a.b.c.values()):
             self.assertEqual(arr[idx], value[0])
 
-    def test_2(self):
+    def test_02(self):
         """ Point agents getting values from normal distribution """
         self.a.b.lower = -8
         self.a.b.upper = 2
@@ -49,7 +49,7 @@ class TestProperty(unittest.TestCase):
         for idx, value in enumerate(self.a.b.c.values()):
             self.assertAlmostEqual(arr[idx], value[0])
 
-    def test_3(self):
+    def test_03(self):
         """ Point agents getting values from uniform distribution """
         self.a.b.lower = -4
         self.a.b.upper = 10
@@ -59,7 +59,7 @@ class TestProperty(unittest.TestCase):
         for idx, value in enumerate(self.a.b.c.values()):
             self.assertAlmostEqual(arr[idx], value[0])
 
-    def test_4(self):
+    def test_04(self):
         """ Field agents getting same values """
 
         self.a.field.c = 500
@@ -69,8 +69,7 @@ class TestProperty(unittest.TestCase):
         for idx, value in enumerate(self.a.field.c.values()):
             self.assertTrue((arr==value).all())
 
-
-    def test_5(self):
+    def test_05(self):
         """ Field agents getting values from normal distribution """
         self.a.field.lower = -8
         self.a.field.upper = 2
@@ -87,8 +86,7 @@ class TestProperty(unittest.TestCase):
         for idx, value in enumerate(self.a.field.c.values()):
             self.assertTrue((np.isclose(arr[idx], value).all()))
 
-
-    def test_6(self):
+    def test_06(self):
         """ Field agents getting values from uniform distribution """
         self.a.field.lower = -4
         self.a.field.upper = 10
@@ -106,8 +104,7 @@ class TestProperty(unittest.TestCase):
         for idx, value in enumerate(self.a.field.c.values()):
             self.assertTrue((np.isclose(arr[idx], value).all()))
 
-
-    def test_7(self):
+    def test_07(self):
         """ Point agents getting values from random_integers distribution """
         self.a.b.lower = -25
         self.a.b.upper = 25
@@ -117,8 +114,7 @@ class TestProperty(unittest.TestCase):
         for idx, value in enumerate(self.a.b.c.values()):
             self.assertEqual(arr[idx], value[0])
 
-
-    def test_8(self):
+    def test_08(self):
         """ Field agents getting values from random_integers distribution """
         self.a.field.lower = -4
         self.a.field.upper = 10
@@ -135,3 +131,85 @@ class TestProperty(unittest.TestCase):
 
         for idx, value in enumerate(self.a.field.c.values()):
             self.assertTrue((arr[idx]==value).all())
+
+    def test_09(self):
+        """ Point agents, assigning values with NumPy array """
+        self.a.b.c = np.array([500, 600, 700, 800], dtype=np.int32)
+        arr = np.array([500, 600, 700, 800], dtype=np.int32)
+
+        for idx, value in enumerate(self.a.b.c.values()):
+            self.assertEqual(arr[idx], value[0])
+
+    def test_10(self):
+        """ Point agents, assigning values with unsupported """
+        with self.assertRaises(Exception) as context_manager:
+            self.a.b.c = [12, 34, 56, 78]
+
+        self.assertRegex(str(context_manager.exception),
+            "Setting values with 'list' is not implemented. Use NumPy arrays instead.")
+
+        with self.assertRaises(Exception) as context_manager:
+            self.a.b.c = "unexpected"
+
+        self.assertRegex(str(context_manager.exception),
+            "Setting values with 'str' is not implemented. Use NumPy arrays instead.")
+
+    def test_11(self):
+        """ Point agents, assigning array with different nr of agents """
+        with self.assertRaises(Exception) as context_manager:
+            self.a.b.c = np.array([500, 600, 700])
+
+        self.assertEqual(str(context_manager.exception),
+            "Number of provided values (3) does not match number of agents (4)")
+
+    def test_12(self):
+        """ Field agents, assigning arrays with different nr of agents """
+        with self.assertRaises(Exception) as context_manager:
+            self.a.field.a = np.arange(1, 19).reshape(3, 2, 3)
+
+        self.assertEqual(str(context_manager.exception),
+            "Number of provided values (3) does not match number of agents (4)")
+
+    def test_13(self):
+        """ Field agents, assigning arrays """
+        self.a.field.a = np.arange(1, 25).reshape(4, 2, 3)
+
+        val = np.arange(1, 25).reshape(4, 2, 3)
+
+        for idx, value in enumerate(self.a.field.a.values()):
+            self.assertTrue((val[idx]==value).all())
+
+    def test_14(self):
+        """ Field agents, assigning arrays incorrect shape"""
+        with self.assertRaises(Exception) as context_manager:
+            self.a.field.a = np.arange(1, 25).reshape(4, 3, 2)
+
+        self.assertEqual(str(context_manager.exception),
+            "The provided shape (3, 2) does not match the expected shape (2, 3)")
+
+    def test_15(self):
+        """ One field agent, assigning array values"""
+        with open("extent2.csv", "w") as content:
+            content.write("0,0,20,40,2,3\n")
+
+        ds = campo.Campo(seed=13)
+        phen2 = self.ds.add_phenomenon("phen2")
+        phen2.add_property_set("field", "extent2.csv")
+
+        phen2.field.a = np.arange(1, 7).reshape(1, 2, 3)
+        val = np.arange(1, 7).reshape(1, 2, 3)
+
+        for idx, value in enumerate(phen2.field.a.values()):
+            self.assertTrue((val[idx]==value).all())
+
+        with self.assertRaises(Exception) as context_manager:
+            phen2.field.a = np.arange(1, 7).reshape(1, 3, 2)
+
+        self.assertEqual(str(context_manager.exception),
+            "The provided shape (3, 2) does not match the expected shape (2, 3)")
+
+        with self.assertRaises(Exception) as context_manager:
+            phen2.field.a = np.arange(1, 7).reshape(2, 3)
+
+        self.assertEqual(str(context_manager.exception),
+            "Array of shape (2, 3) cannot be assigned to one agent, use shape (1, 2, 3)")

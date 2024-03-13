@@ -46,7 +46,6 @@ class TestDataframe(unittest.TestCase):
             tmp_df = campo.to_df(dataframe, timestep)
             campo.mobile_points_to_gpkg(coords, tmp_df, f"tmp_{timestep}.gpkg", 'EPSG:28992')
 
-
     def test_3(self):
         """ Writing GeoTiff stationary dynamic field agent """
 
@@ -62,5 +61,23 @@ class TestDataframe(unittest.TestCase):
 
         for timestep in range(1, 6):
             raster = df["phen"]["field"]["fdata"][agent_id][timestep - 1]
+            filename = pathlib.Path(directory, f"fdata_{agent_id}_{timestep}.tiff")
+            campo.to_geotiff(raster, filename, crs)
+
+    def test_4(self):
+        """ Writing GeoTiff stationary dynamic field agent """
+
+        dataset = ldm.open_dataset("TestDynamicModel_test_2.lue", "r")
+        df = campo.dataframe.select(dataset.phen2, property_names=['fdata'])
+
+        agent_id = 0
+        crs = "EPSG:4326"
+        directory = "TestDataframe_test_4"
+
+        if not pathlib.Path(directory).exists():
+            pathlib.Path(directory).mkdir()
+
+        for timestep in range(1, 6):
+            raster = df["phen2"]["field"]["fdata"][agent_id][timestep - 1]
             filename = pathlib.Path(directory, f"fdata_{agent_id}_{timestep}.tiff")
             campo.to_geotiff(raster, filename, crs)
