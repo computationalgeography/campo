@@ -36,20 +36,31 @@ jobs:
 
             - uses: conda-incubator/setup-miniconda@v3
               with:
-                  activate-environment: campo
-                  environment-file: environment/configuration/conda_environment.yaml
+                  activate-environment: campo_dev
+                  environment-file: environment/configuration/campo_dev.yaml
                   python-version: 3.11
                   auto-activate-base: false
 
-            - name: Build
+            - name: Configure Campo
               shell: bash -l {0}
               run: |
                   mkdir ${{ env.build-directory }}
-                  cd ${{ env.build-directory }}
-                  cmake ${{ env.source-directory }} -DCAMPO_BUILD_WHEEL=ON
-                  make documentation
-                  make install
-                  rm -f package/dist/*gz
+                  cmake \
+                    -S ${{ env.source-directory }} \
+                    -B ${{ env.build-directory }} \
+                    -D CAMPO_BUILD_WHEEL=ON
+
+            - name: Build Campo
+              shell: bash -l {0}
+              run: |
+                  cmake --build ${{ env.build-directory }} --target documentation
+                  cmake --build ${{ env.build-directory }} --target install
+                  rm -f ${{ env.build-directory }}/package/dist/*gz
+
+            - name: Test Campo
+              shell: bash -l {0}
+              run: |
+                  ctest --test-dir ${{ env.build-directory }} --output-on-failure
 
             - name: Deploy wheel
               if: github.repository == 'computationalgeography/campo'
