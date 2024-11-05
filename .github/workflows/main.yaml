@@ -1,8 +1,11 @@
 name: Build and deploy
 
 on:
-    push:
-    pull_request:
+  pull_request:
+  push:
+    branches:
+      - "master"
+  workflow_dispatch:
 
 env:
     source-directory: $GITHUB_WORKSPACE
@@ -36,23 +39,40 @@ jobs:
 
             - uses: conda-incubator/setup-miniconda@v3
               with:
-                  activate-environment: campo
-                  environment-file: environment/configuration/conda_environment.yaml
+                  activate-environment: campo_dev
+                  environment-file: environment/configuration/campo_dev.yaml
                   python-version: 3.11
                   auto-activate-base: false
 
-            - name: Build
+            - name: Configure Campo
               shell: bash -l {0}
               run: |
                   mkdir ${{ env.build-directory }}
+                  cmake \
+                    -S ${{ env.source-directory }} \
+                    -B ${{ env.build-directory }} \
+                    -D CAMPO_BUILD_WHEEL=ON
+
+            - name: Build Campo
+              shell: bash -l {0}
+              run: |
+                  cmake --build ${{ env.build-directory }} --target documentation
+                  cmake --build ${{ env.build-directory }} --target install
+                  rm -f ${{ env.build-directory }}/package/dist/*gz
+
+            - name: Test Campo
+              shell: bash -l {0}
+              run: |
+                  ctest --test-dir ${{ env.build-directory }} --output-on-failure
+
+            - name: Deploy documentation
+              if: github.repository == 'computationalgeography/campo' && github.ref == 'refs/heads/master'
+              run: |
                   cd ${{ env.build-directory }}
-                  cmake ${{ env.source-directory }} -DCAMPO_BUILD_WHEEL=ON
-                  make documentation
-                  make install
-                  rm -f package/dist/*gz
+                  # lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir1 }}"
 
             - name: Deploy wheel
-              if: github.repository == 'computationalgeography/campo'
+              if: github.repository == 'computationalgeography/campo' && github.ref == 'refs/heads/master'
               run: |
                   mkdir -p $HOME/.ssh
                   echo "HostKeyAlgorithms ssh-rsa" >> $HOME/.ssh/config
@@ -61,14 +81,8 @@ jobs:
                   cd ${{ env.build-directory }}
                   lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ ${{ env.remote_dir2 }}"
 
-            - name: Deploy documentation
-              if: github.repository == 'computationalgeography/campo' && github.ref == 'refs/heads/master'
-              run: |
-                  cd ${{ env.build-directory }}
-                  # lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir1 }}"
-
             - name: Deploy development documentation
-              if: github.repository == 'computationalgeography/campo'
+              if: github.repository == 'computationalgeography/campo' && github.ref == 'refs/heads/master'
               run: |
                   cd ${{ env.build-directory }}
                   lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir3 }}"
