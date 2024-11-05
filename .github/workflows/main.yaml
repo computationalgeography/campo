@@ -25,7 +25,7 @@ jobs:
         steps:
 
             - name: Checkout Campo
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: configure system
               run: |
@@ -34,7 +34,7 @@ jobs:
                   # sudo apt-get autoremove
                   sudo apt-get --yes install lftp
 
-            - uses: conda-incubator/setup-miniconda@v2
+            - uses: conda-incubator/setup-miniconda@v3
               with:
                   activate-environment: campo
                   environment-file: environment/configuration/conda_environment.yaml
@@ -52,6 +52,7 @@ jobs:
                   rm -f package/dist/*gz
 
             - name: Deploy wheel
+              if: github.repository == 'computationalgeography/campo'
               run: |
                   mkdir -p $HOME/.ssh
                   echo "HostKeyAlgorithms ssh-rsa" >> $HOME/.ssh/config
@@ -61,12 +62,13 @@ jobs:
                   lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ ${{ env.remote_dir2 }}"
 
             - name: Deploy documentation
-              if: github.ref == 'refs/heads/master'
+              if: github.repository == 'computationalgeography/campo' && github.ref == 'refs/heads/master'
               run: |
                   cd ${{ env.build-directory }}
                   # lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir1 }}"
 
             - name: Deploy development documentation
+              if: github.repository == 'computationalgeography/campo'
               run: |
                   cd ${{ env.build-directory }}
                   lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir3 }}"
