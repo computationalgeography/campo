@@ -1,8 +1,11 @@
 name: Build and deploy
 
 on:
-    push:
-    pull_request:
+  pull_request:
+  push:
+    branches:
+      - "master"
+  workflow_dispatch:
 
 env:
     source-directory: $GITHUB_WORKSPACE
@@ -62,8 +65,14 @@ jobs:
               run: |
                   ctest --test-dir ${{ env.build-directory }} --output-on-failure
 
+            - name: Deploy documentation
+              if: github.repository == 'computationalgeography/campo' && github.ref == 'refs/heads/master'
+              run: |
+                  cd ${{ env.build-directory }}
+                  # lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir1 }}"
+
             - name: Deploy wheel
-              if: github.repository == 'computationalgeography/campo'
+              if: github.repository == 'computationalgeography/campo' && github.ref == 'refs/heads/master'
               run: |
                   mkdir -p $HOME/.ssh
                   echo "HostKeyAlgorithms ssh-rsa" >> $HOME/.ssh/config
@@ -72,14 +81,8 @@ jobs:
                   cd ${{ env.build-directory }}
                   lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue package/dist/ ${{ env.remote_dir2 }}"
 
-            - name: Deploy documentation
-              if: github.repository == 'computationalgeography/campo' && github.ref == 'refs/heads/master'
-              run: |
-                  cd ${{ env.build-directory }}
-                  # lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir1 }}"
-
             - name: Deploy development documentation
-              if: github.repository == 'computationalgeography/campo'
+              if: github.repository == 'computationalgeography/campo' && github.ref == 'refs/heads/master'
               run: |
                   cd ${{ env.build-directory }}
                   lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir3 }}"
