@@ -57,3 +57,15 @@ def find_closest_dest (field_pset, boolean_fieldprop, point_pset_orX, pidx_orY):
     ycoord = new_yidx*resolution + minY
     travel_distance = float(distances [0][0])*resolution 
     return xcoord, ycoord, travel_distance
+
+def move_directed (field_pset, dest_boolean_fieldprop, boolean_clump_fieldprop, point_pset, pidx):
+    '''boolean_clump_fieldprop = the current clump as a boolean map (is all available area for the current location of the pointagent)'''
+    # Find closest spawning area pixel destination 
+    closest_destX, closest_destY, dist1 = find_closest_dest(field_pset, dest_boolean_fieldprop, point_pset, pidx)
+    # from this pixel, find closest clump pixel , which will be in the right direction 
+    xcoord, ycoord, dist2 = find_closest_dest(field_pset, boolean_clump_fieldprop, closest_destX, closest_destY)
+
+    initialX = point_pset.space_domain.xcoord[pidx]
+    initialY = point_pset.space_domain.ycoord[pidx]
+    travel_distance = np.sqrt((xcoord - initialX)**2 +(ycoord - initialY)**2)
+    return xcoord, ycoord, travel_distance
