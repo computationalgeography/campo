@@ -264,8 +264,9 @@ class Campo(object):
             if tmp_pset.object_tracker.active_object_id.nr_ids == 0:
                 tmp_pset.object_tracker.active_object_id.expand(time_boxes * nr_timesteps_and_objects)[:] = np.arange(nr_timesteps_and_objects)
                 tmp_pset.object_tracker.active_set_index.expand(time_boxes)[:] = 0
-                time_domain = tmp_pset.time_domain
-                time_domain.value.expand(time_boxes)[:] = np.array([0, self._nr_timesteps])
+                if not static:
+                    time_domain = tmp_pset.time_domain
+                    time_domain.value.expand(time_boxes)[:] = np.array([0, self._nr_timesteps])
 
         elif space_type == ldm.SpaceDomainItemType.box:
 
@@ -380,9 +381,6 @@ class Campo(object):
 
         :param timestep: None for initial, integer timestep number otherwise
         """
-        if (not self._nr_timesteps):
-            msg = _color_message(f"Number of timesteps not yet specified, use set_time")
-            raise RuntimeError(msg)
 
         dataset = ldm.open_dataset(self.lue_filename, 'r')
         # Get list of phenomena such that we can close the dataset immediately

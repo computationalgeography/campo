@@ -25,7 +25,7 @@ def _timeunit_pdname(unit):
 
 
 def point_agent(object_ids, space_domain):
-    obj_idx = int(np.where(object_ids == object_ids[0])[0])
+    obj_idx = int(np.where(object_ids == object_ids[0])[0][0])
     dom = space_domain.value[:][obj_idx]
     if len(dom) == 2:
         return True
@@ -36,7 +36,7 @@ def point_agent(object_ids, space_domain):
 def object_indices(object_ids, selection):
     res = []
     for item in selection:
-        idx = int(np.where(object_ids == item)[0])
+        idx = int(np.where(object_ids == item)[0][0])
         res.append(idx)
     return res
 
@@ -137,7 +137,7 @@ def select_constant_different_shape_arrays(
 
         # Individual data arrays due to different shapes
         for oid in object_selection:
-            obj_idx = int(np.where(object_ids == oid)[0])
+            obj_idx = int(np.where(object_ids == oid)[0][0])
 
             dom = space_domain.value[:][obj_idx]
             dis = space_discretization.value[:][obj_idx]
