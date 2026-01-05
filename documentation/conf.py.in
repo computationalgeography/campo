@@ -54,17 +54,19 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-#html_theme = 'pyramid' # 'alabaster'
-html_theme = "sphinx_rtd_theme"
-html_theme_path = ["@sphinx_lue_theme_SOURCE_DIR@"]
+html_theme = 'alabaster' # 'alabaster'
+#html_theme = "sphinx_rtd_theme"
+#html_theme_path = ["@sphinx_lue_theme_SOURCE_DIR@"]
 
 html_last_updated_fmt = "%b %d, %Y"
+
 html_show_sourcelink = False
 
-#html_theme_options = {
+html_theme_options = {
+    'show_powered_by' : 'false'
 #  'sidebarwidth' : '16%',
 #  'body_max_width' : None
-#}
+}
 
 html_sidebars = {
     '**': [
