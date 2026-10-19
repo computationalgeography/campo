@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.27)
 
 project(campo
   VERSION 0.3.12
@@ -19,7 +19,7 @@ set(${PROJECT_NAME}_ORGANISATION_NAME "Computational Geography group, Dept. of P
 set(${PROJECT_NAME}_COPYRIGHT
      "2020 - ${DEV_CURRENT_YEAR}, ${${PROJECT_NAME}_ORGANISATION_NAME}")
 
-find_package(Python 3.8
+find_package(Python 3.11
   REQUIRED COMPONENTS Interpreter
 )
 
