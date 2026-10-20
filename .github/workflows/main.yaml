@@ -54,6 +54,7 @@ jobs:
               run: |
                   mkdir ${{ env.build-directory }}
                   cmake \
+                    -G Ninja \
                     -S ${{ env.source-directory }} \
                     -B ${{ env.build-directory }} \
                     -D CAMPO_BUILD_WHEEL=ON
@@ -61,8 +62,7 @@ jobs:
             - name: Build Campo
               shell: bash -l {0}
               run: |
-                  cmake --build ${{ env.build-directory }} --target documentation
-                  cmake --build ${{ env.build-directory }} --target install
+                  cmake --build ${{ env.build-directory }} --target documentation install
                   rm -f ${{ env.build-directory }}/package/dist/*gz
 
             - name: Test Campo

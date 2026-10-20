@@ -5,6 +5,8 @@ channels:
 dependencies:
   - python=3.14
   - numpy
+  - cmake
+  - ninja
   - lue
   - pcraster
   - sphinx
@@ -13,5 +15,6 @@ dependencies:
   - xarray
   - gdal
   - networkx
-  - cmake
+  - pip:
+    - build
   # - ipython
