@@ -40,15 +40,6 @@ set_tests_properties(campo_unit_tests PROPERTIES
     init_test_sources
   DEPENDS
     init_campo_sources
+  ENVIRONMENT_MODIFICATION
+    "PYTHONPATH=path_list_prepend:${CMAKE_BINARY_DIR}/source"
 )
-
-# add path of project's unit test related files to PYTHONPATH
-# required to execute this unit test via ctest properly
-if(WIN32)
-  message(FATAL_ERROR)
-else()
-  set(ENV_PATH $ENV{PYTHONPATH})
-  set_tests_properties(campo_unit_tests PROPERTIES
-    ENVIRONMENT "PYTHONPATH=${CMAKE_BINARY_DIR}/source:$ENV{PYTHONPATH}"
-  )
-endif()
