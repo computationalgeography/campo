@@ -18,3 +18,4 @@ dependencies:
   - pip:
     - build
   # - ipython
+  - hdf5=1.14.6
