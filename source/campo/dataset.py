@@ -126,7 +126,7 @@ class Campo(object):
                 time_boxes = 1
                 p_shape = (self._nr_timesteps,)
                 lue_prop = pset.add_property(prop.name, dtype=np.dtype(dtype), shape=p_shape, value_variability=ldm.ValueVariability.variable)
-                lue_prop.value.expand(nr_objects)
+                lue_prop.value.expand(nr_objects)[:] = np.zeros((nr_objects, self._nr_timesteps), dtype=np.dtype(dtype))
 
                 # Just create these once...
                 if pset.object_tracker.active_object_id.nr_ids == 0:
@@ -163,16 +163,12 @@ class Campo(object):
 
             space_discr = pset.campo_discretization
 
-            # if number of rows/columns not yet set...
-            if pset.campo_discretization.value[0][0] == 0 and pset.campo_discretization.value[0][1] == 0:
+            shapes = np.arange(1, nr_objects * 2 + 1, dtype=ldm.dtype.Count).reshape(nr_objects, 2)
 
-                shapes = np.arange(1, nr_objects * 2 + 1, dtype=ldm.dtype.Count) \
-                              .reshape(nr_objects, 2)
+            for idx, item in enumerate(property_set.space_domain):
+                shapes[idx] = [item[4], item[5]]
 
-                for idx, item in enumerate(property_set.space_domain):
-                    shapes[idx] = [item[4], item[5]]
-
-                space_discr.value[:] = shapes
+            space_discr.value[:] = shapes
 
             rank = 2
             if prop.is_dynamic:
@@ -365,7 +361,7 @@ class Campo(object):
                     for idx, val in enumerate(prop.values().values):
                         #lue_prop.value[:][idx, timestep - 1] = prop.values().values[idx]
                         tmp = lue_prop.value[idx]
-                        tmp[timestep - 1] = prop.values().values[idx]
+                        tmp[timestep - 1] = prop.values().values[idx][0]
                         lue_prop.value[idx] = tmp
                 else:
                     for idx, val in enumerate(prop.values().values):
