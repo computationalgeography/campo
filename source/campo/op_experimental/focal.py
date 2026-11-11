@@ -305,7 +305,7 @@ def _focal_agents(values):
     if fail == True:
         assert not numpy.isnan(result)
 
-    return idx, result
+    return idx, numpy.array([result])
 
 
 def focal_agents(dest, weight, source, fail=False):

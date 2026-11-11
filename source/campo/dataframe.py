@@ -342,7 +342,7 @@ def select_variable_different_shape_constant_shape_arrays(
 
         # Individual data arrays due to different shapes
         for oid in object_selection:
-            obj_idx = int(np.where(object_ids == oid)[0])
+            obj_idx = int(np.where(object_ids == oid)[0].item(0))
 
             dom = space_domain.value[:][obj_idx]
             dis = space_discretization.value[:][obj_idx]
