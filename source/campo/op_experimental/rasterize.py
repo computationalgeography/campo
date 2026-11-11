@@ -15,7 +15,7 @@ def feature_to_raster(field_pset, point_pset):
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromEPSG(28992)
 
-    ogr_source=ogr.GetDriverByName('MEMORY').CreateDataSource('memSource')
+    ogr_source=ogr.GetDriverByName('MEM').CreateDataSource('memSource')
 
     tmp_prop = Property('emptycreatename', field_pset.uuid, field_pset.space_domain, field_pset.shapes)
 
@@ -66,7 +66,7 @@ def feature_to_raster_all(field_pset, point_pset):
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromEPSG(28992)
 
-    outdriver=ogr.GetDriverByName('MEMORY')
+    outdriver=ogr.GetDriverByName('MEM')
     source=outdriver.CreateDataSource('memData')
     tmp=outdriver.Open('memData', 1)
     lyr = source.CreateLayer('locations', geom_type=ogr.wkbPoint, srs=spatial_ref)

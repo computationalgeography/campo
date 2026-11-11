@@ -49,7 +49,7 @@ def get_others(start_prop, dest_prop, buffer_size):
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromEPSG(28992)
 
-    memdriver = ogr.GetDriverByName('MEMORY')
+    memdriver = ogr.GetDriverByName('MEM')
     ds = memdriver.CreateDataSource('tmp.gpkg')
 
     # Destination layer
@@ -112,7 +112,7 @@ def focal_average_others(start_prop, dest_prop, value_prop, buffer_size, default
     geo_out = 'foodenv.gpkg'
     # ds = ogr.GetDriverByName('GPKG').CreateDataSource(geo_out)
 
-    memdriver = ogr.GetDriverByName('MEMORY')
+    memdriver = ogr.GetDriverByName('MEM')
     ds = memdriver.CreateDataSource(geo_out)
 
     # Second we make a point feature from which we will obtain the values
@@ -198,7 +198,7 @@ def _focal_agents(values):
     spatial_ref = osr.SpatialReference()
     spatial_ref.ImportFromEPSG(crs)
 
-    ds = ogr.GetDriverByName('MEMORY').CreateDataSource(f'mem{idx}')
+    ds = ogr.GetDriverByName('MEM').CreateDataSource(f'mem{idx}')
 
     # Second we make a point feature from which we will obtain the locations
     # Holding all objects
@@ -357,7 +357,7 @@ def focal_agents(dest, weight, source, fail=False):
     #spatial_ref = osr.SpatialReference()
     #spatial_ref.ImportFromEPSG(point_crs)
 
-    #ds = ogr.GetDriverByName('MEMORY').CreateDataSource('mem')
+    #ds = ogr.GetDriverByName('MEM').CreateDataSource('mem')
 
     ## Second we make a point feature from which we will obtain the locations
     ## Holding all objects
@@ -434,7 +434,7 @@ def focal_agents(dest, weight, source, fail=False):
         #      ds.DeleteLayer('extent')
         #ds.DeleteLayer('extent')
 
-        ds_extent = ogr.GetDriverByName('MEMORY').CreateDataSource('ds_extent')
+        ds_extent = ogr.GetDriverByName('MEM').CreateDataSource('ds_extent')
 
         extent_lyr = ds_extent.CreateLayer('extent', geom_type=ogr.wkbPolygon,  srs=spatial_ref)
 
