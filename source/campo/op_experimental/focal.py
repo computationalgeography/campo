@@ -9,6 +9,7 @@ from osgeo import ogr
 from osgeo import osr
 
 ogr.UseExceptions()
+osr.UseExceptions()
 
 import pcraster
 
