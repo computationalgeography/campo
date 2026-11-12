@@ -34,6 +34,9 @@ set(EXPERIMENTAL_SOURCES
   op_experimental/focal.py
   op_experimental/network.py
   op_experimental/export.py
+  op_experimental/local.py
+  op_experimental/move_closest_dest.py
+  op_experimental/randommove.py
 )
 
 
