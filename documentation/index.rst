@@ -10,7 +10,7 @@ You can find more information about this project on the `Campo <https://campo.co
 
 
 .. note::
-   this documentation page is work in progress
+   This documentation page is work in progress
 
 .. toctree::
    :hidden:
@@ -26,3 +26,4 @@ You can find more information about this project on the `Campo <https://campo.co
    general/changes.rst
    general/indices.rst
    Campo project website <https://campo.computationalgeography.org/>
+   Computational Geography website <https://www.computationalgeography.org/>

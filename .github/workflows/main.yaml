@@ -82,7 +82,7 @@ jobs:
               if: github.repository == 'computationalgeography/campo' && github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-26.04'
               run: |
                   cd ${{ env.build-directory }}
-                  # lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir1 }}"
+                  lftp -c "open --user ${{ env.ftp_username }} --password ${{ env.ftp_password }} -p ${{ env.ftp_port }} ${{ env.ftp_server }};set sftp:auto-confirm yes;set ssl:verify-certificate false;mirror --verbose --reverse --continue --parallel=2 documentation/_build/ ${{ env.remote_dir1 }}"
 
             - name: Deploy wheel
               if: github.repository == 'computationalgeography/campo' && github.ref == 'refs/heads/master' && matrix.os == 'ubuntu-26.04'

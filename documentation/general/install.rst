@@ -2,12 +2,12 @@ Installation
 ============
 
 You can install Campo on Windows, macOS or Linux.
-Supported Python versions are 3.6 or higher.
+Supported Python versions are 3.11 or higher.
 
 Installing Python
 -----------------
 
-We suggest to install the |mambaforge| distribution.
+We suggest to install the |miniforge| distribution.
 Alternative distributions are |miniconda|, or |anaconda| provided by Continuum Analytics.
 The user guide and short reference on the conda pacakge manager can be found |minicondadoc|.
 
@@ -19,9 +19,17 @@ You can install the latest Campo version with
 
 .. code-block:: console
 
-   conda create --name campo -c conda-forge python=3.11 campo
+   conda create --name campo -c conda-forge campo
    # or
-   mamba create --name campo -c conda-forge python=3.11 campo
+   mamba create --name campo -c conda-forge campo
+
+
+
+For installing Campo including additional software packages used in our `on-site <https://www.uu.nl/staff/DJKarssenberg/Teaching>`_ or `online <https://campo.computationalgeography.org/courses/index.html>`_ courses, type:
+
+.. code-block:: console
+
+   conda create --name campo -c conda-forge campo spyder spyder-terminal qgis
 
 
 ..
@@ -36,9 +44,9 @@ You can test your installation afterwards by printing the Campo version number
 .. include:: install_test.rst
 
 
-.. |mambaforge| raw:: html
+.. |miniforge| raw:: html
 
-   <a href="https://mamba.readthedocs.io/en/latest/mamba-installation.html" target="_blank">Mambaforge</a>
+   <a href="https://conda-forge.org/download/" target="_blank">Miniforge</a>
 
 
 .. |miniconda| raw:: html
