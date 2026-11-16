@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.27)
 
 project(campo
-  VERSION 0.3.12
+  VERSION 0.4.0
   DESCRIPTION "Modelling framework for fields and agents"
   HOMEPAGE_URL "https://campo.computationalgeography.org/"
   LANGUAGES NONE
